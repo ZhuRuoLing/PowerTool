@@ -20,6 +20,9 @@ Gadgets that online convention organizers may find useful when holding conventio
 - 更多没有方块实体的“装饰”方块
 - 物品展示框和荧光物品展示框（但是方块版本）：可以旋转其中物品，支持红石比较器检测，支持隐藏框体。极难破坏。
 - 透明刷：右键可直接将方块模式的展示框变为透明。
+- 加速玩家：使用 `/accelerate` 命令改变玩家速度（或者使用 `/bathappy` 别名，让森林蝙蝠快乐）。
+  - `/accelerate <player> <multiply|add|set> <x> <y> <z>`
+  - `/accelerate <player> multiply <factor>`
 - 未完待续 To be continued
 
 ## 鸣谢
@@ -27,4 +30,4 @@ Gadgets that online convention organizers may find useful when holding conventio
 - `src/main/resources/assets/powertool/sound/item/clap.ogg`
   出自 [https://freesound.org/people/mikaelfernstrom/sounds/68727/](https://freesound.org/people/mikaelfernstrom/sounds/68727/)，
   在 CC-BY 4.0 许可证下发布，有修改。
-- 全息投影告示牌的部分代码改编自 [ModFest 团队维护的 GlowCase 模组](https://github.com/ModFest/glowcase)，该模组代码在 CC-1.0 许可证下发布。
+- 全息投影告示牌的部分代码改编自 [ModFest 团队维护的 GlowCase 模组](https://github.com/ModFest/glowcase)，该模组代码在 CC0-1.0 许可证下发布。

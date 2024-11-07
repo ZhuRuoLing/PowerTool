@@ -1,8 +1,11 @@
 package org.teacon.powertool.command;
 
+import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
+import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
@@ -13,46 +16,39 @@ import org.teacon.powertool.network.client.UpdatePlayerMovement;
 
 /**
  * Give the player an acceleration.
+ * Made ForestBat happy.
  */
-public class BatHappyCommand {
+public class AccelerateCommand {
 
-    public static final LiteralArgumentBuilder<CommandSourceStack> COMMAND = Commands.literal("bathappy")
+    public static final LiteralArgumentBuilder<CommandSourceStack> COMMAND = Commands.literal("accelerate")
             .requires(p -> p.hasPermission(2))
             .then(Commands.argument("player", EntityArgument.player())
                     .then(Commands.literal("multiply")
                             .then(Commands.argument("factor", DoubleArgumentType.doubleArg())
-                                    .executes(BatHappyCommand::multiplyMotion)
-                            )
-                            .then(Commands.argument("x", DoubleArgumentType.doubleArg())
-                                    .then(Commands.argument("y", DoubleArgumentType.doubleArg())
-                                            .then(Commands.argument("z", DoubleArgumentType.doubleArg())
-                                                    .executes(BatHappyCommand::multiplyMotionXyz)
-                                            )
-                                    )
-                            )
+                                    .executes(AccelerateCommand::multiplyMotion))
+                            .then(createXyzArgs(AccelerateCommand::multiplyMotionXyz))
                     )
                     .then(Commands.literal("set")
-                            .then(Commands.argument("x", DoubleArgumentType.doubleArg())
-                                    .then(Commands.argument("y", DoubleArgumentType.doubleArg())
-                                            .then(Commands.argument("z", DoubleArgumentType.doubleArg())
-                                                    .executes(BatHappyCommand::setMotion)
-                                            )
-                                    )
-                            )
+                            .then(createXyzArgs(AccelerateCommand::setMotion))
                     )
                     .then(Commands.literal("add")
-                            .then(Commands.argument("x", DoubleArgumentType.doubleArg())
-                                    .then(Commands.argument("y", DoubleArgumentType.doubleArg())
-                                            .then(Commands.argument("z", DoubleArgumentType.doubleArg())
-                                                    .executes(BatHappyCommand::addMotion)
-                                            )
-                                    )
-                            )
+                            .then(createXyzArgs(AccelerateCommand::addMotion))
                     )
             );
 
+    public static final LiteralArgumentBuilder<CommandSourceStack> ALIAS_BAT_HAPPY = Commands.literal("bathappy")
+            .redirect(COMMAND.build());
+
+    private static RequiredArgumentBuilder<CommandSourceStack, Double> createXyzArgs(Command<CommandSourceStack> command) {
+        return Commands.argument("x", DoubleArgumentType.doubleArg())
+                .then(Commands.argument("y", DoubleArgumentType.doubleArg())
+                        .then(Commands.argument("z", DoubleArgumentType.doubleArg())
+                                .executes(command)));
+    }
+
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(COMMAND);
+        dispatcher.register(ALIAS_BAT_HAPPY);
     }
 
     private static int multiplyMotion(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
