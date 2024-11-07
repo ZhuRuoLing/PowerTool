@@ -79,14 +79,14 @@ public class ExamineHoloGlass extends ArmorItem implements IScreenProviderItem{
     
     private static void addTags(ItemStack stack, List<TagKey<Block>> tagList) {
         if (stack.getItem() instanceof ExamineHoloGlass) {
-            var tags = stack.get(PowerToolItems.BLOCK_TAGS_DATA);
+            var tags = stack.get(PowerToolDataComponents.BLOCK_TAGS_DATA);
             if (tags != null) tagList.addAll(tags.tags);
         }
     }
     
     private static void addBlocks(ItemStack stack, List<Block> blockList) {
         if (stack.getItem() instanceof ExamineHoloGlass) {
-            var blocks = stack.get(PowerToolItems.BLOCKS_DATA);
+            var blocks = stack.get(PowerToolDataComponents.BLOCKS_DATA);
             if(blocks != null){
                 blockList.addAll(blocks.blocks.stream().map(BuiltInRegistries.BLOCK::get).filter(b -> b != Blocks.AIR).toList());
             }
@@ -96,7 +96,7 @@ public class ExamineHoloGlass extends ArmorItem implements IScreenProviderItem{
     @Override
     @OnlyIn(Dist.CLIENT)
     public Supplier<Screen> getScreenSupplier(ItemStack stack, EquipmentSlot slot) {
-        return () -> new ExamineHoloGlassScreen(slot,stack.get(PowerToolItems.BLOCK_TAGS_DATA),stack.get(PowerToolItems.BLOCKS_DATA));
+        return () -> new ExamineHoloGlassScreen(slot,stack.get(PowerToolDataComponents.BLOCK_TAGS_DATA),stack.get(PowerToolDataComponents.BLOCKS_DATA));
     }
     
     public record BlockTagsComponent(List<TagKey<Block>> tags) {

@@ -68,7 +68,6 @@ public class ItemDisplayBlock extends BaseEntityBlock {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public RenderShape getRenderShape(BlockState pState) {
         return RenderShape.MODEL;
     }
@@ -130,8 +129,9 @@ public class ItemDisplayBlock extends BaseEntityBlock {
         }
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
-
+    
     @Override
+    @SuppressWarnings("deprecation")
     public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
         if (level.getBlockEntity(pos) instanceof ItemDisplayBlockEntity theBE) {
             return theBE.itemToDisplay.copyWithCount(1);
@@ -140,13 +140,11 @@ public class ItemDisplayBlock extends BaseEntityBlock {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public boolean hasAnalogOutputSignal(BlockState state) {
         return true;
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
         if (level.getBlockEntity(pos) instanceof ItemDisplayBlockEntity theBE) {
             return theBE.itemToDisplay.isEmpty() ? 0 : theBE.rotation / 45 + 1;

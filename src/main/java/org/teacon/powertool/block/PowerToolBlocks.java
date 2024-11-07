@@ -46,7 +46,7 @@ import org.teacon.powertool.block.entity.TimeObserverBlockEntity;
 import org.teacon.powertool.block.entity.TrashCanWithContainerBlockEntity;
 import org.teacon.powertool.block.holo_sign.HolographicSignBlock;
 import org.teacon.powertool.block.holo_sign.SignType;
-import org.teacon.powertool.item.PowerToolItems;
+import org.teacon.powertool.item.PowerToolDataComponents;
 
 import java.util.List;
 import java.util.Map;
@@ -277,10 +277,10 @@ public class PowerToolBlocks {
         ITEMS.register("mechanical_register", () -> new BlockItem(MECHANICAL_REGISTER.get(), new Item.Properties()));
         ITEMS.register("tech_register", () -> new BlockItem(TECH_REGISTER.get(), new Item.Properties()));
         ITEMS.register("temple", () -> new BlockItem(TEMPLE.get(), new Item.Properties()));
-        ITEMS.register("safe", () -> new BlockItem(SAFE.get(), new Item.Properties().component(PowerToolItems.COMMAND, "/ac safe")));
-        ITEMS.register("gorgeous_safe", () -> new BlockItem(GORGEOUS_SAFE.get(), new Item.Properties().component(PowerToolItems.COMMAND, "/ac safe")));
-        ITEMS.register("mechanical_safe", () -> new BlockItem(MECHANICAL_SAFE.get(), new Item.Properties().component(PowerToolItems.COMMAND, "/ac safe")));
-        ITEMS.register("tech_safe", () -> new BlockItem(TECH_SAFE.get(), new Item.Properties().component(PowerToolItems.COMMAND, "/ac safe")));
+        ITEMS.register("safe", () -> new BlockItem(SAFE.get(), new Item.Properties().component(PowerToolDataComponents.COMMAND, "/ac safe")));
+        ITEMS.register("gorgeous_safe", () -> new BlockItem(GORGEOUS_SAFE.get(), new Item.Properties().component(PowerToolDataComponents.COMMAND, "/ac safe")));
+        ITEMS.register("mechanical_safe", () -> new BlockItem(MECHANICAL_SAFE.get(), new Item.Properties().component(PowerToolDataComponents.COMMAND, "/ac safe")));
+        ITEMS.register("tech_safe", () -> new BlockItem(TECH_SAFE.get(), new Item.Properties().component(PowerToolDataComponents.COMMAND, "/ac safe")));
         ITEMS.register("observer_realtime",() -> new BlockItem(REAL_TIME_OBSERVER.get(), new Item.Properties()));
         ITEMS.register("observer_realtime_cyl",() -> new BlockItem(REAL_TIME_CYCLE_OBSERVER.get(),new Item.Properties()));
         ITEMS.register("observer_gametime_cyl",() -> new BlockItem(GAME_TIME_CYCLE_OBSERVER.get(), new Item.Properties()));

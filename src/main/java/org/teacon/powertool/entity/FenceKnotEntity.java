@@ -34,7 +34,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.teacon.powertool.datagen.PowerToolItemTagsProvider;
-import org.teacon.powertool.item.PowerToolItems;
+import org.teacon.powertool.item.PowerToolDataComponents;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.LinkedHashSet;
@@ -115,10 +115,10 @@ public class FenceKnotEntity extends HangingEntity {
 
         var held = p.getItemInHand(hand);
         if (held.is(PowerToolItemTagsProvider.TONK)) {
-            var data = held.get(PowerToolItems.KNOT_DATA);
+            var data = held.get(PowerToolDataComponents.KNOT_DATA);
             if (data == null) {
                 // Connection start.
-                held.set(PowerToolItems.KNOT_DATA,new PowerToolKnotData(this.pos));
+                held.set(PowerToolDataComponents.KNOT_DATA,new PowerToolKnotData(this.pos));
                 p.sendSystemMessage(Component.translatable("entity.powertool.fence_knot.connecting", this.pos.toShortString()));
             } else {
                 var fromPos = data.pos;
@@ -147,7 +147,7 @@ public class FenceKnotEntity extends HangingEntity {
                         p.sendSystemMessage(Component.translatable("entity.powertool.fence_knot.connected", fromKnot.pos.toShortString(), this.pos.toShortString()));
                     }
                 }
-                held.set(PowerToolItems.KNOT_DATA,null);
+                held.set(PowerToolDataComponents.KNOT_DATA,null);
             }
         }
         return InteractionResult.CONSUME;

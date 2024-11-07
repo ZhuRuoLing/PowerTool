@@ -104,6 +104,12 @@ public class ObjectInputBox<T> extends EditBox implements Renderable {
     @Override
     public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+        var font = Minecraft.getInstance().font;
+        var rec = guiGraphics.scissorStack.stack.isEmpty() ? null : guiGraphics.scissorStack.stack.peekLast();
+        if(rec != null){
+            guiGraphics.disableScissor();
+            guiGraphics.enableScissor(rec.position().x()-100, rec.position().y(), rec.position().x()+rec.width(), rec.position().y()+rec.height());
+        }
         if (this.visible) {
             if(renderState){
                 if(validator.test(getValue())) {
@@ -115,9 +121,12 @@ public class ObjectInputBox<T> extends EditBox implements Renderable {
             }
             var title = this.getMessage().getString();
             if(!title.isEmpty()){
-                var font = Minecraft.getInstance().font;
                 guiGraphics.drawString(font,title,getX()-font.width(title)-(renderState?12:2),getY()+2,0xFFFFFF);
             }
+        }
+        if(rec != null){
+            guiGraphics.disableScissor();
+            guiGraphics.enableScissor(rec.position().x(), rec.position().y(), rec.position().x()+rec.width(), rec.position().y()+rec.height());
         }
     }
     

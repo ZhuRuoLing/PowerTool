@@ -18,7 +18,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import org.teacon.powertool.block.entity.SafeBlockEntity;
-import org.teacon.powertool.item.PowerToolItems;
+import org.teacon.powertool.item.PowerToolDataComponents;
 
 public class SafeBlock extends BaseEntityBlock {
 
@@ -68,7 +68,7 @@ public class SafeBlock extends BaseEntityBlock {
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         if (level.getBlockEntity(pos) instanceof SafeBlockEntity theSafe) {
-            String cmd = theSafe.components().getOrDefault(PowerToolItems.COMMAND.get(), "/ac safe");
+            String cmd = theSafe.components().getOrDefault(PowerToolDataComponents.COMMAND.get(), "/ac safe");
             var server = level.getServer();
             if (server != null) {
                 server.getCommands().performPrefixedCommand(player.createCommandSourceStack(), cmd);

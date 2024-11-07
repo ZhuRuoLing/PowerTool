@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.teacon.powertool.datagen.PowerToolBlockTagsProvider;
 import org.teacon.powertool.item.ExamineHoloGlass;
-import org.teacon.powertool.item.PowerToolItems;
+import org.teacon.powertool.item.PowerToolDataComponents;
 import org.teacon.powertool.network.server.UpdateItemStackData;
 
 import javax.annotation.Nullable;
@@ -73,8 +73,8 @@ public class ExamineHoloGlassScreen extends Screen {
     @Override
     public void removed() {
         var patch = DataComponentPatch.builder()
-                .set(PowerToolItems.BLOCK_TAGS_DATA.get(),new ExamineHoloGlass.BlockTagsComponent(new ArrayList<>(tagsData)))
-                .set(PowerToolItems.BLOCKS_DATA.get(),new ExamineHoloGlass.BlockComponents(new ArrayList<>(blocksData)))
+                .set(PowerToolDataComponents.BLOCK_TAGS_DATA.get(),new ExamineHoloGlass.BlockTagsComponent(new ArrayList<>(tagsData)))
+                .set(PowerToolDataComponents.BLOCKS_DATA.get(),new ExamineHoloGlass.BlockComponents(new ArrayList<>(blocksData)))
                 .build();
         PacketDistributor.sendToServer(new UpdateItemStackData(slot,patch));
     }

@@ -1,5 +1,7 @@
 package org.teacon.powertool.item;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.server.level.ServerPlayer;
@@ -17,6 +19,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.teacon.powertool.client.gui.SetCommandScreen;
 import org.teacon.powertool.network.client.OpenItemScreen;
+import org.teacon.powertool.utils.DelayServerExecutor;
 import org.teacon.powertool.utils.VanillaUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -36,18 +39,16 @@ public class CommandRune extends Item implements IScreenProviderItem{
 
     @Override
     public int getUseDuration(ItemStack stack, LivingEntity entity) {
-        return stack.getOrDefault(PowerToolItems.CYCLE, 0); // getOrDefault(Supplier<DataComponentType<T>>, T) is from NeoForge
+        return stack.getOrDefault(PowerToolDataComponents.CYCLE, 0); // getOrDefault(Supplier<DataComponentType<T>>, T) is from NeoForge
     }
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack held = player.getItemInHand(hand);
-        String command = held.get(PowerToolItems.COMMAND);
-        if (command == null) {
-             if(player instanceof ServerPlayer serverPlayer){
-                PacketDistributor.sendToPlayer(serverPlayer,
-                        new OpenItemScreen(player.getItemInHand(hand),hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND));
-            }
+        String command = held.get(PowerToolDataComponents.COMMAND);
+        if ((command == null || (player.getAbilities().instabuild && player.isCrouching())) && player instanceof ServerPlayer serverPlayer) {
+            PacketDistributor.sendToPlayer(serverPlayer,
+                    new OpenItemScreen(player.getItemInHand(hand),hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND));
             return InteractionResultHolder.pass(held);
         }
         player.startUsingItem(hand);
@@ -57,10 +58,10 @@ public class CommandRune extends Item implements IScreenProviderItem{
     @Override
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity livingEntity) {
         if (!level.isClientSide) {
-            String command = stack.get(PowerToolItems.COMMAND); // get(Supplier<DataComponentType<T>>) is from NeoForge
+            String command = stack.get(PowerToolDataComponents.COMMAND); // get(Supplier<DataComponentType<T>>) is from NeoForge
             if (command != null) {
                 VanillaUtils.runCommand(command, livingEntity);
-                if(Boolean.TRUE.equals(stack.get(PowerToolItems.CONSUME)) && ( !(livingEntity instanceof Player player) || !player.getAbilities().instabuild)){
+                if(Boolean.TRUE.equals(stack.get(PowerToolDataComponents.CONSUME)) && ( !(livingEntity instanceof Player player) || !player.getAbilities().instabuild)){
                     stack.shrink(1);
                 }
                 // Yes, you can make it consumable
@@ -69,6 +70,14 @@ public class CommandRune extends Item implements IScreenProviderItem{
 //                EquipmentSlot slot = stack.equals(livingEntity.getItemBySlot(EquipmentSlot.OFFHAND))
 //                        ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND;
 //                stack.hurtAndBreak(1, livingEntity, slot);
+            }
+            var delayCommands = stack.get(PowerToolDataComponents.DELAYED_COMMANDS);
+            if (delayCommands != null && livingEntity instanceof Player player) {
+                var i = 0;
+                for(var pair : delayCommands) {
+                    i += pair.delay;
+                    if(!pair.command.isEmpty()) DelayServerExecutor.addTask(i,(server) -> VanillaUtils.runCommand(pair.command,server,player.getUUID()));
+                }
             }
             
         }
@@ -79,5 +88,13 @@ public class CommandRune extends Item implements IScreenProviderItem{
     @OnlyIn(Dist.CLIENT)
     public Supplier<Screen> getScreenSupplier(ItemStack stack, EquipmentSlot slot) {
         return () -> new SetCommandScreen(stack,slot);
+    }
+    
+    public record DelayedCommandData(int delay, String command){
+        
+        public static final Codec<DelayedCommandData> CODEC = RecordCodecBuilder.create(ins -> ins.group(
+                Codec.INT.fieldOf("delay").forGetter(o -> o.delay),
+                Codec.STRING.fieldOf("command").forGetter(o -> o.command)
+        ).apply(ins, DelayedCommandData::new));
     }
 }

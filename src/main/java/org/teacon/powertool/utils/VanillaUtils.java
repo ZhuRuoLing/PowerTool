@@ -1,7 +1,9 @@
 package org.teacon.powertool.utils;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -9,6 +11,8 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec2;
 import org.teacon.powertool.PowerTool;
+
+import java.util.UUID;
 
 public class VanillaUtils {
     
@@ -40,6 +44,13 @@ public class VanillaUtils {
         var server = livingEntity.level().getServer();
         if (server != null) {
             server.getCommands().performPrefixedCommand(cmdSrc, command);
+        }
+    }
+    
+    public static void runCommand(String command,MinecraftServer server, UUID playerUUID){
+        var player = server.getPlayerList().getPlayer(playerUUID);
+        if(player != null){
+            server.getCommands().performPrefixedCommand(player.createCommandSourceStack().withPermission(2),command);
         }
     }
     
