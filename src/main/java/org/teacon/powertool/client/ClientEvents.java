@@ -33,6 +33,7 @@ import org.teacon.powertool.client.gui.RegisterScreen;
 import org.teacon.powertool.client.gui.TrashCanWithContainerScreen;
 import org.teacon.powertool.client.renders.FenceKnotRenderer;
 import org.teacon.powertool.client.renders.TempleRenderer;
+import org.teacon.powertool.client.renders.entity.MartingEntityRenderer;
 import org.teacon.powertool.client.renders.holo_sign.HolographicSignBlockEntityRenderer;
 import org.teacon.powertool.client.renders.ItemDisplayBlockEntityRenderer;
 import org.teacon.powertool.client.renders.ItemSupplierBlockEntityRenderer;
@@ -161,6 +162,8 @@ public class ClientEvents {
             event.registerBlockEntityRenderer(PowerToolBlocks.LINK_HOLOGRAPHIC_SIGN_BLOCK_ENTITY.get(), LinkHolographicSignBlockEntityRenderer::new);
             event.registerBlockEntityRenderer(PowerToolBlocks.RAW_JSON_HOLOGRAPHIC_SIGN_BLOCK_ENTITY.get(), RawJsonHolographicSignBlockEntityRenderer::new);
             event.registerBlockEntityRenderer(PowerToolBlocks.TEMPLE_BLOCK_ENTITY.get(), TempleRenderer::new);
+
+            event.registerEntityRenderer(PowerToolEntities.MARTING.get(), MartingEntityRenderer::new);
         }
         @SubscribeEvent
         public static void on(RegisterGuiLayersEvent event) {

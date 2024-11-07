@@ -35,6 +35,10 @@ public class MartingEntity extends VehicleEntity {
         compound.putString("variant", variant.getName());
     }
 
+    public Variant getVariant() {
+        return variant;
+    }
+
     public enum Variant {
         RED("marting_red", PowerToolItems.MARTING_RED),
         GREEN("marting_green", PowerToolItems.MARTING_GREEN),
@@ -50,7 +54,7 @@ public class MartingEntity extends VehicleEntity {
             this.name = name;
             this.itemSupplier = itemSupplier;
             this.id = ResourceLocation.fromNamespaceAndPath(PowerTool.MODID, name);
-            this.texture = ResourceLocation.fromNamespaceAndPath(PowerTool.MODID, "entity/" + name);
+            this.texture = ResourceLocation.fromNamespaceAndPath(PowerTool.MODID, "item/" + name);
         }
 
         public static Variant from(String name) {
