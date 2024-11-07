@@ -77,7 +77,6 @@ public class HolographicSignBlock extends BaseEntityBlock implements SimpleWater
     }
     
     @Override
-    @SuppressWarnings("deprecation")
     public RenderShape getRenderShape(BlockState state) {
         return RenderShape.INVISIBLE;
     }
