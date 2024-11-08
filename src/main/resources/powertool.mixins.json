@@ -9,7 +9,8 @@
     "CommandSourceStackMixin",
     "MixinArmorStand",
     "MixinItemFrame",
-    "ServerGamePacketListenerImplMixin"
+    "ServerGamePacketListenerImplMixin",
+    "ServerPlayerMixin"
   ],
   "client": [
     "client.ClientRecipeBookMixin",

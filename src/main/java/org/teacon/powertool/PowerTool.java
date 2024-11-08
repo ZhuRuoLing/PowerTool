@@ -1,6 +1,7 @@
 package org.teacon.powertool;
 
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import org.teacon.powertool.attachment.PowerToolAttachments;
@@ -22,5 +23,10 @@ public class PowerTool {
         PowerToolEntities.register(bus);
         PowerToolAttachments.register(bus);
         PowerToolConfig.init(modContainer);
+    }
+
+    @SubscribeEvent
+    public void on(){
+
     }
 }

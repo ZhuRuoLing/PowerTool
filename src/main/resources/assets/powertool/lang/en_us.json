@@ -88,6 +88,7 @@
   "item.powertool.auto_vanish_mangrove_boat": "Auto Vanish Mangrove Boat",
   "item.powertool.auto_vanish_bamboo_boat": "Auto Vanish Bamboo Boat",
   "item.powertool.auto_vanish_minecart": "Auto Vanish Minecart",
+  "item.powertool.display_mode_tool": "Display Mode Tool",
 
 
   "entity.powertool.fence_knot": "Knot On Fence",
@@ -132,5 +133,10 @@
   "powertool.realtime_observer.gui": "Realtime Observer",
   "powertool.gui.button.utc_time": "Set time zone to UTC + 0",
   "powertool.gui.button.local_time": "Set time zone to local time zone",
-  "itemGroup.powertool.cosmetic": "PowerTool: CosmeticBlocks"
+  "itemGroup.powertool.cosmetic": "PowerTool: CosmeticBlocks",
+
+  "tooltip.powertool.display_tool": "Use on block to toggle Display Mode",
+  "powertool.gui.display_mode_enabled": "Enabled display mode on %s",
+  "powertool.gui.display_mode_disabled": "Disabled display mode on %s",
+  "powertool.gui.display_mode_error": "Could not enable display mode on %s because it has no ability to open any screen."
 }
