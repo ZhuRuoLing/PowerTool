@@ -24,7 +24,7 @@ public class DisplayModeClient {
         }
         if (screen instanceof AbstractContainerScreen<? extends AbstractContainerMenu> abstractContainerScreen) {
             ChunkPos pos = new ChunkPos(interactionSourcePos);
-            if (data.containsKey(pos)){
+            if (data.containsKey(pos)) {
                 return data.get(pos).contains(interactionSourcePos);
             }
         }
@@ -35,11 +35,19 @@ public class DisplayModeClient {
         data.clear();
     }
 
-    public void updateInteractionSource(BlockPos pos){
+    public void updateInteractionSource(BlockPos pos) {
         this.interactionSourcePos = pos;
     }
 
     public void update(ChunkPos chunkPos, List<BlockPos> blockPosList) {
         data.put(chunkPos, blockPosList);
+    }
+
+    public boolean isDisplayModeEnabledAt(BlockPos blockPos) {
+        ChunkPos pos = new ChunkPos(blockPos);
+        if (data.containsKey(pos)) {
+            return data.get(pos).contains(blockPos);
+        }
+        return false;
     }
 }

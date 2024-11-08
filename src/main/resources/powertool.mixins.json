@@ -14,6 +14,7 @@
   ],
   "client": [
     "client.ClientRecipeBookMixin",
+    "client.DebugScreenOverlayMixin",
     "client.GameModeSwitcherScreenMixin",
     "client.KeyboardHandlerMixin",
     "client.PlayerMixin",
