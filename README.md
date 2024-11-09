@@ -23,6 +23,7 @@ Gadgets that online convention organizers may find useful when holding conventio
 - 加速玩家：使用 `/accelerate` 命令改变玩家速度（或者使用 `/bathappy` 别名，让森林蝙蝠快乐）。
   - `/accelerate <player> <multiply|add|set> <x> <y> <z>`
   - `/accelerate <player> multiply <factor>`
+- 展示模式工具：在方块上使用后该方块打开的gui将无法在非创造模式下进行任何操作，仅能查看。
 - 未完待续 To be continued
 
 ## 鸣谢

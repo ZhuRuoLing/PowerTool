@@ -1,7 +1,8 @@
 package org.teacon.powertool.utils;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.InteractionHand;
@@ -9,6 +10,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec2;
 import org.teacon.powertool.PowerTool;
 
@@ -68,5 +70,10 @@ public class VanillaUtils {
         if (times == 1) return new Vec2(16-y,x);
         if (times == 2) return new Vec2(16-x,16-y);
         return new Vec2(y,16-x);
+    }
+
+    public static Component getName(Block block) {
+        ResourceLocation rl = BuiltInRegistries.BLOCK.getKey(block);
+        return Component.translatable("block." + rl.getNamespace() + "." + rl.getPath());
     }
 }

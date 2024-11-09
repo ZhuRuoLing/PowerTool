@@ -61,6 +61,7 @@
   "item.powertool.clap_but_angry": "生气的鼓掌",
   "item.powertool.transparent_brush":"透明刷",
   "item.powertool.command_wand": "命令方块魔杖",
+  "item.powertool.display_mode_tool": "展示模式工具",
 
   "entity.powertool.fence_knot": "拴栅栏上的结",
   "entity.powertool.fence_knot.tooltip": "跟原版拴绳儿一样，但是是连着俩栅栏儿的",
@@ -133,6 +134,11 @@
   "powertool.realtime_observer.gui": "现实时间侦测器",
   "powertool.gui.button.utc_time": "设置时区为 UTC + 0",
   "powertool.gui.button.local_time": "设置时区为本地时区",
-  "itemGroup.powertool.cosmetic": "PowerTool: 装饰方块"
+  "itemGroup.powertool.cosmetic": "PowerTool: 装饰方块",
+
+  "tooltip.powertool.display_tool": "在方块上使用以切换展示模式",
+  "powertool.gui.display_mode_enabled": "已在%s上启用展示模式",
+  "powertool.gui.display_mode_disabled": "已在%s上禁用展示模式",
+  "powertool.gui.display_mode_error": "无法在%s上启用展示模式，因为它无法打开任何可交互界面"
 
 }

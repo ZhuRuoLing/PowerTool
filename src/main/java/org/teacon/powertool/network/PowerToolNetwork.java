@@ -42,7 +42,17 @@ public class PowerToolNetwork {
                 UpdatePlayerMovement.STREAM_CODEC,
                 UpdatePlayerMovement::handle
         );
-        
+        register.playToClient(
+            UpdateOpenMenuSourcePacket.TYPE,
+            UpdateOpenMenuSourcePacket.STREAM_CODEC,
+            UpdateOpenMenuSourcePacket::handle
+        );
+
+        register.playToClient(
+            UpdateDisplayChunkDataPacket.TYPE,
+            UpdateDisplayChunkDataPacket.STREAM_CODEC,
+            UpdateDisplayChunkDataPacket::handle
+        );
     
         register.commonToServer(
                 SetCommandBlockPacket.TYPE,

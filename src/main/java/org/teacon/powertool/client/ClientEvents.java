@@ -17,12 +17,14 @@ import net.minecraft.world.phys.HitResult;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
+import org.lwjgl.glfw.GLFW;
 import org.teacon.powertool.PowerTool;
 import org.teacon.powertool.block.PowerToolBlocks;
 import org.teacon.powertool.block.entity.PeriodicCommandBlockEntity;
@@ -99,6 +101,40 @@ public class ClientEvents {
         Component prompt2 = Component.translatable("block.powertool.register.hud.prompt.2", Component.keybind("key.use")).withStyle(ChatFormatting.ITALIC);
         guiGraphics.drawString(mc.font, prompt2, (int) ((x + 8) / 0.75F), (int) ((y + 30) / 0.75F), 0xB0B0B0, false);
         guiGraphics.pose().popPose();
+    }
+
+    @SubscribeEvent
+    static void on(ScreenEvent.MouseButtonPressed.Pre event) {
+        event.setCanceled(DisplayModeClient.INSTANCE.isDisplayModeEnabledOn(event.getScreen()));
+    }
+
+    @SubscribeEvent
+    static void on(ScreenEvent.MouseButtonReleased.Pre event) {
+        event.setCanceled(DisplayModeClient.INSTANCE.isDisplayModeEnabledOn(event.getScreen()));
+    }
+
+    @SubscribeEvent
+    static void on(ScreenEvent.KeyPressed.Pre event) {
+        if (event.getKeyCode() != GLFW.GLFW_KEY_ESCAPE) {
+            event.setCanceled(DisplayModeClient.INSTANCE.isDisplayModeEnabledOn(event.getScreen()));
+        }
+    }
+
+    @SubscribeEvent
+    static void on(ScreenEvent.KeyReleased.Pre event) {
+        if (event.getKeyCode() != GLFW.GLFW_KEY_ESCAPE) {
+            event.setCanceled(DisplayModeClient.INSTANCE.isDisplayModeEnabledOn(event.getScreen()));
+        }
+    }
+
+    @SubscribeEvent
+    static void on(ScreenEvent.CharacterTyped.Pre event) {
+        event.setCanceled(DisplayModeClient.INSTANCE.isDisplayModeEnabledOn(event.getScreen()));
+    }
+
+    @SubscribeEvent
+    static void on(ClientPlayerNetworkEvent.LoggingOut event) {
+        DisplayModeClient.INSTANCE.clear();
     }
 
     @EventBusSubscriber(value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD, modid = PowerTool.MODID)
