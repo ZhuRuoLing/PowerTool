@@ -78,7 +78,7 @@ public class PowerToolEvents {
         BlockPos pos,
         @Nullable ServerPlayer player
     ) {
-        List<BlockPos> displayEnabledPosList = chunk.getData(PowerToolAttachments.DISPLAY_MODE);
+        List<BlockPos> displayEnabledPosList = new ArrayList<>(chunk.getData(PowerToolAttachments.DISPLAY_MODE));
         displayEnabledPosList.remove(pos);
         chunk.setUnsaved(true);
         chunk.setData(PowerToolAttachments.DISPLAY_MODE, displayEnabledPosList);
