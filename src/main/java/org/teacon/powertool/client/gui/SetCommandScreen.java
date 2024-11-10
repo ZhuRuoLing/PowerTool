@@ -1,6 +1,5 @@
 package org.teacon.powertool.client.gui;
 
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
