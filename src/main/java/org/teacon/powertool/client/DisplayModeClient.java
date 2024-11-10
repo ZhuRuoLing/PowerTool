@@ -31,6 +31,10 @@ public class DisplayModeClient {
         return false;
     }
 
+    public void screenClosed() {
+        interactionSourcePos = null;
+    }
+
     public void clear() {
         data.clear();
     }
