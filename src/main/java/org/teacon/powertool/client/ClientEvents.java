@@ -133,6 +133,11 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
+    static void on(ScreenEvent.Closing event){
+        DisplayModeClient.INSTANCE.screenClosed();
+    }
+
+    @SubscribeEvent
     static void on(ClientPlayerNetworkEvent.LoggingOut event) {
         DisplayModeClient.INSTANCE.clear();
     }
