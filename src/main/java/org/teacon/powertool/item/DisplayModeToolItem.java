@@ -59,7 +59,7 @@ public class DisplayModeToolItem extends Item {
         BlockState blockState = level.getBlockState(pos);
         MenuProvider menuProvider = blockState.getMenuProvider(level, pos);
         Component blockName = VanillaUtils.getName(blockState.getBlock());
-        if (menuProvider == null) {
+        if (menuProvider == null && !player.isShiftKeyDown()) {
             player.displayClientMessage(
                 Component.translatable("powertool.gui.display_mode_error", blockName)
                     .withStyle(ChatFormatting.RED),

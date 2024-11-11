@@ -139,6 +139,6 @@
   "tooltip.powertool.display_tool": "在方块上使用以切换展示模式",
   "powertool.gui.display_mode_enabled": "已在%s上启用展示模式",
   "powertool.gui.display_mode_disabled": "已在%s上禁用展示模式",
-  "powertool.gui.display_mode_error": "无法在%s上启用展示模式，因为它无法打开任何可交互界面"
+  "powertool.gui.display_mode_error": "无法在%s上启用展示模式，因为它无法打开任何可交互界面.按下shift键强制启用展示模式."
 
 }
