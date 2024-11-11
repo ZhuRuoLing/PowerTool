@@ -102,7 +102,7 @@ public class HolographicSignBlock extends BaseEntityBlock implements SimpleWater
     
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        if(context instanceof EntityCollisionContext ecc && ecc.getEntity() instanceof Player player && !player.getAbilities().instabuild){
+        if(type == SignType.COMMON && context instanceof EntityCollisionContext ecc && ecc.getEntity() instanceof Player player && !player.getAbilities().instabuild){
             return Shapes.empty();
         }
         return super.getShape(state, level, pos, context);
