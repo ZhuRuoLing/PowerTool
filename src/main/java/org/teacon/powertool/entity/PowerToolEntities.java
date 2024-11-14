@@ -41,6 +41,13 @@ public class PowerToolEntities {
                     .clientTrackingRange(8)
                     .build("auto_vanish_minecart"));
 
+    public static final DeferredHolder<EntityType<?>,EntityType<AutoVanishMinecart>> MARTING = ENTITIES.register("marting",
+            () -> EntityType.Builder.<AutoVanishMinecart>of(AutoVanishMinecart::new, MobCategory.MISC)
+                    .sized(0.98F, 0.7F)
+                    .passengerAttachments(0.1875F)
+                    .clientTrackingRange(8)
+                    .build("marting"));
+
     public static final DeferredHolder<EntityDataSerializer<?>,EntityDataSerializer<Set<BlockPos>>> BLOCK_POS_LIST = ENTITY_DATA_SERIALIZER.register(
             "block_pos_list",() ->EntityDataSerializer.forValueType(BlockPos.STREAM_CODEC.apply(ByteBufCodecs.collection(HashSet::new))));
 

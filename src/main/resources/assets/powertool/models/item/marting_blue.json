@@ -1,0 +1,6 @@
+{
+	"parent": "powertool:item/marting",
+	"textures": {
+		"1": "powertool:entity/marting_blue"
+	}
+}
