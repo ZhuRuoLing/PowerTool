@@ -34,6 +34,7 @@ import org.teacon.powertool.client.gui.TrashCanWithContainerScreen;
 import org.teacon.powertool.client.renders.FenceKnotRenderer;
 import org.teacon.powertool.client.renders.TempleRenderer;
 import org.teacon.powertool.client.renders.entity.MartingEntityRenderer;
+import org.teacon.powertool.client.renders.entity.model.MartingEntityModel;
 import org.teacon.powertool.client.renders.holo_sign.HolographicSignBlockEntityRenderer;
 import org.teacon.powertool.client.renders.ItemDisplayBlockEntityRenderer;
 import org.teacon.powertool.client.renders.ItemSupplierBlockEntityRenderer;
@@ -165,6 +166,12 @@ public class ClientEvents {
 
             event.registerEntityRenderer(PowerToolEntities.MARTING.get(), MartingEntityRenderer::new);
         }
+
+        @SubscribeEvent
+        public static void on(EntityRenderersEvent.RegisterLayerDefinitions event) {
+            event.registerLayerDefinition(MartingEntityModel.LAYER, MartingEntityModel::createBodyLayer);
+        }
+
         @SubscribeEvent
         public static void on(RegisterGuiLayersEvent event) {
             event.registerAbove(VanillaGuiLayers.CROSSHAIR, ResourceLocation.fromNamespaceAndPath(PowerTool.MODID, "cashier_hud"), (guiGraphics, partialTicks) -> {

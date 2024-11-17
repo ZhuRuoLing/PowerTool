@@ -13,7 +13,10 @@ import org.teacon.powertool.PowerTool;
 import org.teacon.powertool.entity.MartingEntity;
 
 public class MartingEntityModel<T extends MartingEntity> extends EntityModel<T> {
-    public static final ModelLayerLocation LAYER = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(PowerTool.MODID, "marting"), "main");
+    public static final ModelLayerLocation LAYER = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(PowerTool.MODID, "marting_car"), "main");
+//    public static final ModelLayerLocation LAYER_RED = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(PowerTool.MODID, "marting_car_red"), "main");
+//    public static final ModelLayerLocation LAYER_BLUE = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(PowerTool.MODID, "marting_car_green"), "main");
+//    public static final ModelLayerLocation LAYER_GREEN = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(PowerTool.MODID, "marting_car_blue"), "main");
 
     private final ModelPart kart;
     private final ModelPart seat;

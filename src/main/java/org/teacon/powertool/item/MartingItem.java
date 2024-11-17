@@ -15,8 +15,11 @@ import java.util.List;
 public class MartingItem extends Item {
     public static final String TOOLTIP = "tooltip.powertool.marting";
 
-    public MartingItem(Properties properties) {
+    private final MartingEntity.Variant variant;
+
+    public MartingItem(Properties properties, MartingEntity.Variant variant) {
         super(properties);
+        this.variant = variant;
     }
 
     @Override
@@ -31,8 +34,9 @@ public class MartingItem extends Item {
     public @NotNull InteractionResult useOn(@NotNull UseOnContext context) {
         var level = context.getLevel();
         if (!level.isClientSide()) {
-            var pos = context.getClickedPos().relative(context.getClickedFace().getOpposite());
+            var pos = context.getClickedPos().relative(context.getClickedFace());
             var entity = new MartingEntity(PowerToolEntities.MARTING.get(), level);
+            entity.setVariant(variant);
             entity.setPos(pos.getCenter());
             level.addFreshEntity(entity);
         }

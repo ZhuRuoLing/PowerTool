@@ -1,5 +1,5 @@
 {
-	"parent": "powertool:item/marting",
+	"parent": "powertool:item/marting_car",
 	"textures": {
 		"1": "powertool:item/marting_green"
 	}
