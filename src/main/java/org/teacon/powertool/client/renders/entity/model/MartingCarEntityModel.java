@@ -10,10 +10,9 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.teacon.powertool.PowerTool;
-import org.teacon.powertool.entity.MartingEntity;
+import org.teacon.powertool.entity.MartingCarEntity;
 
-public class MartingEntityModel<T extends MartingEntity> extends EntityModel<T> {
-    public static final ModelLayerLocation LAYER = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(PowerTool.MODID, "marting_car"), "main");
+public class MartingCarEntityModel<T extends MartingCarEntity> extends EntityModel<T> {
     public static final ModelLayerLocation LAYER_RED = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(PowerTool.MODID, "marting_car_red"), "main");
     public static final ModelLayerLocation LAYER_BLUE = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(PowerTool.MODID, "marting_car_green"), "main");
     public static final ModelLayerLocation LAYER_GREEN = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(PowerTool.MODID, "marting_car_blue"), "main");
@@ -31,7 +30,7 @@ public class MartingEntityModel<T extends MartingEntity> extends EntityModel<T> 
     private final ModelPart wheel3;
     private final ModelPart wheel4;
 
-    public MartingEntityModel(ModelPart root) {
+    public MartingCarEntityModel(ModelPart root) {
         this.kart = root.getChild("kart");
         this.seat = this.kart.getChild("seat");
         this.steering = this.kart.getChild("steering");
@@ -122,7 +121,7 @@ public class MartingEntityModel<T extends MartingEntity> extends EntityModel<T> 
     }
 
     @Override
-    public void setupAnim(@NotNull MartingEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void setupAnim(@NotNull MartingCarEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
     }
 
     @Override

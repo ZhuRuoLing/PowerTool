@@ -33,8 +33,8 @@ import org.teacon.powertool.client.gui.RegisterScreen;
 import org.teacon.powertool.client.gui.TrashCanWithContainerScreen;
 import org.teacon.powertool.client.renders.FenceKnotRenderer;
 import org.teacon.powertool.client.renders.TempleRenderer;
-import org.teacon.powertool.client.renders.entity.MartingEntityRenderer;
-import org.teacon.powertool.client.renders.entity.model.MartingEntityModel;
+import org.teacon.powertool.client.renders.entity.MartingCarEntityRenderer;
+import org.teacon.powertool.client.renders.entity.model.MartingCarEntityModel;
 import org.teacon.powertool.client.renders.holo_sign.HolographicSignBlockEntityRenderer;
 import org.teacon.powertool.client.renders.ItemDisplayBlockEntityRenderer;
 import org.teacon.powertool.client.renders.ItemSupplierBlockEntityRenderer;
@@ -42,7 +42,7 @@ import org.teacon.powertool.client.gui.PeriodicCommandBlockEditScreen;
 import org.teacon.powertool.client.gui.PowerSupplyScreen;
 import org.teacon.powertool.client.renders.holo_sign.LinkHolographicSignBlockEntityRenderer;
 import org.teacon.powertool.client.renders.holo_sign.RawJsonHolographicSignBlockEntityRenderer;
-import org.teacon.powertool.entity.MartingEntity;
+import org.teacon.powertool.entity.MartingCarEntity;
 import org.teacon.powertool.entity.PowerToolEntities;
 import org.teacon.powertool.menu.PowerToolMenus;
 
@@ -165,13 +165,13 @@ public class ClientEvents {
             event.registerBlockEntityRenderer(PowerToolBlocks.RAW_JSON_HOLOGRAPHIC_SIGN_BLOCK_ENTITY.get(), RawJsonHolographicSignBlockEntityRenderer::new);
             event.registerBlockEntityRenderer(PowerToolBlocks.TEMPLE_BLOCK_ENTITY.get(), TempleRenderer::new);
 
-            event.registerEntityRenderer(PowerToolEntities.MARTING.get(), MartingEntityRenderer::new);
+            event.registerEntityRenderer(PowerToolEntities.MARTING.get(), MartingCarEntityRenderer::new);
         }
 
         @SubscribeEvent
         public static void on(EntityRenderersEvent.RegisterLayerDefinitions event) {
-            for (var v : MartingEntity.Variant.values()) {
-                event.registerLayerDefinition(v.getModelLayer(), MartingEntityModel::createBodyLayer);
+            for (var v : MartingCarEntity.Variant.values()) {
+                event.registerLayerDefinition(v.getModelLayer(), MartingCarEntityModel::createBodyLayer);
             }
         }
 
