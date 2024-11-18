@@ -163,7 +163,7 @@ public class MartingEntity extends VehicleEntity {
             this.name = name;
             this.itemSupplier = itemSupplier;
             this.id = ResourceLocation.fromNamespaceAndPath(PowerTool.MODID, name);
-            this.texture = ResourceLocation.fromNamespaceAndPath(PowerTool.MODID, "item/" + name);
+            this.texture = ResourceLocation.fromNamespaceAndPath(PowerTool.MODID, "item/" + name + ".png");
         }
 
         public static Variant from(String name) {
