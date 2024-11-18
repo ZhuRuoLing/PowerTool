@@ -140,6 +140,7 @@
   "powertool.gui.display_mode_disabled": "Disabled display mode on %s",
   "powertool.gui.display_mode_error": "Could not enable display mode on %s because it has no ability to open any screen. Or press shift key and click again to force enable display mode.",
 
+  "entity.powertool.marting_car": "Marting Car",
   "item.powertool.marting_car_red": "Marting Car (Red)",
   "item.powertool.marting_car_green": "Marting Car (Green)",
   "item.powertool.marting_car_blue": "Marting Car (Blue)",

@@ -141,6 +141,7 @@
   "powertool.gui.display_mode_disabled": "已在%s上禁用展示模式",
   "powertool.gui.display_mode_error": "无法在%s上启用展示模式，因为它无法打开任何可交互界面.按下shift键强制启用展示模式.",
 
+  "entity.powertool.marting_car": "马丁车",
   "item.powertool.marting_car_red": "马丁车（红色）",
   "item.powertool.marting_car_green": "马丁车（绿色）",
   "item.powertool.marting_car_blue": "马丁车（蓝色）",
