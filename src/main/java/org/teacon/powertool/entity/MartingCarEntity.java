@@ -15,24 +15,17 @@ import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.vehicle.VehicleEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.PowderSnowBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.teacon.powertool.PowerTool;
-import org.teacon.powertool.client.renders.entity.model.MartingEntityModel;
+import org.teacon.powertool.client.renders.entity.model.MartingCarEntityModel;
 import org.teacon.powertool.item.PowerToolItems;
-import org.w3c.dom.Attr;
 
 import java.util.List;
 import java.util.Objects;
@@ -43,13 +36,13 @@ import java.util.function.Supplier;
  *
  * @author qyl27
  */
-public class MartingEntity extends LivingEntity {
+public class MartingCarEntity extends LivingEntity {
 
     // Rotate degrees of the steering wheel, negative for left, positive for right.
     // Todo: each wheel speed depends on the steering wheel.
-    public static final EntityDataAccessor<Float> DATA_ID_STEERING_WHEEL_ROTATE_DEGREE = SynchedEntityData.defineId(MartingEntity.class, EntityDataSerializers.FLOAT);
+    public static final EntityDataAccessor<Float> DATA_ID_STEERING_WHEEL_ROTATE_DEGREE = SynchedEntityData.defineId(MartingCarEntity.class, EntityDataSerializers.FLOAT);
 
-    public static final EntityDataAccessor<Float> DATA_ID_DAMAGE = SynchedEntityData.defineId(MartingEntity.class, EntityDataSerializers.FLOAT);
+    public static final EntityDataAccessor<Float> DATA_ID_DAMAGE = SynchedEntityData.defineId(MartingCarEntity.class, EntityDataSerializers.FLOAT);
 
     // Todo: wheel speed should depends on velocity.
     public static final double WHEEL_ROTATE_DEGREE_PER_TICK = 18;   // 360 / 20
@@ -70,7 +63,7 @@ public class MartingEntity extends LivingEntity {
 
     // </editor-fold>
 
-    public MartingEntity(EntityType<MartingEntity> entityType, Level level) {
+    public MartingCarEntity(EntityType<MartingCarEntity> entityType, Level level) {
         super(entityType, level);
     }
 
@@ -107,6 +100,8 @@ public class MartingEntity extends LivingEntity {
     public void tick() {
         super.tick();
 
+        setYHeadRot(getYRot());
+        setYBodyRot(getYRot());
         if (!level().isClientSide()) {
             if (remainingLifeTimeTicks < 0) {
                 discard();
@@ -196,13 +191,6 @@ public class MartingEntity extends LivingEntity {
         return variant.getItemSupplier().get();
     }
 
-    @Override
-    public void onPassengerTurned(@NotNull Entity passenger) {
-        super.onPassengerTurned(passenger);
-
-        setYRot(passenger.getYRot());
-    }
-
     protected void updateWheelsAnimation() {
         // Todo: update wheels speeds.
         if (!getPassengers().isEmpty()) {
@@ -221,9 +209,8 @@ public class MartingEntity extends LivingEntity {
 
     @Override
     protected @NotNull Vec3 getRiddenInput(@NotNull Player player, @NotNull Vec3 travelVector) {
-        float deltaDirection = player.xxa * 0.5F;
-        float deltaForward = player.zza * 1.5F;
-        return new Vec3(deltaDirection, 0.0F, deltaForward);
+        setYRot(player.getYHeadRot());
+        return new Vec3(player.xxa, 0.0F, player.zza);
     }
 
     // </editor-fold>
@@ -276,7 +263,7 @@ public class MartingEntity extends LivingEntity {
         return AttributeSupplier.builder()
                 .add(Attributes.MAX_HEALTH, 1)
                 .add(Attributes.STEP_HEIGHT, 1)
-                .add(Attributes.MOVEMENT_SPEED, 0.25)
+                .add(Attributes.MOVEMENT_SPEED, 0.7)
                 .add(Attributes.SCALE)
                 .add(Attributes.GRAVITY)
                 .add(Attributes.MOVEMENT_EFFICIENCY)
@@ -308,9 +295,9 @@ public class MartingEntity extends LivingEntity {
     // </editor-fold>
 
     public enum Variant {
-        RED("marting_red", PowerToolItems.MARTING_RED, MartingEntityModel.LAYER_RED),
-        GREEN("marting_green", PowerToolItems.MARTING_GREEN, MartingEntityModel.LAYER_GREEN),
-        BLUE("marting_blue", PowerToolItems.MARTING_BLUE, MartingEntityModel.LAYER_BLUE),
+        RED("marting_red", PowerToolItems.MARTING_RED, MartingCarEntityModel.LAYER_RED),
+        GREEN("marting_green", PowerToolItems.MARTING_GREEN, MartingCarEntityModel.LAYER_GREEN),
+        BLUE("marting_blue", PowerToolItems.MARTING_BLUE, MartingCarEntityModel.LAYER_BLUE),
         ;
 
         private final String name;

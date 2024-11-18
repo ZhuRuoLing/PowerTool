@@ -27,7 +27,7 @@ import org.teacon.powertool.PowerTool;
 import org.teacon.powertool.block.CosmeticBlock;
 import org.teacon.powertool.block.PowerToolBlocks;
 import org.teacon.powertool.entity.FenceKnotEntity;
-import org.teacon.powertool.entity.MartingEntity;
+import org.teacon.powertool.entity.MartingCarEntity;
 import org.teacon.powertool.utils.VanillaUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -110,9 +110,9 @@ public class PowerToolItems {
     public static DeferredHolder<Item,AutoVanishMinecartItem> AV_MINE_CART;
     public static DeferredHolder<Item, DisplayModeToolItem> DISPLAY_MODE_TOOL;
 
-    public static Supplier<Item> MARTING_RED = ITEMS.register("marting_car_red", () -> new MartingItem(new Item.Properties(), MartingEntity.Variant.RED));
-    public static Supplier<Item> MARTING_GREEN = ITEMS.register("marting_car_green", () -> new MartingItem(new Item.Properties(), MartingEntity.Variant.GREEN));
-    public static Supplier<Item> MARTING_BLUE = ITEMS.register("marting_car_blue", () -> new MartingItem(new Item.Properties(), MartingEntity.Variant.BLUE));
+    public static Supplier<Item> MARTING_RED = ITEMS.register("marting_car_red", () -> new MartingCarItem(new Item.Properties(), MartingCarEntity.Variant.RED));
+    public static Supplier<Item> MARTING_GREEN = ITEMS.register("marting_car_green", () -> new MartingCarItem(new Item.Properties(), MartingCarEntity.Variant.GREEN));
+    public static Supplier<Item> MARTING_BLUE = ITEMS.register("marting_car_blue", () -> new MartingCarItem(new Item.Properties(), MartingCarEntity.Variant.BLUE));
 
     public static void register(IEventBus bus) {
         ITEMS.register(bus);

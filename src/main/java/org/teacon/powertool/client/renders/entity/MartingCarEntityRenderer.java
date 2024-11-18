@@ -10,20 +10,20 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
 import org.jetbrains.annotations.NotNull;
-import org.teacon.powertool.client.renders.entity.model.MartingEntityModel;
-import org.teacon.powertool.entity.MartingEntity;
+import org.teacon.powertool.client.renders.entity.model.MartingCarEntityModel;
+import org.teacon.powertool.entity.MartingCarEntity;
 
 import java.util.Arrays;
 import java.util.Map;
 
-public class MartingEntityRenderer extends EntityRenderer<MartingEntity> {
+public class MartingCarEntityRenderer extends EntityRenderer<MartingCarEntity> {
 
-    private final Map<MartingEntity.Variant, MartingEntityModel<MartingEntity>> variantToModel;
+    private final Map<MartingCarEntity.Variant, MartingCarEntityModel<MartingCarEntity>> variantToModel;
 
-    public MartingEntityRenderer(EntityRendererProvider.Context context) {
+    public MartingCarEntityRenderer(EntityRendererProvider.Context context) {
         super(context);
 
-        this.variantToModel = Arrays.stream(MartingEntity.Variant.values())
+        this.variantToModel = Arrays.stream(MartingCarEntity.Variant.values())
                 .collect(
                         ImmutableMap.toImmutableMap(
                                 v -> v,
@@ -31,22 +31,22 @@ public class MartingEntityRenderer extends EntityRenderer<MartingEntity> {
                 );
     }
 
-    private MartingEntityModel<MartingEntity> createModel(EntityRendererProvider.Context context, MartingEntity.Variant variant) {
-        return new MartingEntityModel<>(context.bakeLayer(variant.getModelLayer()));
+    private MartingCarEntityModel<MartingCarEntity> createModel(EntityRendererProvider.Context context, MartingCarEntity.Variant variant) {
+        return new MartingCarEntityModel<>(context.bakeLayer(variant.getModelLayer()));
     }
 
-    private MartingEntityModel<MartingEntity> getBuffer(MartingEntity entity) {
+    private MartingCarEntityModel<MartingCarEntity> getBuffer(MartingCarEntity entity) {
         var v = entity.getVariant();
         return variantToModel.get(v);
     }
 
     @Override
-    public @NotNull ResourceLocation getTextureLocation(@NotNull MartingEntity entity) {
+    public @NotNull ResourceLocation getTextureLocation(@NotNull MartingCarEntity entity) {
         return entity.getVariant().getTexture();
     }
 
     @Override
-    public void render(@NotNull MartingEntity entity, float entityYaw, float partialTick,
+    public void render(@NotNull MartingCarEntity entity, float entityYaw, float partialTick,
                        @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight) {
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
 

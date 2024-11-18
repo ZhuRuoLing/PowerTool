@@ -7,17 +7,17 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import org.jetbrains.annotations.NotNull;
-import org.teacon.powertool.entity.MartingEntity;
+import org.teacon.powertool.entity.MartingCarEntity;
 import org.teacon.powertool.entity.PowerToolEntities;
 
 import java.util.List;
 
-public class MartingItem extends Item {
+public class MartingCarItem extends Item {
     public static final String TOOLTIP = "tooltip.powertool.marting";
 
-    private final MartingEntity.Variant variant;
+    private final MartingCarEntity.Variant variant;
 
-    public MartingItem(Properties properties, MartingEntity.Variant variant) {
+    public MartingCarItem(Properties properties, MartingCarEntity.Variant variant) {
         super(properties);
         this.variant = variant;
     }
@@ -35,7 +35,7 @@ public class MartingItem extends Item {
         var level = context.getLevel();
         if (!level.isClientSide()) {
             var pos = context.getClickedPos().relative(context.getClickedFace());
-            var entity = new MartingEntity(PowerToolEntities.MARTING.get(), level);
+            var entity = new MartingCarEntity(PowerToolEntities.MARTING.get(), level);
             entity.setVariant(variant);
             entity.setPos(pos.getCenter());
             level.addFreshEntity(entity);
