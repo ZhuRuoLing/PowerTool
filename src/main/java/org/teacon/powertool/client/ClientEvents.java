@@ -42,6 +42,7 @@ import org.teacon.powertool.client.gui.PeriodicCommandBlockEditScreen;
 import org.teacon.powertool.client.gui.PowerSupplyScreen;
 import org.teacon.powertool.client.renders.holo_sign.LinkHolographicSignBlockEntityRenderer;
 import org.teacon.powertool.client.renders.holo_sign.RawJsonHolographicSignBlockEntityRenderer;
+import org.teacon.powertool.entity.MartingEntity;
 import org.teacon.powertool.entity.PowerToolEntities;
 import org.teacon.powertool.menu.PowerToolMenus;
 
@@ -169,7 +170,9 @@ public class ClientEvents {
 
         @SubscribeEvent
         public static void on(EntityRenderersEvent.RegisterLayerDefinitions event) {
-            event.registerLayerDefinition(MartingEntityModel.LAYER, MartingEntityModel::createBodyLayer);
+            for (var v : MartingEntity.Variant.values()) {
+                event.registerLayerDefinition(v.getModelLayer(), MartingEntityModel::createBodyLayer);
+            }
         }
 
         @SubscribeEvent

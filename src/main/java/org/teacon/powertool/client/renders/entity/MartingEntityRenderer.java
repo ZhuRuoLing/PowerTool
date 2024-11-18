@@ -1,5 +1,6 @@
 package org.teacon.powertool.client.renders.entity;
 
+import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -12,25 +13,32 @@ import org.jetbrains.annotations.NotNull;
 import org.teacon.powertool.client.renders.entity.model.MartingEntityModel;
 import org.teacon.powertool.entity.MartingEntity;
 
+import java.util.Arrays;
+import java.util.Map;
+
 public class MartingEntityRenderer extends EntityRenderer<MartingEntity> {
 
-    private MartingEntityModel<MartingEntity> model;
-//    private final Map<MartingEntity.Variant, Tuple<ResourceLocation, MartingEntityModel<MartingEntity>>> variantToModel;
+    private final Map<MartingEntity.Variant, MartingEntityModel<MartingEntity>> variantToModel;
 
     public MartingEntityRenderer(EntityRendererProvider.Context context) {
         super(context);
-        this.model = new MartingEntityModel<>(context.bakeLayer(MartingEntityModel.LAYER));
 
-//        this.variantToModel = Arrays.stream(MartingEntity.Variant.values())
-//                .collect(
-//                        ImmutableMap.toImmutableMap(
-//                                v -> v,
-//                                v -> new Tuple<>(v.getTexture(), createModel(context, v)))
-//                );
+        this.variantToModel = Arrays.stream(MartingEntity.Variant.values())
+                .collect(
+                        ImmutableMap.toImmutableMap(
+                                v -> v,
+                                v -> createModel(context, v))
+                );
     }
 
-//    private MartingEntityModel<MartingEntity> createModel(EntityRendererProvider.Context context, MartingEntity.Variant variant) {
-//    }
+    private MartingEntityModel<MartingEntity> createModel(EntityRendererProvider.Context context, MartingEntity.Variant variant) {
+        return new MartingEntityModel<>(context.bakeLayer(variant.getModelLayer()));
+    }
+
+    private MartingEntityModel<MartingEntity> getBuffer(MartingEntity entity) {
+        var v = entity.getVariant();
+        return variantToModel.get(v);
+    }
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(@NotNull MartingEntity entity) {
@@ -42,6 +50,7 @@ public class MartingEntityRenderer extends EntityRenderer<MartingEntity> {
                        @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight) {
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
 
+        var model = getBuffer(entity);
         var buffer = bufferSource.getBuffer(model.renderType(getTextureLocation(entity)));
 
         poseStack.pushPose();

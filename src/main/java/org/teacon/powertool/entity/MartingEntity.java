@@ -1,5 +1,6 @@
 package org.teacon.powertool.entity;
 
+import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -13,6 +14,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.teacon.powertool.PowerTool;
+import org.teacon.powertool.client.renders.entity.model.MartingEntityModel;
 import org.teacon.powertool.item.PowerToolItems;
 
 import java.util.function.Supplier;
@@ -149,21 +151,23 @@ public class MartingEntity extends VehicleEntity {
     // </editor-fold>
 
     public enum Variant {
-        RED("marting_red", PowerToolItems.MARTING_RED),
-        GREEN("marting_green", PowerToolItems.MARTING_GREEN),
-        BLUE("marting_blue", PowerToolItems.MARTING_BLUE),
+        RED("marting_red", PowerToolItems.MARTING_RED, MartingEntityModel.LAYER_RED),
+        GREEN("marting_green", PowerToolItems.MARTING_GREEN, MartingEntityModel.LAYER_GREEN),
+        BLUE("marting_blue", PowerToolItems.MARTING_BLUE, MartingEntityModel.LAYER_BLUE),
         ;
 
         private final String name;
         private final Supplier<Item> itemSupplier;
         private final ResourceLocation id;
         private final ResourceLocation texture;
+        private final ModelLayerLocation layer;
 
-        Variant(String name, Supplier<Item> itemSupplier) {
+        Variant(String name, Supplier<Item> itemSupplier, ModelLayerLocation layer) {
             this.name = name;
             this.itemSupplier = itemSupplier;
             this.id = ResourceLocation.fromNamespaceAndPath(PowerTool.MODID, name);
-            this.texture = ResourceLocation.fromNamespaceAndPath(PowerTool.MODID, "item/" + name + ".png");
+            this.texture = ResourceLocation.fromNamespaceAndPath(PowerTool.MODID, "textures/item/" + name + ".png");
+            this.layer = layer;
         }
 
         public static Variant from(String name) {
@@ -190,6 +194,10 @@ public class MartingEntity extends VehicleEntity {
 
         public ResourceLocation getTexture() {
             return texture;
+        }
+
+        public ModelLayerLocation getModelLayer() {
+            return layer;
         }
     }
 }
