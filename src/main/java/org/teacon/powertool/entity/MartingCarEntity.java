@@ -128,7 +128,7 @@ public class MartingCarEntity extends LivingEntity {
                 this.setDamage(this.getDamage() + amount * 10.0F);
                 this.gameEvent(GameEvent.ENTITY_DAMAGE, source.getEntity());
                 boolean flag = source.getEntity() instanceof Player && ((Player) source.getEntity()).getAbilities().instabuild;
-                if ((flag || !(this.getDamage() > 40.0F)) && !this.shouldSourceDestroy(source)) {
+                if ((flag || !(this.getDamage() > 10.0F)) && !this.shouldSourceDestroy(source)) {
                     if (flag) {
                         this.discard();
                     }
@@ -148,7 +148,7 @@ public class MartingCarEntity extends LivingEntity {
     }
 
     public void destroy(Item dropItem) {
-        this.kill();
+        this.discard();
         if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
             ItemStack itemstack = new ItemStack(dropItem);
             itemstack.set(DataComponents.CUSTOM_NAME, this.getCustomName());

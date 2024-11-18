@@ -38,6 +38,7 @@ public class MartingCarItem extends Item {
             var entity = new MartingCarEntity(PowerToolEntities.MARTING.get(), level);
             entity.setVariant(variant);
             entity.setPos(pos.getCenter());
+            context.getItemInHand().shrink(1);
             level.addFreshEntity(entity);
         }
         return InteractionResult.SUCCESS;
