@@ -21,6 +21,10 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.common.NeoForgeMod;
+import net.neoforged.neoforge.common.data.fixes.NeoForgeEntityLegacyAttributesFix;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.teacon.powertool.PowerTool;
@@ -43,6 +47,8 @@ public class MartingCarEntity extends LivingEntity {
     public static final EntityDataAccessor<Float> DATA_ID_STEERING_WHEEL_ROTATE_DEGREE = SynchedEntityData.defineId(MartingCarEntity.class, EntityDataSerializers.FLOAT);
 
     public static final EntityDataAccessor<Float> DATA_ID_DAMAGE = SynchedEntityData.defineId(MartingCarEntity.class, EntityDataSerializers.FLOAT);
+    
+    public static final EntityDataAccessor<Integer> VARIANT = SynchedEntityData.defineId(MartingCarEntity.class, EntityDataSerializers.INT);
 
     // Todo: wheel speed should depends on velocity.
     public static final double WHEEL_ROTATE_DEGREE_PER_TICK = 18;   // 360 / 20
@@ -50,8 +56,7 @@ public class MartingCarEntity extends LivingEntity {
     public static final int MAX_REMAINING_LIFE_TIME_TICKS = 120 * 20;    // 2 minutes
 
     // <editor-fold desc="Persistent states.">
-
-    private Variant variant = Variant.RED;
+    
     private int remainingLifeTimeTicks = MAX_REMAINING_LIFE_TIME_TICKS;
     private AttributeMap attributeMap;
 
@@ -68,11 +73,11 @@ public class MartingCarEntity extends LivingEntity {
     }
 
     public void setVariant(Variant variant) {
-        this.variant = variant;
+        this.entityData.set(VARIANT,variant.ordinal());
     }
 
     public Variant getVariant() {
-        return variant;
+        return Variant.from(this.entityData.get(VARIANT));
     }
 
     // <editor-fold desc="Living entity staff.">
@@ -188,7 +193,7 @@ public class MartingCarEntity extends LivingEntity {
     }
 
     protected @NotNull Item getDropItem() {
-        return variant.getItemSupplier().get();
+        return getVariant().getItemSupplier().get();
     }
 
     protected void updateWheelsAnimation() {
@@ -231,7 +236,7 @@ public class MartingCarEntity extends LivingEntity {
 
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
-        compound.putString("variant", variant.getName());
+        compound.putString("variant", getVariant().getName());
         compound.putInt("lifetimeRemain", remainingLifeTimeTicks);
     }
 
@@ -240,6 +245,7 @@ public class MartingCarEntity extends LivingEntity {
         super.defineSynchedData(builder);
         builder.define(DATA_ID_STEERING_WHEEL_ROTATE_DEGREE, 0F);
         builder.define(DATA_ID_DAMAGE, 0F);
+        builder.define(VARIANT,0);
     }
 
     public float getDamage() {
@@ -267,6 +273,8 @@ public class MartingCarEntity extends LivingEntity {
                 .add(Attributes.SCALE)
                 .add(Attributes.GRAVITY)
                 .add(Attributes.MOVEMENT_EFFICIENCY)
+                .add(NeoForgeMod.SWIM_SPEED)
+                .add(Attributes.WATER_MOVEMENT_EFFICIENCY)
                 .add(Attributes.SAFE_FALL_DISTANCE, 30)
                 .add(Attributes.FALL_DAMAGE_MULTIPLIER)
                 .build();
@@ -295,23 +303,22 @@ public class MartingCarEntity extends LivingEntity {
     // </editor-fold>
 
     public enum Variant {
-        RED("marting_red", PowerToolItems.MARTING_RED, MartingCarEntityModel.LAYER_RED),
-        GREEN("marting_green", PowerToolItems.MARTING_GREEN, MartingCarEntityModel.LAYER_GREEN),
-        BLUE("marting_blue", PowerToolItems.MARTING_BLUE, MartingCarEntityModel.LAYER_BLUE),
+        RED("marting_red", PowerToolItems.MARTING_RED),
+        GREEN("marting_green", PowerToolItems.MARTING_GREEN),
+        BLUE("marting_blue", PowerToolItems.MARTING_BLUE),
         ;
 
         private final String name;
         private final Supplier<Item> itemSupplier;
         private final ResourceLocation id;
         private final ResourceLocation texture;
-        private final ModelLayerLocation layer;
+        
 
-        Variant(String name, Supplier<Item> itemSupplier, ModelLayerLocation layer) {
+        Variant(String name, Supplier<Item> itemSupplier) {
             this.name = name;
             this.itemSupplier = itemSupplier;
             this.id = ResourceLocation.fromNamespaceAndPath(PowerTool.MODID, name);
             this.texture = ResourceLocation.fromNamespaceAndPath(PowerTool.MODID, "textures/item/" + name + ".png");
-            this.layer = layer;
         }
 
         public static Variant from(String name) {
@@ -320,8 +327,15 @@ public class MartingCarEntity extends LivingEntity {
                     return v;
                 }
             }
-
             return RED;
+        }
+        
+        public static Variant from(int ordinal){
+            return switch (ordinal){
+                case 1 -> GREEN;
+                case 2 -> BLUE;
+                default -> RED;
+            };
         }
 
         public String getName() {
@@ -340,8 +354,13 @@ public class MartingCarEntity extends LivingEntity {
             return texture;
         }
 
+        @OnlyIn(Dist.CLIENT)
         public ModelLayerLocation getModelLayer() {
-            return layer;
+            return switch (this){
+                case RED -> MartingCarEntityModel.LAYER_RED;
+                case GREEN -> MartingCarEntityModel.LAYER_GREEN;
+                case BLUE -> MartingCarEntityModel.LAYER_BLUE;
+            };
         }
     }
 }

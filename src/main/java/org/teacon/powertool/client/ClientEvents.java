@@ -169,14 +169,14 @@ public class ClientEvents {
         }
 
         @SubscribeEvent
-        public static void on(EntityRenderersEvent.RegisterLayerDefinitions event) {
+        public static void onRegModelLayerDef(EntityRenderersEvent.RegisterLayerDefinitions event) {
             for (var v : MartingCarEntity.Variant.values()) {
                 event.registerLayerDefinition(v.getModelLayer(), MartingCarEntityModel::createBodyLayer);
             }
         }
 
         @SubscribeEvent
-        public static void on(RegisterGuiLayersEvent event) {
+        public static void onRegGuiLayerDef(RegisterGuiLayersEvent event) {
             event.registerAbove(VanillaGuiLayers.CROSSHAIR, ResourceLocation.fromNamespaceAndPath(PowerTool.MODID, "cashier_hud"), (guiGraphics, partialTicks) -> {
                 Minecraft mc = Minecraft.getInstance();
                 HitResult res = mc.hitResult;
