@@ -1,7 +1,9 @@
 package org.teacon.powertool.item;
 
+import com.mojang.serialization.Codec;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.Util;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -25,11 +27,13 @@ import org.teacon.powertool.PowerTool;
 import org.teacon.powertool.block.CosmeticBlock;
 import org.teacon.powertool.block.PowerToolBlocks;
 import org.teacon.powertool.entity.FenceKnotEntity;
+import org.teacon.powertool.entity.MartingEntity;
 import org.teacon.powertool.utils.VanillaUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.function.Supplier;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
@@ -39,6 +43,8 @@ public class PowerToolItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, PowerTool.MODID);
 
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, PowerTool.MODID);
+    
+    public static final DeferredRegister<DataComponentType<?>> DATA_COMPONENTS = DeferredRegister.create(Registries.DATA_COMPONENT_TYPE,PowerTool.MODID);
     
     public static final DeferredRegister<ArmorMaterial> ARMOR_MATERIAL = DeferredRegister.create(Registries.ARMOR_MATERIAL,PowerTool.MODID);
 
@@ -65,12 +71,49 @@ public class PowerToolItems {
                     () -> Ingredient.EMPTY,
                     List.of(),
                     0f,0f));
+
+    public static final DeferredHolder<DataComponentType<?>,DataComponentType<FenceKnotEntity.PowerToolKnotData>> KNOT_DATA = DATA_COMPONENTS.register(
+            "knot_data",() -> DataComponentType.<FenceKnotEntity.PowerToolKnotData>builder()
+                    .persistent(FenceKnotEntity.PowerToolKnotData.CODEC)
+                    .networkSynchronized(FenceKnotEntity.PowerToolKnotData.STREAM_CODEC)
+                    .build()
+    );
+    
+    public static final DeferredHolder<DataComponentType<?>,DataComponentType<ExamineHoloGlass.BlockTagsComponent>> BLOCK_TAGS_DATA = DATA_COMPONENTS.register(
+            "block_tags",() -> DataComponentType.<ExamineHoloGlass.BlockTagsComponent>builder()
+                    .persistent(ExamineHoloGlass.BlockTagsComponent.CODEC)
+                    .networkSynchronized(ExamineHoloGlass.BlockTagsComponent.STREAM_CODEC)
+                    .build()
+    );
+    
+    public static final DeferredHolder<DataComponentType<?>,DataComponentType<ExamineHoloGlass.BlockComponents>> BLOCKS_DATA = DATA_COMPONENTS.register(
+            "blocks_data",() -> DataComponentType.<ExamineHoloGlass.BlockComponents>builder()
+                    .persistent(ExamineHoloGlass.BlockComponents.CODEC)
+                    .networkSynchronized(ExamineHoloGlass.BlockComponents.STREAM_CODEC)
+                    .build()
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> COMMAND = DATA_COMPONENTS.register(
+            "command", () -> DataComponentType.<String>builder().persistent(Codec.STRING).build()
+    );
+    
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> CONSUME = DATA_COMPONENTS.register(
+            "consume", () -> DataComponentType.<Boolean>builder().persistent(Codec.BOOL).build()
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> CYCLE = DATA_COMPONENTS.register(
+            "cycle", () -> DataComponentType.<Integer>builder().persistent(Codec.INT).build()
+    );
     
     public static DeferredHolder<Item,TonkItem> TONK,THICK_TONK,EXTRA_THICK_TONK;
     public static DeferredHolder<Item,AutoVanishBoatItem> AV_OAK_BOAT,AV_SPRUCE_BOAT,AV_BIRCH_BOAT,AV_JUNGLE_BOAT,AV_ACACIA_BOAT,AV_CHERRY_BOAT,AV_DARK_OAK_BOAT,AV_MANGROVE_BOAT,AV_BAMBOO_RAFT;
     public static DeferredHolder<Item,AutoVanishMinecartItem> AV_MINE_CART;
     public static DeferredHolder<Item, DisplayModeToolItem> DISPLAY_MODE_TOOL;
-    
+
+    public static Supplier<Item> MARTING_RED = ITEMS.register("marting_car_red", () -> new MartingItem(new Item.Properties(), MartingEntity.Variant.RED));
+    public static Supplier<Item> MARTING_GREEN = ITEMS.register("marting_car_green", () -> new MartingItem(new Item.Properties(), MartingEntity.Variant.GREEN));
+    public static Supplier<Item> MARTING_BLUE = ITEMS.register("marting_car_blue", () -> new MartingItem(new Item.Properties(), MartingEntity.Variant.BLUE));
+
     public static void register(IEventBus bus) {
         ITEMS.register(bus);
         ITEMS.register("useless_stick", () -> new Item(new Item.Properties()) {
@@ -98,9 +141,8 @@ public class PowerToolItems {
         AV_MANGROVE_BOAT = ITEMS.register("auto_vanish_mangrove_boat",() -> new AutoVanishBoatItem(Boat.Type.MANGROVE));
         AV_BAMBOO_RAFT = ITEMS.register("auto_vanish_bamboo_raft",() -> new AutoVanishBoatItem(Boat.Type.BAMBOO));
         AV_MINE_CART = ITEMS.register("auto_vanish_minecart",() -> new AutoVanishMinecartItem(new Item.Properties()));
-        DISPLAY_MODE_TOOL = ITEMS.register("display_mode_tool", () -> new DisplayModeToolItem(new Item.Properties()));
         CREATIVE_MODE_TABS.register(bus);
-        PowerToolDataComponents.DATA_COMPONENTS.register(bus);
+        DATA_COMPONENTS.register(bus);
         ARMOR_MATERIAL.register(bus);
     }
 
