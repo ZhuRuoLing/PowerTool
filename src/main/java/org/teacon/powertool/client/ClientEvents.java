@@ -24,6 +24,7 @@ import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
+import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 import org.teacon.powertool.PowerTool;
 import org.teacon.powertool.block.PowerToolBlocks;
@@ -52,7 +53,7 @@ public class ClientEvents {
     public static int tickCount = 0;
 
     @SubscribeEvent
-    public static void on(ScreenEvent.Opening event) {
+    public static void onScreenOpen(ScreenEvent.Opening event) {
         if (event.getScreen() instanceof CommandBlockEditScreen screen
             && screen.autoCommandBlock instanceof PeriodicCommandBlockEntity blockEntity) {
             event.setNewScreen(new PeriodicCommandBlockEditScreen(blockEntity));
@@ -60,88 +61,91 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    public static void on(ClientTickEvent.Pre event) {
+    public static void onClientTick(ClientTickEvent.Pre event) {
         tickCount++;
     }
 
-    /*
+    
+    /**
      * The following code is inspired by BookRightClickHandler::onRenderHUD from the Patchouli mod,
      * originally authored by Vazkii, williewillus and other Violet Moon members.
-     * You can access the original code through the link below
-     * https://github.com/VazkiiMods/Patchouli/blob/1.20.x/Xplat/src/main/java/vazkii/patchouli/client/handler/BookRightClickHandler.java
+     * You can access the original code through the link
+     * <a href="https://github.com/VazkiiMods/Patchouli/blob/1.20.x/Xplat/src/main/java/vazkii/patchouli/client/handler/BookRightClickHandler.java">here</a>
+     * @return The lower right pos of rendered area.
      */
-    static void drawRegisterInfo(Minecraft mc, GuiGraphics guiGraphics, ItemStack requestedItem) {
+    @SuppressWarnings("SameParameterValue")
+    static Vector2i drawRegisterInfo(Minecraft mc, GuiGraphics guiGraphics, ItemStack item, int xOffset, int yOffset, Component componentTop, Component componentBottom) {
         Window window = mc.getWindow();
-        int x = window.getGuiScaledWidth() / 2;
-        int y = window.getGuiScaledHeight() / 2;
+        int x = window.getGuiScaledWidth() / 2 + xOffset;
+        int y = window.getGuiScaledHeight() / 2 + yOffset;
 
-        // Render first prompt
+        if(!componentTop.getString().isEmpty()){
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().scale(0.75F, 0.75F, 1F);
+            guiGraphics.drawString(mc.font, componentTop, (int) ((x + 8) / 0.75F), (int) (y / 0.75F), 0xB0B0B0, false);
+            guiGraphics.pose().popPose();
+        }
+        
         guiGraphics.pose().pushPose();
-        guiGraphics.pose().scale(0.75F, 0.75F, 1F);
-        Component prompt1 = Component.translatable("block.powertool.register.hud.prompt.1").withStyle(ChatFormatting.ITALIC);
-        guiGraphics.drawString(mc.font, prompt1, (int) ((x + 8) / 0.75F), (int) (y / 0.75F), 0xB0B0B0, false);
-        guiGraphics.pose().popPose();
-
-        guiGraphics.pose().pushPose();
-        // Positive z index moves things to front
         guiGraphics.pose().translate(0, 0, 10);
-        // This renders the item
-        guiGraphics.renderItem(requestedItem, x + 8, y + 10);
-        // This render the stack size, as well as the foil effect found in enchanted items
-        guiGraphics.renderItemDecorations(mc.font, requestedItem, x + 8, y + 10);
+        guiGraphics.renderItem(item, x + 8, y + 10);
+        guiGraphics.renderItemDecorations(mc.font, item, x + 8, y + 10);
         guiGraphics.pose().popPose();
-
-        // Render item name plus the count
-        Component itemDisplayName = requestedItem.getHoverName()
+        
+        Component itemDisplayName = item.getHoverName()
                 .copy()
-                .withStyle(requestedItem.getRarity().getStyleModifier())
-                .append(" × " + requestedItem.getCount());
+                .withStyle(item.getRarity().getStyleModifier())
+                .append(" × " + item.getCount());
         guiGraphics.drawString(mc.font, itemDisplayName, x + 28, y + 14, 0xFFFFFF, false);
 
-        // Render the second prompt
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().scale(0.75F, 0.75F, 1F);
-        Component prompt2 = Component.translatable("block.powertool.register.hud.prompt.2", Component.keybind("key.use")).withStyle(ChatFormatting.ITALIC);
-        guiGraphics.drawString(mc.font, prompt2, (int) ((x + 8) / 0.75F), (int) ((y + 30) / 0.75F), 0xB0B0B0, false);
-        guiGraphics.pose().popPose();
+        if(!componentBottom.getString().isEmpty()){
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().scale(0.75F, 0.75F, 1F);
+            guiGraphics.drawString(mc.font, componentBottom, (int) ((x + 8) / 0.75F), (int) ((y + 30) / 0.75F), 0xB0B0B0, false);
+            guiGraphics.pose().popPose();
+        }
+
+        var xSize = xOffset + 28 + mc.font.width(itemDisplayName);
+        var ySize = yOffset + 40;
+        return new Vector2i(xSize, ySize);
     }
 
     @SubscribeEvent
-    static void on(ScreenEvent.MouseButtonPressed.Pre event) {
+    static void onMousePress(ScreenEvent.MouseButtonPressed.Pre event) {
         event.setCanceled(DisplayModeClient.INSTANCE.isDisplayModeEnabledOn(event.getScreen()));
     }
 
     @SubscribeEvent
-    static void on(ScreenEvent.MouseButtonReleased.Pre event) {
+    static void onMouseRelease(ScreenEvent.MouseButtonReleased.Pre event) {
         event.setCanceled(DisplayModeClient.INSTANCE.isDisplayModeEnabledOn(event.getScreen()));
     }
 
     @SubscribeEvent
-    static void on(ScreenEvent.KeyPressed.Pre event) {
+    static void onKeyPress(ScreenEvent.KeyPressed.Pre event) {
         if (event.getKeyCode() != GLFW.GLFW_KEY_ESCAPE) {
             event.setCanceled(DisplayModeClient.INSTANCE.isDisplayModeEnabledOn(event.getScreen()));
         }
     }
 
     @SubscribeEvent
-    static void on(ScreenEvent.KeyReleased.Pre event) {
+    static void onKeyRelease(ScreenEvent.KeyReleased.Pre event) {
         if (event.getKeyCode() != GLFW.GLFW_KEY_ESCAPE) {
             event.setCanceled(DisplayModeClient.INSTANCE.isDisplayModeEnabledOn(event.getScreen()));
         }
     }
 
     @SubscribeEvent
-    static void on(ScreenEvent.CharacterTyped.Pre event) {
+    static void onCharTyped(ScreenEvent.CharacterTyped.Pre event) {
         event.setCanceled(DisplayModeClient.INSTANCE.isDisplayModeEnabledOn(event.getScreen()));
     }
 
     @SubscribeEvent
-    static void on(ScreenEvent.Closing event){
+    static void onScreenClosing(ScreenEvent.Closing event){
         DisplayModeClient.INSTANCE.screenClosed();
     }
 
     @SubscribeEvent
-    static void on(ClientPlayerNetworkEvent.LoggingOut event) {
+    static void onPlayerLogout(ClientPlayerNetworkEvent.LoggingOut event) {
         DisplayModeClient.INSTANCE.clear();
     }
 
@@ -183,7 +187,14 @@ public class ClientEvents {
                 if (mc.level != null && res instanceof BlockHitResult hit) {
                     BlockEntity be = mc.level.getBlockEntity(hit.getBlockPos());
                     if (be instanceof RegisterBlockEntity theBE && !theBE.itemToAccept.isEmpty()) {
-                        drawRegisterInfo(mc, guiGraphics, theBE.itemToAccept);
+                        var offset = drawRegisterInfo(mc, guiGraphics, theBE.itemToAccept,0,0,
+                                Component.translatable("block.powertool.register.hud.prompt.1").withStyle(ChatFormatting.ITALIC),
+                                Component.translatable("block.powertool.register.hud.prompt.2", Component.keybind("key.use")).withStyle(ChatFormatting.ITALIC));
+                        if(theBE.displaySupply && !theBE.itemToSupply.isEmpty()){
+                            drawRegisterInfo(mc,guiGraphics,theBE.itemToSupply,offset.x+8,0,
+                                    Component.translatable("block.powertool.register.hud.prompt.3").withStyle(ChatFormatting.ITALIC),
+                                    Component.empty());
+                        }
                     }
                 }
             });

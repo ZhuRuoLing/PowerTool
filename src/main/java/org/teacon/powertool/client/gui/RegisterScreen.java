@@ -1,17 +1,29 @@
 package org.teacon.powertool.client.gui;
 
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.neoforged.neoforge.network.PacketDistributor;
+import org.teacon.powertool.block.entity.RegisterBlockEntity;
 import org.teacon.powertool.menu.RegisterMenu;
+import org.teacon.powertool.network.server.UpdateBlockEntityData;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class RegisterScreen extends AbstractContainerScreen<RegisterMenu> {
-
+    
     private static final ResourceLocation BG = ResourceLocation.fromNamespaceAndPath("powertool", "textures/gui/register.png");
 
+    private RegisterBlockEntity rbe;
+    private Checkbox matchData;
+    private Checkbox displaySupply;
+    
     public RegisterScreen(RegisterMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
     }
@@ -19,17 +31,47 @@ public class RegisterScreen extends AbstractContainerScreen<RegisterMenu> {
     @Override
     protected void init() {
         super.init();
+        if (this.minecraft != null && this.minecraft.level != null) {
+            var be = this.minecraft.level.getBlockEntity(menu.pos);
+            if (be instanceof RegisterBlockEntity _rbe) {
+                rbe = _rbe;
+            }
+        }
         int x = 116;
-        var matchData = Checkbox.builder(Component.translatable("powertool.gui.register.match_data"), this.font)
-                .pos(this.width / 2 - 10, this.height / 2 - 60)
+        this.matchData = Checkbox.builder(Component.translatable("powertool.gui.register.match_data"), this.font)
+                .pos(this.leftPos+80, this.topPos+25)
                 .build();
+        this.displaySupply = Checkbox.builder(Component.translatable("powertool.gui.register.display_supply"), this.font)
+                .pos(this.leftPos+80, this.topPos+45)
+                .build();
+        if(rbe != null) {
+            if(rbe.matchDataComponents) matchData.onPress();
+            if(rbe.displaySupply) displaySupply.onPress();
+        }
         this.addRenderableWidget(matchData);
+        this.addRenderableWidget(displaySupply);
     }
-
+    
+    @Override
+    public void removed() {
+        if(rbe != null) {
+            rbe.itemToAccept = menu.getSlot(0).getItem().copy();
+            rbe.itemToSupply = menu.getSlot(1).getItem().copy();
+            rbe.matchDataComponents = matchData.selected();
+            rbe.displaySupply = displaySupply.selected();
+            PacketDistributor.sendToServer(UpdateBlockEntityData.create(rbe));
+        }
+        super.removed();
+    }
+    
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
+        var rev = Component.translatable("powertool.gui.register.rev");
+        var sup = Component.translatable("powertool.gui.register.sup");
+        guiGraphics.drawString(font,rev,leftPos+38-font.width(rev),topPos + 25+2,16777215,true);
+        guiGraphics.drawString(font,sup,leftPos+38-font.width(sup),topPos + 45+2,16777215,true);
     }
 
     @Override

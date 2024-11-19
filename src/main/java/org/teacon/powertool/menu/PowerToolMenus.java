@@ -29,6 +29,7 @@ public class PowerToolMenus {
             return new PowerSupplyMenu(windowId, inv, dataHolder);
         })));
         TRASH_CAN_MENU = MENUS.register("trash_can_with_container",() -> IMenuTypeExtension.create(((windowId, inv, data) -> new TrashCanWithContainerMenu(windowId,inv,new SimpleContainer(1)))));
-        REGISTER_MENU = MENUS.register("register", () -> IMenuTypeExtension.create(((windowId, inv, data) -> new RegisterMenu(windowId, inv, new SimpleContainer(1)))));
+        REGISTER_MENU = MENUS.register("register", () -> IMenuTypeExtension.create(((windowId, inv, data) ->
+                new RegisterMenu(windowId, inv, new SimpleContainer(2),data.readBlockPos()))));
     }
 }

@@ -50,6 +50,7 @@
   "block.powertool.tech_register": "科技风收银台",
   "block.powertool.register.hud.prompt.1": "这台收银台需要：",
   "block.powertool.register.hud.prompt.2": "按 %s 放入上述物品以继续",
+  "block.powertool.register.hud.prompt.3": "这台收银机提供：",
   "block.powertool.register.hud.insufficient": "所需物品不足！",
   "block.powertool.safe": "保险箱",
   "block.powertool.gorgeous_safe": "保险箱",
@@ -88,7 +89,7 @@
   "powertool.gui.holographic_sign.bidirectional.false": "双面渲染:关闭",
   "powertool.gui.holographic_sign.lock.true": "方向锁定:开启",
   "powertool.gui.holographic_sign.lock.false": "方向锁定:关闭",
-  "powertool.gui.register.match_data": "精确匹配物品数据（还不能用）",
+  "powertool.gui.register.match_data": "精确匹配物品数据",
 
   "powertool.command.fly.enabled": "创造飞行已开启。",
   "powertool.command.fly.disabled": "创造飞行已关闭",
@@ -145,5 +146,8 @@
   "item.powertool.marting_car_red": "马丁车（红色）",
   "item.powertool.marting_car_green": "马丁车（绿色）",
   "item.powertool.marting_car_blue": "马丁车（蓝色）",
-  "tooltip.powertool.marting": "马雷让写的卡丁车，简称马丁车"
+  "tooltip.powertool.marting": "马雷让写的卡丁车，简称马丁车",
+  "powertool.gui.register.rev": "需求物品:",
+  "powertool.gui.register.sup": "提供物品(可选):",
+  "powertool.gui.register.display_supply": "在HUD显示提供的物品"
 }

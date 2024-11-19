@@ -51,6 +51,7 @@
   "block.powertool.tech_register": "Tech Register",
   "block.powertool.register.hud.prompt.1": "This register asks for:",
   "block.powertool.register.hud.prompt.2": "Press %s to put in items it asked for",
+  "block.powertool.register.hud.prompt.3": "This register provides:",
   "block.powertool.register.hud.insufficient": "Insufficient items!",
   "block.powertool.safe": "Safe",
   "block.powertool.gorgeous_safe": "Gorgeous Safe",
@@ -116,7 +117,7 @@
   "powertool.gui.holographic_sign.bidirectional.false": "Bidirectional render disabled",
   "powertool.gui.holographic_sign.lock.true": "render direction locked",
   "powertool.gui.holographic_sign.lock.false": "render direction follows player",
-  "powertool.gui.register.match_data": "Match Data (WIP)",
+  "powertool.gui.register.match_data": "Match Data",
 
   "powertool.command.fly.enabled": "Flying enabled",
   "powertool.command.fly.disabled": "Flying disabled",
@@ -144,5 +145,8 @@
   "item.powertool.marting_car_red": "Marting Car (Red)",
   "item.powertool.marting_car_green": "Marting Car (Green)",
   "item.powertool.marting_car_blue": "Marting Car (Blue)",
-  "tooltip.powertool.marting": "MalayP asked me to write a karting car"
+  "tooltip.powertool.marting": "MalayP asked me to write a karting car",
+  "powertool.gui.register.rev": "Require Item:",
+  "powertool.gui.register.sup": "Supply Item (Optional):",
+  "powertool.gui.register.display_supply": "Display Supply Item On HUD"
 }

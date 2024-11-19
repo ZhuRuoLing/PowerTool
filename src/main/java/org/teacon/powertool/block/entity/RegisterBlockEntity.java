@@ -1,5 +1,6 @@
 package org.teacon.powertool.block.entity;
 
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -15,11 +16,17 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import org.teacon.powertool.block.PowerToolBlocks;
 
-public class RegisterBlockEntity extends BlockEntity {
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
+public class RegisterBlockEntity extends BlockEntity implements IClientUpdateBlockEntity{
 
     public ItemStack itemToAccept = ItemStack.EMPTY;
+    public ItemStack itemToSupply = ItemStack.EMPTY;
 
     public boolean matchDataComponents = false;
+    public boolean displaySupply = true;
 
     public final Container menuView = new Container() {
 
@@ -30,7 +37,7 @@ public class RegisterBlockEntity extends BlockEntity {
 
         @Override
         public int getContainerSize() {
-            return 1;
+            return 2;
         }
 
         @Override
@@ -40,24 +47,27 @@ public class RegisterBlockEntity extends BlockEntity {
 
         @Override
         public ItemStack getItem(int slot) {
-            return itemToAccept;
+            return slot == 0 ? itemToAccept : itemToSupply;
         }
 
         @Override
         public ItemStack removeItem(int slot, int amount) {
-            itemToAccept = ItemStack.EMPTY;
+            if(slot == 0) itemToAccept = ItemStack.EMPTY;
+            if(slot == 1) itemToSupply = ItemStack.EMPTY;
             return ItemStack.EMPTY;
         }
 
         @Override
         public ItemStack removeItemNoUpdate(int slot) {
-            itemToAccept = ItemStack.EMPTY;
+            if(slot == 0) itemToAccept = ItemStack.EMPTY;
+            if(slot == 1) itemToSupply = ItemStack.EMPTY;
             return ItemStack.EMPTY;
         }
 
         @Override
         public void setItem(int slot, ItemStack stack) {
-            itemToAccept = stack.copy();
+            if(slot == 0) itemToAccept = stack.copy();
+            if(slot == 1) itemToSupply = stack.copy();
         }
 
         @Override
@@ -78,7 +88,9 @@ public class RegisterBlockEntity extends BlockEntity {
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         tag.put("item", this.itemToAccept.saveOptional(registries));
+        tag.put("itemSupply", this.itemToSupply.saveOptional(registries));
         tag.putBoolean("matchDataComponents", this.matchDataComponents);
+        tag.putBoolean("displaySupply", this.displaySupply);
         super.saveAdditional(tag, registries);
     }
 
@@ -86,21 +98,27 @@ public class RegisterBlockEntity extends BlockEntity {
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         this.itemToAccept = ItemStack.parseOptional(registries,tag.getCompound("item"));
+        this.itemToSupply = ItemStack.parseOptional(registries,tag.getCompound("itemSupply"));
         this.matchDataComponents = tag.getBoolean("matchDataComponents");
+        this.displaySupply = tag.getBoolean("displaySupply");
     }
 
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         var result = super.getUpdateTag(registries);
         result.put("item", this.itemToAccept.saveOptional(registries));
+        result.put("itemSupply", this.itemToSupply.saveOptional(registries));
         result.putBoolean("matchDataComponents", this.matchDataComponents);
+        result.putBoolean("displaySupply", this.displaySupply);
         return result;
     }
 
     @Override
     public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
         this.itemToAccept = ItemStack.parseOptional(registries,tag.getCompound("item"));
+        this.itemToSupply = ItemStack.parseOptional(registries,tag.getCompound("itemSupply"));
         this.matchDataComponents = tag.getBoolean("matchDataComponents");
+        this.displaySupply = tag.getBoolean("displaySupply");
         super.handleUpdateTag(tag, registries);
     }
 
@@ -114,5 +132,17 @@ public class RegisterBlockEntity extends BlockEntity {
     public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider lookupProvider) {
         super.onDataPacket(net, pkt, lookupProvider);
         this.handleUpdateTag(pkt.getTag(), lookupProvider);
+    }
+    
+    @Override
+    public void update(CompoundTag tag, HolderLookup.Provider registries) {
+        this.matchDataComponents = tag.getBoolean("matchDataComponents");
+        this.displaySupply = tag.getBoolean("displaySupply");
+    }
+    
+    @Override
+    public void writeToPacket(CompoundTag tag, HolderLookup.Provider registries) {
+        tag.putBoolean("matchDataComponents", this.matchDataComponents);
+        tag.putBoolean("displaySupply", this.displaySupply);
     }
 }

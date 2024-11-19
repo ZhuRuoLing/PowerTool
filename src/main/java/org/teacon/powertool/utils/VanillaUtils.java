@@ -1,6 +1,7 @@
 package org.teacon.powertool.utils;
 
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -17,6 +18,8 @@ import org.teacon.powertool.PowerTool;
 import java.util.UUID;
 
 public class VanillaUtils {
+    
+    public static final Direction[] DIRECTIONS = Direction.values();
     
     public static ResourceLocation modRL(String path) {
         return resourceLocationOf(PowerTool.MODID, path);

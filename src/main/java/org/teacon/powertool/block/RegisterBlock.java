@@ -1,6 +1,7 @@
 package org.teacon.powertool.block;
 
 import com.mojang.serialization.MapCodec;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -26,15 +27,23 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 import org.teacon.powertool.block.entity.RegisterBlockEntity;
 import org.teacon.powertool.menu.RegisterMenu;
+import org.teacon.powertool.utils.VanillaUtils;
+
+import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
  * 收银台（Register）可接受指定物品并输出红石信号脉冲。
  */
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class RegisterBlock extends BaseEntityBlock {
 
+    public static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 13, 16);
     public static final MapCodec<RegisterBlock> CODEC = simpleCodec(RegisterBlock::new);
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
@@ -84,12 +93,14 @@ public class RegisterBlock extends BaseEntityBlock {
     @Override
     protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         if (state.getValue(POWERED)) {
-            level.setBlock(pos, state.setValue(POWERED, Boolean.FALSE), UPDATE_CLIENTS);
+            level.setBlock(pos, state.setValue(POWERED, Boolean.FALSE), UPDATE_ALL);
         } else {
-            level.setBlock(pos, state.setValue(POWERED, Boolean.TRUE), UPDATE_CLIENTS);
+            level.setBlock(pos, state.setValue(POWERED, Boolean.TRUE), UPDATE_ALL);
             level.scheduleTick(pos, this, 2);
         }
-
+        for(var dir : VanillaUtils.DIRECTIONS) {
+            level.updateNeighborsAt(pos.relative(dir),this);
+        }
         // Trigger block update oo all 6 faces
         for (Direction direction : ALL_DIRECTIONS) {
             level.neighborChanged(pos.relative(direction), this, pos);
@@ -100,7 +111,7 @@ public class RegisterBlock extends BaseEntityBlock {
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (level.getBlockEntity(pos) instanceof RegisterBlockEntity theBE) {
             if (player.getAbilities().instabuild) {
-                player.openMenu(new RegisterMenu.Provider(theBE.menuView));
+                player.openMenu(new RegisterMenu.Provider(theBE.menuView,pos),buf -> buf.writeBlockPos(pos));
                 return ItemInteractionResult.SUCCESS;
             }
             if (theBE.itemToAccept.isEmpty()) {
@@ -115,6 +126,7 @@ public class RegisterBlock extends BaseEntityBlock {
             accept &= stack.getCount() >= theBE.itemToAccept.getCount();
             if (accept) {
                 stack.shrink(theBE.itemToAccept.getCount());
+                if(!theBE.itemToSupply.isEmpty()) player.getInventory().add(theBE.itemToSupply.copy());
                 level.scheduleTick(pos, state.getBlock(), 2);
                 return ItemInteractionResult.SUCCESS;
             } else if (!player.getAbilities().instabuild){
@@ -128,6 +140,7 @@ public class RegisterBlock extends BaseEntityBlock {
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         // TODO[3TUSK]: 打开 GUI
+        // 是不是可以去掉这个todo了[xkball]
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
@@ -145,5 +158,9 @@ public class RegisterBlock extends BaseEntityBlock {
     protected int getSignal(BlockState blockState, BlockGetter blockAccess, BlockPos pos, Direction side) {
         return blockState.getValue(POWERED) ? 15 : 0;
     }
-
+    
+    @Override
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return SHAPE;
+    }
 }
