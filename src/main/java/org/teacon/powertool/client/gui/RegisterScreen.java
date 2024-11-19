@@ -19,6 +19,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class RegisterScreen extends AbstractContainerScreen<RegisterMenu> {
     
     private static final ResourceLocation BG = ResourceLocation.fromNamespaceAndPath("powertool", "textures/gui/register.png");
+    private static final int TEXT_COLOR = 16777215;
 
     private RegisterBlockEntity rbe;
     private Checkbox matchData;
@@ -47,6 +48,8 @@ public class RegisterScreen extends AbstractContainerScreen<RegisterMenu> {
             if(rbe.matchDataComponents) matchData.onPress();
             if(rbe.displaySupply) displaySupply.onPress();
         }
+        matchData.textWidget.setColor(TEXT_COLOR);
+        displaySupply.textWidget.setColor(TEXT_COLOR);
         this.addRenderableWidget(matchData);
         this.addRenderableWidget(displaySupply);
     }
@@ -69,8 +72,8 @@ public class RegisterScreen extends AbstractContainerScreen<RegisterMenu> {
         this.renderTooltip(guiGraphics, mouseX, mouseY);
         var rev = Component.translatable("powertool.gui.register.rev");
         var sup = Component.translatable("powertool.gui.register.sup");
-        guiGraphics.drawString(font,rev,leftPos+38-font.width(rev),topPos + 25+2,16777215,true);
-        guiGraphics.drawString(font,sup,leftPos+38-font.width(sup),topPos + 45+2,16777215,true);
+        guiGraphics.drawString(font,rev,leftPos+38-font.width(rev),topPos + 25+2,TEXT_COLOR,true);
+        guiGraphics.drawString(font,sup,leftPos+38-font.width(sup),topPos + 45+2,TEXT_COLOR,true);
     }
 
     @Override
