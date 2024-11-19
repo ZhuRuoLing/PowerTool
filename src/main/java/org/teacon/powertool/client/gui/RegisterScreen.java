@@ -37,7 +37,6 @@ public class RegisterScreen extends AbstractContainerScreen<RegisterMenu> {
                 rbe = _rbe;
             }
         }
-        int x = 116;
         this.matchData = Checkbox.builder(Component.translatable("powertool.gui.register.match_data"), this.font)
                 .pos(this.leftPos+80, this.topPos+25)
                 .build();
