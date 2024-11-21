@@ -13,12 +13,15 @@ import org.teacon.powertool.motd.MotDHandler;
 public class PowerToolConfig {
 
     public static ModConfigSpec.ConfigValue<String> motdContent;
+    
+    public static ModConfigSpec.ConfigValue<Boolean> disableTeleportToEnd;
 
     public static void init(ModContainer container) {
         var builder = new ModConfigSpec.Builder();
         motdContent = builder
                 .comment("Message-of-the-day content.")
                 .define("motd","");
+        disableTeleportToEnd = builder.comment("Disable the access of the End.").define("disableTeleportToEnd", true);
         container.registerConfig(ModConfig.Type.SERVER, builder.build());
     }
 

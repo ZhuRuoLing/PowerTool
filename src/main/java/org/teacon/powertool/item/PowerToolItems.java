@@ -106,6 +106,7 @@ public class PowerToolItems {
         AV_MANGROVE_BOAT = ITEMS.register("auto_vanish_mangrove_boat",() -> new AutoVanishBoatItem(Boat.Type.MANGROVE));
         AV_BAMBOO_RAFT = ITEMS.register("auto_vanish_bamboo_raft",() -> new AutoVanishBoatItem(Boat.Type.BAMBOO));
         AV_MINE_CART = ITEMS.register("auto_vanish_minecart",() -> new AutoVanishMinecartItem(new Item.Properties()));
+        DISPLAY_MODE_TOOL = ITEMS.register("display_mode_tool", () -> new DisplayModeToolItem(new Item.Properties()));
         CREATIVE_MODE_TABS.register(bus);
         PowerToolDataComponents.DATA_COMPONENTS.register(bus);
         ARMOR_MATERIAL.register(bus);

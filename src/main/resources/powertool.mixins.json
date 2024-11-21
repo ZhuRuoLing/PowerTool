@@ -8,6 +8,7 @@
     "CommandsMixin",
     "CommandSourceStackMixin",
     "MixinArmorStand",
+    "MixinEntity",
     "MixinItemFrame",
     "ServerGamePacketListenerImplMixin",
     "ServerPlayerMixin"

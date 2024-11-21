@@ -9,6 +9,8 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.EntityTravelToDimensionEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.ChunkWatchEvent;
 import net.neoforged.neoforge.event.level.ExplosionEvent;
@@ -40,7 +42,7 @@ public class PowerToolEvents {
     }
 
     @SubscribeEvent
-    public static void on(ExplosionEvent.Detonate event) {
+    public static void onExplosion(ExplosionEvent.Detonate event) {
         Map<ChunkPos, List<BlockPos>> map = new HashMap<>();
         for (BlockPos affectedBlock : event.getAffectedBlocks()) {
             map.computeIfAbsent(new ChunkPos(affectedBlock), it -> new ArrayList<>())
@@ -118,7 +120,7 @@ public class PowerToolEvents {
     }
 
     @SubscribeEvent
-    public static void on(BlockEvent.BreakEvent event) {
+    public static void onBlockBreak(BlockEvent.BreakEvent event) {
         ServerLevel level = (ServerLevel) event.getLevel();
         BlockPos pos = event.getPos();
         removeDisplayMode(
@@ -126,5 +128,12 @@ public class PowerToolEvents {
             pos,
             (ServerPlayer) event.getPlayer()
         );
+    }
+    
+    @SubscribeEvent
+    public static void onChangeDimension(EntityTravelToDimensionEvent event) {
+        if(event.getDimension().equals(ServerLevel.END) && PowerToolConfig.disableTeleportToEnd.get()){
+            event.setCanceled(true);
+        }
     }
 }

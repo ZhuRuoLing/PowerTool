@@ -32,7 +32,7 @@ import org.teacon.powertool.block.entity.PeriodicCommandBlockEntity;
 import org.teacon.powertool.block.entity.RegisterBlockEntity;
 import org.teacon.powertool.client.gui.RegisterScreen;
 import org.teacon.powertool.client.gui.TrashCanWithContainerScreen;
-import org.teacon.powertool.client.renders.FenceKnotRenderer;
+import org.teacon.powertool.client.renders.entity.FenceKnotRenderer;
 import org.teacon.powertool.client.renders.TempleRenderer;
 import org.teacon.powertool.client.renders.entity.MartingCarEntityRenderer;
 import org.teacon.powertool.client.renders.entity.model.MartingCarEntityModel;
