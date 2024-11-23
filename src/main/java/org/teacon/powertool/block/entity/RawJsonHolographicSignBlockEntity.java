@@ -1,12 +1,14 @@
 package org.teacon.powertool.block.entity;
 
 import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.ParserUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -54,6 +56,9 @@ public class RawJsonHolographicSignBlockEntity extends BaseHolographicSignBlockE
             } else {
                 this.forRender = forFilter;
             }
+            try {
+                this.forRender = ComponentUtils.updateForEntity(player.createCommandSourceStack(),forRender,null,0);
+            } catch (CommandSyntaxException ignored) {}
             this.setChanged();
             if (level != null) {
                 var state = this.getBlockState();

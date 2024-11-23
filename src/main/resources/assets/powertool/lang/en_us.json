@@ -148,5 +148,6 @@
   "tooltip.powertool.marting": "MalayP asked me to write a karting car",
   "powertool.gui.register.rev": "Require Item:",
   "powertool.gui.register.sup": "Supply Item (Optional):",
-  "powertool.gui.register.display_supply": "Display Supply Item On HUD"
+  "powertool.gui.register.display_supply": "Display Supply Item On HUD",
+  "tooltip.powertool.raw_json_holo_sign_block":"Dynamic update content when block shape update.(eg. scoreboard)"
 }

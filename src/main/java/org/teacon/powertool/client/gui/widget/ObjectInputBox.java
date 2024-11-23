@@ -76,10 +76,21 @@ public class ObjectInputBox<T> extends EditBox implements Renderable {
             (str) -> Float.parseFloat(str) >= 0.0f && Float.parseFloat(str) <= 1.0f
     );
     
+    public static final Predicate<String> RGB_COLOR_VALIDATOR = (str) -> {
+        if(str.length() != 6 && str.length() != 8) return false;
+        try {
+            Integer.parseInt(str,16);
+            return true;
+        }catch (NumberFormatException e){
+            return false;
+        }
+    };
+    
     public static final Function<String,String> PASS_RESPONDER = str -> str;
     public static final Function<String,Integer> INT_RESPONDER = Integer::parseInt;
     public static final Function<String,Long> LONG_RESPONDER = Long::parseLong;
     public static final Function<String,Float> FLOAT_RESPONDER = Float::parseFloat;
+    public static final Function<String,Integer> RGB_COLOR_RESPONDER = (str) -> Integer.parseInt(str,16);
     
     protected final Predicate<String> validator;
     protected final Function<String, T> responder;

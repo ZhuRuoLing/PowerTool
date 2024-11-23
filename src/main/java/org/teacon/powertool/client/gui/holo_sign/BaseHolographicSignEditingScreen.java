@@ -12,7 +12,6 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
@@ -21,8 +20,10 @@ import org.teacon.powertool.block.entity.CommonHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.LinkHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.RawJsonHolographicSignBlockEntity;
 import org.teacon.powertool.block.holo_sign.SignType;
+import org.teacon.powertool.client.gui.widget.ObjectInputBox;
 import org.teacon.powertool.network.server.UpdateBlockEntityData;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlockEntity> extends Screen {
@@ -40,7 +41,7 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
     protected boolean bidirectional;
 
     protected Button changeAlignment;
-    protected EditBox colorInput;
+    protected ObjectInputBox<Integer> colorInput;
     protected Button zOffsetToggle;
     protected Button shadowToggle;
     
@@ -113,14 +114,12 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
                 .size(80, 20)
                 .createNarration(displayed -> Component.translatable("powertool.gui.holographic_sign.narration.shadow", displayed.get()))
                 .build();
-
-        this.colorInput = new EditBox(this.minecraft.font, 200 + innerPadding * 2, 0, 50, 20, Component.empty());
-        this.colorInput.setValue("#" + Integer.toHexString(this.colorInARGB));
-        this.colorInput.setResponder(string -> {
-            TextColor color = TextColor.parseColor(this.colorInput.getValue()).result().orElse(null);
-            this.colorInARGB = color == null ? 0xFFFFFFFF : color.getValue() | 0xFF000000;
-        });
+        
+        if(colorInARGB < 0) colorInARGB = 0xffffff;
+        this.colorInput = new ObjectInputBox<>(font, 200 + innerPadding * 2, 0, 50, 20, Component.empty(),ObjectInputBox.RGB_COLOR_VALIDATOR,ObjectInputBox.RGB_COLOR_RESPONDER);
+        this.colorInput.setValue(Integer.toHexString(this.colorInARGB).toUpperCase());
         this.colorInput.setFocused(false);
+        this.colorInput.setMaxLength(6);
         this.colorInput.setCanLoseFocus(true);
 
         this.zOffsetToggle = new Button.Builder(this.layerArrange.displayName, btn -> {
@@ -219,7 +218,7 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
     }
     
     protected void writeBackToBE(){
-        this.sign.colorInARGB = this.colorInARGB;
+        this.sign.colorInARGB = Optional.ofNullable(colorInput.get()).orElse(0xffffff);
         this.sign.scale = this.scale;
         this.sign.align = this.textAlign;
         this.sign.shadow = this.shadowType;

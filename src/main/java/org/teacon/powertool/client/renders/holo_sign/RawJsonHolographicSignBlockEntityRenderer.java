@@ -1,6 +1,7 @@
 package org.teacon.powertool.client.renders.holo_sign;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
@@ -9,8 +10,11 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.world.phys.BlockHitResult;
+import net.neoforged.neoforge.client.ClientCommandHandler;
+import net.neoforged.neoforge.client.ClientCommandSourceStack;
 import org.teacon.powertool.block.entity.RawJsonHolographicSignBlockEntity;
 
 import javax.annotation.ParametersAreNonnullByDefault;

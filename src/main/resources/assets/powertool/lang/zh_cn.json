@@ -149,5 +149,6 @@
   "tooltip.powertool.marting": "马雷让写的卡丁车，简称马丁车",
   "powertool.gui.register.rev": "需求物品:",
   "powertool.gui.register.sup": "提供物品(可选):",
-  "powertool.gui.register.display_supply": "在HUD显示提供的物品"
+  "powertool.gui.register.display_supply": "在HUD显示提供的物品",
+  "tooltip.powertool.raw_json_holo_sign_block":"在方块形状更新时动态更新内容(例: 计分板)."
 }
