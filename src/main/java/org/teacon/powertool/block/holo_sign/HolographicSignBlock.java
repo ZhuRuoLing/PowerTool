@@ -129,12 +129,15 @@ public class HolographicSignBlock extends BaseEntityBlock implements SimpleWater
                 return ClientLogicHolder.tryUseAdditional(level,pos) ? InteractionResult.SUCCESS : InteractionResult.PASS;
             }
             else if(level.getBlockEntity(pos) instanceof RawJsonHolographicSignBlockEntity be){
-                var clickEvent = be.forRender.getStyle().getClickEvent();
-                if(clickEvent == null) return InteractionResult.PASS;
-                var action = clickEvent.getAction();
-                if(action == ClickEvent.Action.RUN_COMMAND){
-                    VanillaUtils.runCommand(clickEvent.getValue(),player);
+                for(var component : be.forRender){
+                    var clickEvent = component.getStyle().getClickEvent();
+                    if(clickEvent == null) return InteractionResult.PASS;
+                    var action = clickEvent.getAction();
+                    if(action == ClickEvent.Action.RUN_COMMAND){
+                        VanillaUtils.runCommand(clickEvent.getValue(),player);
+                    }
                 }
+                
             }
         }
         return InteractionResult.SUCCESS;
@@ -196,25 +199,27 @@ public class HolographicSignBlock extends BaseEntityBlock implements SimpleWater
                 return tryOpenURL(be.url);
             }
             if(level.isClientSide() && level.getBlockEntity(pos) instanceof RawJsonHolographicSignBlockEntity be) {
-                var clickEvent = be.forRender.getStyle().getClickEvent();
-                if(clickEvent == null) return false;
-                var action = clickEvent.getAction();
-                if(action == ClickEvent.Action.OPEN_URL) return tryOpenURL(clickEvent.getValue());
-                if(action == ClickEvent.Action.OPEN_FILE){
-                    Util.getPlatform().openFile(new File(clickEvent.getValue()));
-                    return true;
-                }
-                if(action == ClickEvent.Action.COPY_TO_CLIPBOARD){
-                    Minecraft.getInstance().keyboardHandler.setClipboard(clickEvent.getValue());
-                    return true;
-                }
-                //交给服务端
-                //if(action == ClickEvent.Action.RUN_COMMAND)
-                if(action == ClickEvent.Action.SUGGEST_COMMAND){
-                    var screen = new ChatScreen("");
-                    screen.handleComponentClicked(be.forRender.getStyle());
-                    Minecraft.getInstance().setScreen(screen);
-                    return true;
+                for(var component : be.forRender){
+                    var clickEvent = component.getStyle().getClickEvent();
+                    if(clickEvent == null) return false;
+                    var action = clickEvent.getAction();
+                    if(action == ClickEvent.Action.OPEN_URL) return tryOpenURL(clickEvent.getValue());
+                    if(action == ClickEvent.Action.OPEN_FILE){
+                        Util.getPlatform().openFile(new File(clickEvent.getValue()));
+                        return true;
+                    }
+                    if(action == ClickEvent.Action.COPY_TO_CLIPBOARD){
+                        Minecraft.getInstance().keyboardHandler.setClipboard(clickEvent.getValue());
+                        return true;
+                    }
+                    //交给服务端
+                    //if(action == ClickEvent.Action.RUN_COMMAND)
+                    if(action == ClickEvent.Action.SUGGEST_COMMAND){
+                        var screen = new ChatScreen("");
+                        screen.handleComponentClicked(component.getStyle());
+                        Minecraft.getInstance().setScreen(screen);
+                        return true;
+                    }
                 }
             }
             return false;

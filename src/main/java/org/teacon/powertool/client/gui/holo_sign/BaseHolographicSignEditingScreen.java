@@ -22,6 +22,7 @@ import org.teacon.powertool.block.entity.RawJsonHolographicSignBlockEntity;
 import org.teacon.powertool.block.holo_sign.SignType;
 import org.teacon.powertool.client.gui.widget.ObjectInputBox;
 import org.teacon.powertool.network.server.UpdateBlockEntityData;
+import org.teacon.powertool.utils.VanillaUtils;
 
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -30,7 +31,7 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
     protected final T sign;
     
     protected float scale;
-    protected int colorInARGB; // White by default
+    protected int colorInARGB = 0xffffffff; // White by default
     protected BaseHolographicSignBlockEntity.Align textAlign;
     protected BaseHolographicSignBlockEntity.Shadow shadowType;
     protected BaseHolographicSignBlockEntity.LayerArrange layerArrange;
@@ -69,12 +70,16 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
         this.bidirectional = theSign.bidirectional;
         this.sign = theSign;
     }
+    
+    public int getDoneButtonY(){
+        return this.height / 4 + 120;
+    }
 
     @Override
     protected void init() {
         
         this.addRenderableWidget(new Button.Builder(CommonComponents.GUI_DONE, btn -> this.onDone())
-                .pos(this.width / 2 - 100, this.height / 4 + 120)
+                .pos(this.width / 2 - 100, getDoneButtonY())
                 .size(200, 20).build());
 
         int innerPadding = width / 100;
@@ -115,11 +120,10 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
                 .createNarration(displayed -> Component.translatable("powertool.gui.holographic_sign.narration.shadow", displayed.get()))
                 .build();
         
-        if(colorInARGB < 0) colorInARGB = 0xffffff;
         this.colorInput = new ObjectInputBox<>(font, 200 + innerPadding * 2, 0, 50, 20, Component.empty(),ObjectInputBox.RGB_COLOR_VALIDATOR,ObjectInputBox.RGB_COLOR_RESPONDER);
-        this.colorInput.setValue(Integer.toHexString(this.colorInARGB).toUpperCase());
+        this.colorInput.setValue(VanillaUtils.hexColorFromInt(colorInARGB));
         this.colorInput.setFocused(false);
-        this.colorInput.setMaxLength(6);
+        this.colorInput.setMaxLength(8);
         this.colorInput.setCanLoseFocus(true);
 
         this.zOffsetToggle = new Button.Builder(this.layerArrange.displayName, btn -> {
@@ -253,7 +257,8 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
     @Override
     public boolean charTyped(char pCodePoint, int pModifiers) {
         if (this.colorInput.charTyped(pCodePoint, pModifiers)) return true;
-        return this.rotationInput.charTyped(pCodePoint, pModifiers);
+        if (this.rotationInput.charTyped(pCodePoint, pModifiers)) return true;
+        return super.charTyped(pCodePoint, pModifiers);
     }
 
     @Override

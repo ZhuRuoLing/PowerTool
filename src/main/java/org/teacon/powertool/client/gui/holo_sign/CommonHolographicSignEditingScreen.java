@@ -75,14 +75,14 @@ public class CommonHolographicSignEditingScreen extends BaseHolographicSignEditi
 
     @Override
     public boolean charTyped(char pCodePoint, int pModifiers) {
-        if(super.charTyped(pCodePoint, pModifiers)) return true;
-        this.signField.charTyped(pCodePoint);
-        return true;
+        if (this.colorInput.charTyped(pCodePoint, pModifiers)) return true;
+        if (this.rotationInput.charTyped(pCodePoint, pModifiers)) return true;
+        if(!colorInput.isFocused() && !rotationInput.isFocused() && this.signField.charTyped(pCodePoint)) return true;
+        return super.charTyped(pCodePoint, pModifiers);
     }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if(super.keyPressed(keyCode, scanCode, modifiers)) return true;
         if (keyCode == GLFW.GLFW_KEY_UP) {
             // Move up one line
             this.line = (this.line - 1) % this.messages.length;
@@ -101,7 +101,7 @@ public class CommonHolographicSignEditingScreen extends BaseHolographicSignEditi
             return true;
         } else {
             // Regular typing
-            return this.signField.keyPressed(keyCode) || super.keyPressed(keyCode, scanCode, modifiers);
+            return (!colorInput.isFocused() && !rotationInput.isFocused() && this.signField.keyPressed(keyCode)) || super.keyPressed(keyCode, scanCode, modifiers);
         }
     }
 

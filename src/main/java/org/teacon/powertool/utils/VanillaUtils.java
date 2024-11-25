@@ -64,6 +64,33 @@ public class VanillaUtils {
         return a << 24 | r << 16 | g << 8 | b;
     }
     
+    public static int parseColorHEX(String color) throws IllegalArgumentException {
+        if(color.length() == 6){
+            return getColor(
+                    Integer.parseInt(color.substring(0,2),16),
+                    Integer.parseInt(color.substring(2,4),16),
+                    Integer.parseInt(color.substring(4,6),16),
+                    255);
+        }
+        if(color.length() == 8){
+            return getColor(
+                    Integer.parseInt(color.substring(0,2),16),
+                    Integer.parseInt(color.substring(2,4),16),
+                    Integer.parseInt(color.substring(4,6),16),
+                    Integer.parseInt(color.substring(6,8),16)
+            );
+        }
+        throw new IllegalArgumentException("Format of color must be RGB or RGBA digits");
+    }
+    
+    public static String hexColorFromInt(int color){
+        var a = color >>> 24;
+        var r = (color >> 16) & 0xFF;
+        var g = (color >> 8) & 0xFF;
+        var b = color & 0xFF;
+        return String.format("%02X%02X%02X%02X", r, g, b, a).toUpperCase();
+    }
+    
     @SuppressWarnings("SuspiciousNameCombination")
     public static Vec2 rotate90FromBlockCenterYP(Vec2 point, int times) {
         times = times % 4;

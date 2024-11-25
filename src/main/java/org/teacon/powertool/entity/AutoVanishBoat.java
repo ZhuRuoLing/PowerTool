@@ -20,6 +20,13 @@ public class AutoVanishBoat extends Boat {
         this.zo = z;
     }
     
+    public static AutoVanishBoat fromBoat(Boat boat) {
+        var result = new AutoVanishBoat(boat.level(), boat.xo, boat.yo, boat.zo);
+        result.setVariant(boat.getVariant());
+        result.setYRot(boat.getYRot());
+        return result;
+    }
+    
     @Override
     public void tick() {
         if(!this.level().isClientSide()){

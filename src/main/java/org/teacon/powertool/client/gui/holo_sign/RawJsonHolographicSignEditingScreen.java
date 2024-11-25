@@ -3,94 +3,56 @@ package org.teacon.powertool.client.gui.holo_sign;
 import com.mojang.brigadier.StringReader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.commands.ParserUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import org.jetbrains.annotations.NotNull;
 import org.teacon.powertool.block.entity.RawJsonHolographicSignBlockEntity;
+import org.teacon.powertool.client.gui.widget.JsonComponentList;
 import org.teacon.powertool.utils.VanillaUtils;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class RawJsonHolographicSignEditingScreen extends BaseHolographicSignEditingScreen<RawJsonHolographicSignBlockEntity> {
     
-    String content;
-    @Nullable
-    Component forTest = null;
-    
-    EditBox contentInput;
+    public List<String> content;
+    protected Button append;
+    protected JsonComponentList jsonComponentList;
     
     public RawJsonHolographicSignEditingScreen(RawJsonHolographicSignBlockEntity theSign) {
         super(Component.translatable("sign.edit.raw_json"), theSign);
         content = theSign.content;
-        updateTestComponent();
     }
-    
-    protected void updateTestComponent(){
-        try{
-            //noinspection DataFlowIssue
-            forTest = ParserUtils.parseJson(Minecraft.getInstance().level.registryAccess(),new StringReader(content), ComponentSerialization.CODEC);
-        }catch (Exception e){
-            forTest = null;
-        }
-    }
-    
     
     @Override
     protected void init() {
         super.init();
-        var mc = Minecraft.getInstance();
-        this.contentInput = new EditBox(mc.font,width/2-150,height/2-50,300,20,Component.empty());
-        this.contentInput.setMaxLength(114514);
-        this.contentInput.setValue(content);
-        this.contentInput.setResponder(str -> {
-            content = str;
-            updateTestComponent();
-        });
-        this.contentInput.setFocused(false);
-        this.contentInput.setCanLoseFocus(true);
-        this.addRenderableWidget(contentInput);
+        var box_l = (int)Math.max(100,width*0.7);
+        var startY = (int)(height*0.05);
+        this.append = Button.builder(Component.literal("+"),(b) -> {
+            if(this.jsonComponentList != null) jsonComponentList.appendEntry();
+        }).size(20,20).pos(width/2+box_l/2-25,startY+52).build();
+        this.jsonComponentList = new JsonComponentList(this,box_l,startY+50);
+        this.addRenderableWidget(jsonComponentList);
+        this.addRenderableWidget(append);
+    }
+    
+    @Override
+    public int getDoneButtonY() {
+        var startY = (int)(height*0.15);
+        return (int) (startY + height*0.7 + 15);
     }
     
     @Override
     protected void writeBackToBE() {
         super.writeBackToBE();
-        sign.content = content;
-        sign.forFilter = forTest == null ? Component.empty() : forTest;
+        sign.content = new ArrayList<>(jsonComponentList.entries().stream().map(JsonComponentList.Entry::contentString).toList());
+        sign.forFilter = new ArrayList<>(jsonComponentList.entries().stream().map(JsonComponentList.Entry::content).toList());
     }
     
-    @Override
-    public boolean charTyped(char pCodePoint, int pModifiers) {
-        if (super.charTyped(pCodePoint, pModifiers)) {
-            return true;
-        }
-        return this.contentInput.charTyped(pCodePoint, pModifiers);
-    }
-    
-    @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (super.keyPressed(keyCode, scanCode, modifiers)) {
-            return true;
-        }
-
-        return this.contentInput.keyPressed(keyCode, scanCode, modifiers);
-    }
-    
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if(!this.contentInput.mouseClicked(mouseX, mouseY, button)){
-            this.contentInput.setFocused(false);
-        }
-        return super.mouseClicked(mouseX, mouseY, button);
-    }
-    
-    @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
-        if (forTest != null) {
-            guiGraphics.fill(width/2-160,height/2-50,width/2-150,height/2-30, VanillaUtils.getColor(0,255,0,255));
-        }
-        else guiGraphics.fill(width/2-160,height/2-50,width/2-150,height/2-30, VanillaUtils.getColor(255,0,0,255));
-    }
 }

@@ -20,6 +20,12 @@ public class AutoVanishMinecart extends Minecart {
         this.zo = z;
     }
     
+    public static AutoVanishMinecart fromMinecart(Minecart minecart) {
+        var result = new AutoVanishMinecart(minecart.level(),minecart.xo,minecart.yo,minecart.zo);
+        result.setYRot(minecart.getYRot());
+        return result;
+    }
+    
     @Override
     public void tick() {
         if(!this.level().isClientSide()){

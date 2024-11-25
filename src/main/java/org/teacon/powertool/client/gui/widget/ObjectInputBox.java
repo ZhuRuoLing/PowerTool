@@ -1,12 +1,15 @@
 package org.teacon.powertool.client.gui.widget;
 
+import com.mojang.brigadier.StringReader;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Renderable;
+import net.minecraft.commands.ParserUtils;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 import org.teacon.powertool.utils.VanillaUtils;
 
 import javax.annotation.Nullable;
@@ -14,6 +17,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -77,11 +81,19 @@ public class ObjectInputBox<T> extends EditBox implements Renderable {
     );
     
     public static final Predicate<String> RGB_COLOR_VALIDATOR = (str) -> {
-        if(str.length() != 6 && str.length() != 8) return false;
         try {
-            Integer.parseInt(str,16);
+            VanillaUtils.parseColorHEX(str);
             return true;
-        }catch (NumberFormatException e){
+        }catch (Exception e){
+            return false;
+        }
+    };
+    
+    public static final Predicate<String> COMPONENT_VALIDATOR = (str) -> {
+        try {
+            ParserUtils.parseJson(Minecraft.getInstance().level.registryAccess(),new StringReader(str), ComponentSerialization.CODEC);
+            return true;
+        }catch (Exception e){
             return false;
         }
     };
@@ -90,7 +102,8 @@ public class ObjectInputBox<T> extends EditBox implements Renderable {
     public static final Function<String,Integer> INT_RESPONDER = Integer::parseInt;
     public static final Function<String,Long> LONG_RESPONDER = Long::parseLong;
     public static final Function<String,Float> FLOAT_RESPONDER = Float::parseFloat;
-    public static final Function<String,Integer> RGB_COLOR_RESPONDER = (str) -> Integer.parseInt(str,16);
+    public static final Function<String,Integer> RGB_COLOR_RESPONDER = VanillaUtils::parseColorHEX;
+    public static final Function<String,Component> COMPONENT_RESPONDER = (str) -> ParserUtils.parseJson(Objects.requireNonNull(Minecraft.getInstance().level).registryAccess(),new StringReader(str), ComponentSerialization.CODEC);
     
     protected final Predicate<String> validator;
     protected final Function<String, T> responder;

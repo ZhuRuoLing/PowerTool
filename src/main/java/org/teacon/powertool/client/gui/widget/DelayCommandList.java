@@ -17,20 +17,11 @@ import java.util.Objects;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class DelayCommandList extends ContainerObjectSelectionList<DelayCommandList.CommandEntry> {
-    
-    private final SetCommandScreen screen;
-    private int id = 0;
+public class DelayCommandList extends EntryListWidget<SetCommandScreen,DelayCommandList.CommandEntry> {
     
     public DelayCommandList(SetCommandScreen screen,int width,int y) {
-        super(Minecraft.getInstance(), width,100,y,45);
-        this.screen = screen;
+        super(screen, width,100,y,45);
         this.setX((int) (screen.width*0.3));
-        this.setRenderHeader(true,24);
-        for(var data : screen.delayedCommands){
-            this.addEntry(new CommandEntry(id,data.delay(), data.command()));
-            id++;
-        }
         this.resize();
         //this.addEntry(new AppendEntry());
     }
@@ -45,25 +36,21 @@ public class DelayCommandList extends ContainerObjectSelectionList<DelayCommandL
         return (int) Math.min(Math.max(100,24+45*id),screen.height*0.6);
     }
     
-    public List<CommandEntry> entries(){
-        return children();
+    @Override
+    void init(SetCommandScreen screen) {
+        for(var data : screen.delayedCommands){
+            this.addEntry(new CommandEntry(id,data.delay(), data.command()));
+            id++;
+        }
     }
     
     public void appendEntry(){
-        this.addEntry(new CommandEntry(id,0,""));
-        id++;
+        this.appendEntry(new CommandEntry(id,0,""));
     }
     
+    @Override
     public void removeEntry(int id){
-        var newEntries = new ArrayList<CommandEntry>();
-        int nid = 0;
-        for(var entry : children()){
-            if(entry.id!=id){
-                newEntries.add(new CommandEntry(nid, entry.delay(),entry.command()));
-                nid++;
-            }
-        }
-        this.replaceEntries(newEntries);
+        super.removeEntry(id);
         screen.refreshContentPos();
     }
     
@@ -73,8 +60,8 @@ public class DelayCommandList extends ContainerObjectSelectionList<DelayCommandL
     }
     
     
-    public class CommandEntry extends  ContainerObjectSelectionList.Entry<CommandEntry> {
-        public final int id;
+    public class CommandEntry extends EntryListWidget.Entry<CommandEntry> {
+        public int id;
         public final ObjectInputBox<Integer> delay_;
         public final ObjectInputBox<String> command_;
         protected final Button remove;
@@ -122,6 +109,21 @@ public class DelayCommandList extends ContainerObjectSelectionList<DelayCommandL
         
         public String command(){
             return Objects.requireNonNullElse(this.command_.get(),"");
+        }
+        
+        @Override
+        void setID(int id) {
+            this.id = id;
+        }
+        
+        @Override
+        int getID() {
+            return id;
+        }
+        
+        @Override
+        CommandEntry copyWithID(int id) {
+            return new CommandEntry(id,delay(),command());
         }
     }
 }

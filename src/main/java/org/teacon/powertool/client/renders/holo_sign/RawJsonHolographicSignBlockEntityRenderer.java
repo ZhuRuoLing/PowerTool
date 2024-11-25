@@ -50,43 +50,51 @@ public class RawJsonHolographicSignBlockEntityRenderer implements BlockEntityRen
     }
     
     //todo 应用对齐方式
-    public void renderComponentList(List<Component> components, float x, float y, PoseStack transform, MultiBufferSource bufferSource, int packedLight, int fontColorDefault, int bgColor) {
-        for (int i = 0; i < components.size(); i++) {
-            renderComponent(components.get(i),x,y+this.font.lineHeight*i,transform,bufferSource,packedLight,fontColorDefault,bgColor);
+    public float renderComponentList(List<Component> components, float x, float y, PoseStack transform, MultiBufferSource bufferSource, int packedLight, int fontColorDefault, int bgColor,boolean renderHoverText) {
+        var yr = y;
+        for (var component : components) {
+            renderComponent(component, x, y, transform, bufferSource, packedLight, fontColorDefault, bgColor);
+            y += this.font.lineHeight+1;
+            if (renderHoverText) {
+                y += renderHoverText(component, x, y, transform, bufferSource, packedLight, bgColor);
+            }
         }
+        return y-yr;
+    }
+    
+    public float renderHoverText(Component component,float x,float y,PoseStack transform, MultiBufferSource bufferSource, int packedLight, int bgColor){
+        var yr = y;
+        var hoverEvent = component.getStyle().getHoverEvent();
+        if (hoverEvent != null){
+            var action = hoverEvent.getAction();
+            if(action == HoverEvent.Action.SHOW_TEXT){
+                var text = hoverEvent.getValue(HoverEvent.Action.SHOW_TEXT);
+                if(text != null){
+                    renderComponent(text,x,y,transform,bufferSource,packedLight,0xffffff,bgColor);
+                    y+=this.font.lineHeight+1;
+                }
+            }
+            if(action == HoverEvent.Action.SHOW_ENTITY){
+                var entity_info = hoverEvent.getValue(HoverEvent.Action.SHOW_ENTITY);
+                if(entity_info != null){
+                    y+=renderComponentList(entity_info.getTooltipLines(),x,y,transform,bufferSource,packedLight,0xffffff,bgColor,true);
+                }
+            }
+            if(action == HoverEvent.Action.SHOW_ITEM){
+                var item_info = hoverEvent.getValue(HoverEvent.Action.SHOW_ITEM);
+                if(item_info != null){
+                    y+=renderComponentList(Screen.getTooltipFromItem(Minecraft.getInstance(),item_info.getItemStack()),x,y,transform,bufferSource,packedLight,0xffffff,bgColor,true);
+                }
+            }
+        }
+        return yr-y;
     }
     
     public void renderInternal(RawJsonHolographicSignBlockEntity theSign, PoseStack transform, MultiBufferSource bufferSource, int packedLight, int rotatedDegree,boolean renderHoverText) {
         transform.pushPose();
         HolographicSignBlockEntityRenderer.beforeRender(theSign, transform, dispatcher, rotatedDegree);
-        int bgColor = theSign.bgColorInARGB;
         int yOffset = (int) -(0.5 * this.font.lineHeight);
-        renderComponent(theSign.forRender,0,yOffset,transform,bufferSource,packedLight,theSign.colorInARGB,theSign.bgColorInARGB);
-        yOffset+=2;
-        if(renderHoverText) {
-            var hoverEvent = theSign.forRender.getStyle().getHoverEvent();
-            if (hoverEvent != null){
-                var action = hoverEvent.getAction();
-                if(action == HoverEvent.Action.SHOW_TEXT){
-                    var text = hoverEvent.getValue(HoverEvent.Action.SHOW_TEXT);
-                    if(text != null){
-                        renderComponent(text,0,yOffset+this.font.lineHeight,transform,bufferSource,packedLight,bgColor,bgColor);
-                    }
-                }
-                if(action == HoverEvent.Action.SHOW_ENTITY){
-                    var entity_info = hoverEvent.getValue(HoverEvent.Action.SHOW_ENTITY);
-                    if(entity_info != null){
-                        renderComponentList(entity_info.getTooltipLines(),0,yOffset+this.font.lineHeight,transform,bufferSource,packedLight,bgColor,bgColor);
-                    }
-                }
-                if(action == HoverEvent.Action.SHOW_ITEM){
-                    var item_info = hoverEvent.getValue(HoverEvent.Action.SHOW_ITEM);
-                    if(item_info != null){
-                        renderComponentList(Screen.getTooltipFromItem(Minecraft.getInstance(),item_info.getItemStack()),0,yOffset+this.font.lineHeight,transform,bufferSource,packedLight,bgColor,bgColor);
-                    }
-                }
-            }
-        }
+        renderComponentList(theSign.forRender,0,yOffset,transform,bufferSource,packedLight,theSign.colorInARGB,theSign.bgColorInARGB,renderHoverText);
         transform.popPose();
     }
 }

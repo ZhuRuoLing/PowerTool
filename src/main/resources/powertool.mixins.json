@@ -10,6 +10,7 @@
     "MixinArmorStand",
     "MixinEntity",
     "MixinItemFrame",
+    "MixinThrownEgg",
     "ServerGamePacketListenerImplMixin",
     "ServerPlayerMixin"
   ],
