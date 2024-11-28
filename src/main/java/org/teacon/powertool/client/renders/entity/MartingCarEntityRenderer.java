@@ -3,12 +3,15 @@ package org.teacon.powertool.client.renders.entity;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.teacon.powertool.client.renders.entity.model.MartingCarEntityModel;
 import org.teacon.powertool.entity.MartingCarEntity;
@@ -32,7 +35,7 @@ public class MartingCarEntityRenderer extends EntityRenderer<MartingCarEntity> {
     }
 
     private MartingCarEntityModel<MartingCarEntity> createModel(EntityRendererProvider.Context context, MartingCarEntity.Variant variant) {
-        return new MartingCarEntityModel<>(context.bakeLayer(variant.getModelLayer()));
+        return new MartingCarEntityModel<>(context.bakeLayer(getModelLayer(variant)));
     }
 
     private MartingCarEntityModel<MartingCarEntity> getBuffer(MartingCarEntity entity) {
@@ -58,8 +61,18 @@ public class MartingCarEntityRenderer extends EntityRenderer<MartingCarEntity> {
         poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - entityYaw));
         poseStack.scale(1, -1, 1);
 
+        model.updateAnimate(entity, partialTick);
+
         model.renderToBuffer(poseStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, FastColor.ARGB32.color(255,255,255,255));
 
         poseStack.popPose();
+    }
+
+    public static ModelLayerLocation getModelLayer(MartingCarEntity.Variant variant) {
+        return switch (variant){
+            case RED -> MartingCarEntityModel.LAYER_RED;
+            case GREEN -> MartingCarEntityModel.LAYER_GREEN;
+            case BLUE -> MartingCarEntityModel.LAYER_BLUE;
+        };
     }
 }

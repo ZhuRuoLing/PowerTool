@@ -175,7 +175,7 @@ public class ClientEvents {
         @SubscribeEvent
         public static void onRegModelLayerDef(EntityRenderersEvent.RegisterLayerDefinitions event) {
             for (var v : MartingCarEntity.Variant.values()) {
-                event.registerLayerDefinition(v.getModelLayer(), MartingCarEntityModel::createBodyLayer);
+                event.registerLayerDefinition(MartingCarEntityRenderer.getModelLayer(v), MartingCarEntityModel::createBodyLayer);
             }
         }
 

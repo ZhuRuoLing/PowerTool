@@ -1,12 +1,12 @@
 package org.teacon.powertool.entity;
 
-import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -21,13 +21,10 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.teacon.powertool.PowerTool;
-import org.teacon.powertool.client.renders.entity.model.MartingCarEntityModel;
 import org.teacon.powertool.item.PowerToolItems;
 
 import java.util.List;
@@ -41,16 +38,19 @@ import java.util.function.Supplier;
  */
 public class MartingCarEntity extends LivingEntity {
 
-    // Rotate degrees of the steering wheel, negative for left, positive for right.
-    // Todo: each wheel speed depends on the steering wheel.
-    public static final EntityDataAccessor<Float> DATA_ID_STEERING_WHEEL_ROTATE_DEGREE = SynchedEntityData.defineId(MartingCarEntity.class, EntityDataSerializers.FLOAT);
+    // Rotate radians of the steering wheel, negative for left, positive for right.
+    public static final EntityDataAccessor<Float> DATA_ID_STEERING_ROTATE_RADIAN = SynchedEntityData.defineId(MartingCarEntity.class, EntityDataSerializers.FLOAT);
+    // Rotate radians of the wheels.
+    public static final EntityDataAccessor<Float> DATA_ID_WHEEL_ROTATE_RADIAN = SynchedEntityData.defineId(MartingCarEntity.class, EntityDataSerializers.FLOAT);
 
     public static final EntityDataAccessor<Float> DATA_ID_DAMAGE = SynchedEntityData.defineId(MartingCarEntity.class, EntityDataSerializers.FLOAT);
-    
+
     public static final EntityDataAccessor<Integer> VARIANT = SynchedEntityData.defineId(MartingCarEntity.class, EntityDataSerializers.INT);
 
+    // Something definition with radians.
     // Todo: wheel speed should depends on velocity.
-    public static final double WHEEL_ROTATE_DEGREE_PER_TICK = 18;   // 360 / 20
+    public static final float WHEEL_ROTATE_RADIAN_PER_TICK = (float) Math.toRadians(360.0 / 20);   // 360 / 20
+    public static final float STEERING_ROTATE_RADIAN_LIMIT = (float) Math.toRadians(45);    // Both positive limit and negative limit
 
     public static final int MAX_REMAINING_LIFE_TIME_TICKS = 120 * 20;    // 2 minutes
 
@@ -58,12 +58,6 @@ public class MartingCarEntity extends LivingEntity {
     
     private int remainingLifeTimeTicks = MAX_REMAINING_LIFE_TIME_TICKS;
     private AttributeMap attributeMap;
-
-    // </editor-fold>
-
-    // <editor-fold desc="Temporary states.">
-
-    private double wheelRotateDegree = 0;   // Wheels rotate degrees, client only
 
     // </editor-fold>
 
@@ -77,6 +71,14 @@ public class MartingCarEntity extends LivingEntity {
 
     public Variant getVariant() {
         return Variant.from(this.entityData.get(VARIANT));
+    }
+
+    public float getSteeringRotateRadian() {
+        return this.entityData.get(DATA_ID_STEERING_ROTATE_RADIAN);
+    }
+
+    public float getWheelRotateRadian() {
+        return this.entityData.get(DATA_ID_WHEEL_ROTATE_RADIAN);
     }
 
     // <editor-fold desc="Living entity staff.">
@@ -117,7 +119,7 @@ public class MartingCarEntity extends LivingEntity {
                 remainingLifeTimeTicks -= 1;
             }
         } else {
-            updateWheelsAnimation();
+            updateWheelsRotate();
         }
     }
 
@@ -195,12 +197,24 @@ public class MartingCarEntity extends LivingEntity {
         return getVariant().getItemSupplier().get();
     }
 
-    protected void updateWheelsAnimation() {
+    protected void updateWheelsRotate() {
         // Todo: update wheels speeds.
         if (!getPassengers().isEmpty()) {
-            wheelRotateDegree += WHEEL_ROTATE_DEGREE_PER_TICK;
-            wheelRotateDegree %= 360;
+            float original = this.entityData.get(DATA_ID_WHEEL_ROTATE_RADIAN);
+            original += Mth.PI;
+            original += WHEEL_ROTATE_RADIAN_PER_TICK;
+            original %= Mth.TWO_PI;
+            original -= Mth.PI;
+
+            this.entityData.set(DATA_ID_WHEEL_ROTATE_RADIAN, original);
+        } else {
+            this.entityData.set(DATA_ID_WHEEL_ROTATE_RADIAN, 0F);
         }
+    }
+
+    protected void updateSteeringRotate(float input) {
+        float value = Mth.rotLerp(input, 0, STEERING_ROTATE_RADIAN_LIMIT);
+        this.entityData.set(DATA_ID_STEERING_ROTATE_RADIAN, value);
     }
 
     @Override
@@ -214,6 +228,7 @@ public class MartingCarEntity extends LivingEntity {
     @Override
     protected @NotNull Vec3 getRiddenInput(@NotNull Player player, @NotNull Vec3 travelVector) {
         setYRot(player.getYHeadRot());
+        updateSteeringRotate(player.xxa);
         return new Vec3(player.xxa, 0.0F, player.zza);
     }
 
@@ -242,7 +257,8 @@ public class MartingCarEntity extends LivingEntity {
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_ID_STEERING_WHEEL_ROTATE_DEGREE, 0F);
+        builder.define(DATA_ID_STEERING_ROTATE_RADIAN, 0F);
+        builder.define(DATA_ID_WHEEL_ROTATE_RADIAN, 0F);
         builder.define(DATA_ID_DAMAGE, 0F);
         builder.define(VARIANT,0);
     }
@@ -272,10 +288,10 @@ public class MartingCarEntity extends LivingEntity {
                 .add(Attributes.SCALE)
                 .add(Attributes.GRAVITY)
                 .add(Attributes.MOVEMENT_EFFICIENCY)
-                .add(NeoForgeMod.SWIM_SPEED)
                 .add(Attributes.WATER_MOVEMENT_EFFICIENCY)
                 .add(Attributes.SAFE_FALL_DISTANCE, 30)
                 .add(Attributes.FALL_DAMAGE_MULTIPLIER)
+                .add(NeoForgeMod.SWIM_SPEED)
                 .build();
     }
 
@@ -351,15 +367,6 @@ public class MartingCarEntity extends LivingEntity {
 
         public ResourceLocation getTexture() {
             return texture;
-        }
-
-        @OnlyIn(Dist.CLIENT)
-        public ModelLayerLocation getModelLayer() {
-            return switch (this){
-                case RED -> MartingCarEntityModel.LAYER_RED;
-                case GREEN -> MartingCarEntityModel.LAYER_GREEN;
-                case BLUE -> MartingCarEntityModel.LAYER_BLUE;
-            };
         }
     }
 }

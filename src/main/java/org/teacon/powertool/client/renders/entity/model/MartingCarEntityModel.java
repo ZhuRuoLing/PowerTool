@@ -8,6 +8,7 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 import org.teacon.powertool.PowerTool;
 import org.teacon.powertool.entity.MartingCarEntity;
@@ -18,25 +19,17 @@ public class MartingCarEntityModel<T extends MartingCarEntity> extends EntityMod
     public static final ModelLayerLocation LAYER_GREEN = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(PowerTool.MODID, "marting_car_blue"), "main");
 
     private final ModelPart kart;
-    private final ModelPart seat;
-    private final ModelPart steering;
-    private final ModelPart main_frame;
-    private final ModelPart right_arm;
-    private final ModelPart left_arm;
-    private final ModelPart front_wheels;
-    private final ModelPart wheel;
-    private final ModelPart wheel2;
-    private final ModelPart rear_wheels;
-    private final ModelPart wheel3;
-    private final ModelPart wheel4;
+    private final ModelPart steering_inner;     // Mut Y
+    private final ModelPart front_wheels;       // Front wheels Mut X
+    private final ModelPart wheel;              // Right-front  Mut Y
+    private final ModelPart wheel2;             // Left-front   Mut Y
+    private final ModelPart rear_wheels;        // Back wheels  Mut X
+    private final ModelPart wheel3;             // Left-back
+    private final ModelPart wheel4;             // Right-back
 
     public MartingCarEntityModel(ModelPart root) {
         this.kart = root.getChild("kart");
-        this.seat = this.kart.getChild("seat");
-        this.steering = this.kart.getChild("steering");
-        this.main_frame = this.kart.getChild("main_frame");
-        this.right_arm = this.kart.getChild("right_arm");
-        this.left_arm = this.kart.getChild("left_arm");
+        this.steering_inner = this.kart.getChild("steering_outer").getChild("steering_inner");
         this.front_wheels = this.kart.getChild("front_wheels");
         this.wheel = this.front_wheels.getChild("wheel");
         this.wheel2 = this.front_wheels.getChild("wheel2");
@@ -55,8 +48,10 @@ public class MartingCarEntityModel<T extends MartingCarEntity> extends EntityMod
 
         PartDefinition cube_r1 = seat.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(0, 0).addBox(-5.0F, -11.0F, -2.0F, 10.0F, 11.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -3.0F, 7.0F, -0.2618F, 0.0F, 0.0F));
 
-        PartDefinition steering = kart.addOrReplaceChild("steering", CubeListBuilder.create().texOffs(37, 7).addBox(-6.0F, 0.0F, -3.0F, 12.0F, 0.0F, 6.0F, new CubeDeformation(0.0F))
-                .texOffs(0, 22).addBox(-2.0F, -1.0F, -1.0F, 4.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -11.9497F, -6.2218F, -0.7854F, 0.0F, 0.0F));
+        PartDefinition steering_outer = kart.addOrReplaceChild("steering_outer", CubeListBuilder.create(), PartPose.offsetAndRotation(0.0F, -11.9497F, -6.2218F, -0.7854F, 0.0F, 0.0F));
+
+        PartDefinition steering_inner = steering_outer.addOrReplaceChild("steering_inner", CubeListBuilder.create().texOffs(37, 7).addBox(-6.0F, 0.0F, -3.0F, 12.0F, 0.0F, 6.0F, new CubeDeformation(0.0F))
+                .texOffs(0, 22).addBox(-2.0F, -1.0F, -1.0F, 4.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.ZERO);
 
         PartDefinition main_frame = kart.addOrReplaceChild("main_frame", CubeListBuilder.create().texOffs(0, 0).addBox(-3.5F, -0.2929F, -6.0F, 8.0F, 2.0F, 27.0F, new CubeDeformation(0.0F))
                 .texOffs(29, 33).addBox(-7.5F, -0.2929F, 8.0F, 16.0F, 1.0F, 5.0F, new CubeDeformation(0.0F))
@@ -127,5 +122,23 @@ public class MartingCarEntityModel<T extends MartingCarEntity> extends EntityMod
     @Override
     public void renderToBuffer(@NotNull PoseStack poseStack, @NotNull VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
         kart.render(poseStack, buffer, packedLight, packedOverlay, color);
+    }
+
+    private float prevSteeringRad = 0;
+    private float prevWheelsRad = 0;
+
+    public void updateAnimate(@NotNull MartingCarEntity entity, float partialTicks) {
+        var steeringRad = entity.getSteeringRotateRadian();
+        steering_inner.yRot = Mth.rotLerp(partialTicks, prevSteeringRad, steeringRad);
+        // Fixme: rotation vector to euler angles, needs some linear algebra staff.
+//        wheel.yRot = Mth.rotLerp(partialTicks, prevSteeringRad, steeringRad);
+//        wheel2.yRot = Mth.rotLerp(partialTicks, prevSteeringRad, steeringRad);
+
+        var wheelRad = entity.getWheelRotateRadian();
+        front_wheels.xRot = Mth.rotLerp(partialTicks, prevWheelsRad, wheelRad);
+        rear_wheels.xRot = Mth.rotLerp(partialTicks, prevWheelsRad, wheelRad);
+
+        prevSteeringRad = steeringRad;
+        prevWheelsRad = wheelRad;
     }
 }
