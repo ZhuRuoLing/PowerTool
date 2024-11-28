@@ -138,7 +138,7 @@ public class MartingCarEntityModel<T extends MartingCarEntity> extends EntityMod
         front_wheels.xRot = Mth.rotLerp(partialTicks, prevWheelsRad, wheelRad);
         rear_wheels.xRot = Mth.rotLerp(partialTicks, prevWheelsRad, wheelRad);
 
-        prevSteeringRad = steeringRad;
-        prevWheelsRad = wheelRad;
+        prevSteeringRad = steering_inner.yRot;
+        prevWheelsRad = rear_wheels.xRot;
     }
 }
