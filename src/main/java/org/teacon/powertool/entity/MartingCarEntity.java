@@ -48,8 +48,7 @@ public class MartingCarEntity extends LivingEntity {
     public static final EntityDataAccessor<Integer> VARIANT = SynchedEntityData.defineId(MartingCarEntity.class, EntityDataSerializers.INT);
 
     // Something definition with radians.
-    // Todo: wheel speed should depends on velocity.
-    public static final float WHEEL_ROTATE_RADIAN_PER_TICK = (float) Math.toRadians(360.0 / 20);   // 360 / 20
+    public static final float WHEEL_ROTATE_RADIAN_BASE = (float) Math.toRadians(90.0);
     public static final float STEERING_ROTATE_RADIAN_LIMIT = (float) Math.toRadians(45);    // Both positive limit and negative limit
 
     public static final int MAX_REMAINING_LIFE_TIME_TICKS = 120 * 20;    // 2 minutes
@@ -198,11 +197,13 @@ public class MartingCarEntity extends LivingEntity {
     }
 
     protected void updateWheelsRotate() {
-        // Todo: update wheels speeds.
         if (!getPassengers().isEmpty()) {
+            var delta = WHEEL_ROTATE_RADIAN_BASE;
+            delta *= (float) Mth.clamp(Math.log(getDeltaMovement().lengthSqr()+0.8),0,4);
+            if(!movingForward()) delta = -delta;
             float original = this.entityData.get(DATA_ID_WHEEL_ROTATE_RADIAN);
             original += Mth.PI;
-            original += WHEEL_ROTATE_RADIAN_PER_TICK;
+            original += delta;
             original %= Mth.TWO_PI;
             original -= Mth.PI;
 
@@ -210,6 +211,12 @@ public class MartingCarEntity extends LivingEntity {
         } else {
             this.entityData.set(DATA_ID_WHEEL_ROTATE_RADIAN, 0F);
         }
+    }
+    
+    protected boolean movingForward(){
+        var move = getDeltaMovement();
+        var yRot = hasControllingPassenger() ? Objects.requireNonNull(getControllingPassenger()).getViewVector(0) : getViewVector(0);
+        return move.dot(yRot) > 0;
     }
 
     protected void updateSteeringRotate(float input) {
