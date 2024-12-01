@@ -1,15 +1,18 @@
 package org.teacon.powertool.entity;
 
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -20,13 +23,19 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForgeMod;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.teacon.powertool.PowerTool;
+import org.teacon.powertool.client.overlay.ClientDebugCharts;
 import org.teacon.powertool.item.PowerToolItems;
+import org.teacon.powertool.network.client.RecordDebugData;
+import org.teacon.powertool.utils.VanillaUtils;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -36,6 +45,8 @@ import java.util.function.Supplier;
  *
  * @author qyl27
  */
+@MethodsReturnNonnullByDefault
+@ParametersAreNonnullByDefault
 public class MartingCarEntity extends LivingEntity {
 
     // Rotate radians of the steering wheel, negative for left, positive for right.
@@ -57,11 +68,13 @@ public class MartingCarEntity extends LivingEntity {
     
     private int remainingLifeTimeTicks = MAX_REMAINING_LIFE_TIME_TICKS;
     private AttributeMap attributeMap;
-
+    private float xxaSum;
+    private float zzaSum;
     // </editor-fold>
 
     public MartingCarEntity(EntityType<MartingCarEntity> entityType, Level level) {
         super(entityType, level);
+        this.setDiscardFriction(true);
     }
 
     public void setVariant(Variant variant) {
@@ -104,7 +117,10 @@ public class MartingCarEntity extends LivingEntity {
     @Override
     public void tick() {
         super.tick();
-
+        var f2 = this.level().getBlockState(this.getBlockPosBelowThatAffectsMyMovement()).getFriction(level(), this.getBlockPosBelowThatAffectsMyMovement(), this);
+        f2 = this.onGround() ? f2 * 0.4F : 0.2F;
+        //VanillaUtils.recordDebugData("dv", (long) ((getd)*100));
+        this.setDeltaMovement(this.getDeltaMovement().scale(0.6+f2));
         setYHeadRot(getYRot());
         setYBodyRot(getYRot());
         if (!level().isClientSide()) {
@@ -186,12 +202,13 @@ public class MartingCarEntity extends LivingEntity {
         }
 
         if (!level().isClientSide()) {
+            player.setDiscardFriction(true);
             return player.startRiding(this) ? InteractionResult.CONSUME : InteractionResult.PASS;
         } else {
             return InteractionResult.SUCCESS;
         }
     }
-
+    
     protected @NotNull Item getDropItem() {
         return getVariant().getItemSupplier().get();
     }
@@ -199,18 +216,30 @@ public class MartingCarEntity extends LivingEntity {
     protected void updateWheelsRotate() {
         if (!getPassengers().isEmpty()) {
             var delta = WHEEL_ROTATE_RADIAN_BASE;
-            delta *= (float) Mth.clamp(Math.log(getDeltaMovement().lengthSqr()+0.8),0,4);
+            delta *= (float) Mth.clamp(Math.log(getDeltaMovement().length()+0.9),0,4);
             if(!movingForward()) delta = -delta;
             float original = this.entityData.get(DATA_ID_WHEEL_ROTATE_RADIAN);
             original += Mth.PI;
             original += delta;
             original %= Mth.TWO_PI;
             original -= Mth.PI;
-
+            ClientDebugCharts.recordDebugData("Speed", (long) (Mth.sign(delta)*getDeltaMovement().length()*100));
             this.entityData.set(DATA_ID_WHEEL_ROTATE_RADIAN, original);
         } else {
             this.entityData.set(DATA_ID_WHEEL_ROTATE_RADIAN, 0F);
         }
+    }
+    
+    @Override
+    public void move(MoverType type, Vec3 pos) {
+        //if(level().isClientSide)ClientDebugCharts.recordDebugData("Speed", (long) (getDeltaMovement().length()*100));
+        super.move(type, pos);
+        //if(level().isClientSide)ClientDebugCharts.recordDebugData("Speed", (long) (getDeltaMovement().length()*100));
+    }
+    
+    @Override
+    protected float getBlockSpeedFactor() {
+        return 1;
     }
     
     protected boolean movingForward(){
@@ -223,7 +252,12 @@ public class MartingCarEntity extends LivingEntity {
         float value = Mth.rotLerp(input, 0, STEERING_ROTATE_RADIAN_LIMIT);
         this.entityData.set(DATA_ID_STEERING_ROTATE_RADIAN, value);
     }
-
+    
+    @Override
+    public float getFrictionInfluencedSpeed(float friction) {
+        return 0;
+    }
+    
     @Override
     public @Nullable LivingEntity getControllingPassenger() {
         if (getFirstPassenger() instanceof Player player) {
@@ -233,10 +267,13 @@ public class MartingCarEntity extends LivingEntity {
     }
 
     @Override
-    protected @NotNull Vec3 getRiddenInput(@NotNull Player player, @NotNull Vec3 travelVector) {
+    protected Vec3 getRiddenInput(Player player, Vec3 travelVector) {
         setYRot(player.getYHeadRot());
         updateSteeringRotate(player.xxa);
-        return new Vec3(player.xxa, 0.0F, player.zza);
+        xxaSum = Mth.clamp((xxaSum + player.xxa*0.05f)*0.75f,-0.08f,0.08f);
+        zzaSum = Mth.clamp((zzaSum + player.zza*0.08f)*0.75f,-0.25f,0.25f);
+        if(getDeltaMovement().lengthSqr() < 2) this.moveRelative(1,new Vec3(xxaSum, 0.0F, zzaSum));
+        return Vec3.ZERO;
     }
 
     // </editor-fold>
@@ -244,7 +281,7 @@ public class MartingCarEntity extends LivingEntity {
     // <editor-fold desc="Data storage and sync.">
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(CompoundTag compound) {
         if (compound.contains("variant")) {
             var variant = compound.getString("variant");
             setVariant(Variant.from(variant));
@@ -256,13 +293,13 @@ public class MartingCarEntity extends LivingEntity {
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(CompoundTag compound) {
         compound.putString("variant", getVariant().getName());
         compound.putInt("lifetimeRemain", remainingLifeTimeTicks);
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(DATA_ID_STEERING_ROTATE_RADIAN, 0F);
         builder.define(DATA_ID_WHEEL_ROTATE_RADIAN, 0F);
@@ -320,6 +357,139 @@ public class MartingCarEntity extends LivingEntity {
     @Override
     public void setHealth(float health) {
         setDamage(health);
+    }
+    
+    @Override
+    public void aiStep() {
+        if (this.noJumpDelay > 0) {
+            this.noJumpDelay--;
+        }
+        
+        if (this.isControlledByLocalInstance()) {
+            this.lerpSteps = 0;
+            this.syncPacketPositionCodec(this.getX(), this.getY(), this.getZ());
+        }
+        
+        if (this.lerpSteps > 0) {
+            this.lerpPositionAndRotationStep(this.lerpSteps, this.lerpX, this.lerpY, this.lerpZ, this.lerpYRot, this.lerpXRot);
+            this.lerpSteps--;
+        }
+        
+        if (this.lerpHeadSteps > 0) {
+            this.lerpHeadRotationStep(this.lerpHeadSteps, this.lerpYHeadRot);
+            this.lerpHeadSteps--;
+        }
+        
+        Vec3 vec3 = this.getDeltaMovement();
+        double d0 = vec3.x;
+        double d1 = vec3.y;
+        double d2 = vec3.z;
+        if (Math.abs(vec3.x) < 0.003) {
+            d0 = 0.0;
+        }
+        
+        if (Math.abs(vec3.y) < 0.003) {
+            d1 = 0.0;
+        }
+        
+        if (Math.abs(vec3.z) < 0.003) {
+            d2 = 0.0;
+        }
+        
+        this.setDeltaMovement(d0, d1, d2);
+        this.level().getProfiler().push("ai");
+        if (this.isImmobile()) {
+            this.jumping = false;
+            this.xxa = 0.0F;
+            this.zza = 0.0F;
+        } else if (this.isEffectiveAi()) {
+            this.level().getProfiler().push("newAi");
+            this.serverAiStep();
+            this.level().getProfiler().pop();
+        }
+        
+        this.level().getProfiler().pop();
+        this.level().getProfiler().push("jump");
+        if (this.jumping && this.isAffectedByFluids()) {
+            double d3;
+            net.neoforged.neoforge.fluids.FluidType fluidType = this.getMaxHeightFluidType();
+            if (!fluidType.isAir()) d3 = this.getFluidTypeHeight(fluidType);
+            else
+            if (this.isInLava()) {
+                d3 = this.getFluidHeight(FluidTags.LAVA);
+            } else {
+                d3 = this.getFluidHeight(FluidTags.WATER);
+            }
+            
+            boolean flag = this.isInWater() && d3 > 0.0;
+            double d4 = this.getFluidJumpThreshold();
+            if (!flag || this.onGround() && !(d3 > d4)) {
+                if (!this.isInLava() || this.onGround() && !(d3 > d4)) {
+                    if (fluidType.isAir() || this.onGround() && !(d3 > d4)) {
+                        if ((this.onGround() || flag && d3 <= d4) && this.noJumpDelay == 0) {
+                            this.jumpFromGround();
+                            this.noJumpDelay = 10;
+                        }
+                    } else this.jumpInFluid(fluidType);
+                } else {
+                    this.jumpInFluid(net.neoforged.neoforge.common.NeoForgeMod.LAVA_TYPE.value());
+                }
+            } else {
+                this.jumpInFluid(net.neoforged.neoforge.common.NeoForgeMod.WATER_TYPE.value());
+            }
+        } else {
+            this.noJumpDelay = 0;
+        }
+        
+        this.level().getProfiler().pop();
+        this.level().getProfiler().push("travel");
+        this.xxa *= 0.98F;
+        this.zza *= 0.98F;
+        this.updateFallFlying();
+        AABB aabb = this.getBoundingBox();
+        Vec3 vec31 = new Vec3((double)this.xxa, (double)this.yya, (double)this.zza);
+        if (this.hasEffect(MobEffects.SLOW_FALLING) || this.hasEffect(MobEffects.LEVITATION)) {
+            this.resetFallDistance();
+        }
+        
+        label104: {
+            if (this.getControllingPassenger() instanceof Player player && this.isAlive()) {
+                this.travelRidden(player, vec31);
+                break label104;
+            }
+            
+            this.travel(vec31);
+        }
+        
+        this.level().getProfiler().pop();
+        this.level().getProfiler().push("freezing");
+        if (!this.level().isClientSide && !this.isDeadOrDying()) {
+            int i = this.getTicksFrozen();
+            if (this.isInPowderSnow && this.canFreeze()) {
+                this.setTicksFrozen(Math.min(this.getTicksRequiredToFreeze(), i + 1));
+            } else {
+                this.setTicksFrozen(Math.max(0, i - 2));
+            }
+        }
+        
+        this.removeFrost();
+        this.tryAddFrost();
+        if (!this.level().isClientSide && this.tickCount % 40 == 0 && this.isFullyFrozen() && this.canFreeze()) {
+            this.hurt(this.damageSources().freeze(), 1.0F);
+        }
+        
+        this.level().getProfiler().pop();
+        this.level().getProfiler().push("push");
+        if (this.autoSpinAttackTicks > 0) {
+            this.autoSpinAttackTicks--;
+            this.checkAutoSpinAttack(aabb, this.getBoundingBox());
+        }
+        
+        this.pushEntities();
+        this.level().getProfiler().pop();
+        if (!this.level().isClientSide && this.isSensitiveToWater() && this.isInWaterRainOrBubble()) {
+            this.hurt(this.damageSources().drown(), 1.0F);
+        }
     }
 
     // </editor-fold>

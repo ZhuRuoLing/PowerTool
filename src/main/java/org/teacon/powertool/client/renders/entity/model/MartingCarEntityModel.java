@@ -80,7 +80,7 @@ public class MartingCarEntityModel<T extends MartingCarEntity> extends EntityMod
 
         PartDefinition cube_r9 = left_arm.addOrReplaceChild("cube_r9", CubeListBuilder.create().texOffs(20, 51).mirror().addBox(-3.0F, -3.0F, 0.0F, 4.0F, 2.0F, 5.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(0.0F, -0.2929F, 20.2929F, 0.7854F, 0.0F, 0.0F));
 
-        // TODO[xkball] 你这轮胎怎么还有缝啊
+        //TODO[xkball] 你这轮胎怎么还有缝啊
         PartDefinition front_wheels = kart.addOrReplaceChild("front_wheels", CubeListBuilder.create(), PartPose.offset(0.0F, -2.5F, -8.0F));
 
         PartDefinition cube_r10 = front_wheels.addOrReplaceChild("cube_r10", CubeListBuilder.create().texOffs(0, 29).addBox(-11.5F, -1.0F, -1.0F, 23.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -0.7854F, 0.0F, 0.0F));
