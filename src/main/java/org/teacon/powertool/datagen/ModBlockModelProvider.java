@@ -44,6 +44,7 @@ public class ModBlockModelProvider extends BlockStateProvider {
         cosmeticBlock(Blocks.BEACON);
         cosmeticBlock(Blocks.ENCHANTING_TABLE);
         simpleBlockWithItem(cosmeticBlock(Blocks.BEACON),models().withExistingParent(name(cosmeticBlock(Blocks.BEACON)),mcLoc(name(Blocks.BEACON))).renderType("cutout"));
+        modItem(PowerToolBlocks.DELAYER.get());
     }
     
     private void trashCanCap(TrapDoorBlock block) {
@@ -92,5 +93,8 @@ public class ModBlockModelProvider extends BlockStateProvider {
         itemModels().getBuilder(name(cosmeticBlock(block))).parent(models().getExistingFile(mcLoc(name(block))));
     }
 
+    private void modItem(Block block) {
+        itemModels().getBuilder(name(block)).parent(models().getExistingFile(modLoc(name(block))));
+    }
 
 }

@@ -223,18 +223,11 @@ public class MartingCarEntity extends LivingEntity {
             original += delta;
             original %= Mth.TWO_PI;
             original -= Mth.PI;
-            ClientDebugCharts.recordDebugData("Speed", (long) (Mth.sign(delta)*getDeltaMovement().length()*100));
+            //ClientDebugCharts.recordDebugData("Speed", (long) (Mth.sign(delta)*getDeltaMovement().length()*100));
             this.entityData.set(DATA_ID_WHEEL_ROTATE_RADIAN, original);
         } else {
             this.entityData.set(DATA_ID_WHEEL_ROTATE_RADIAN, 0F);
         }
-    }
-    
-    @Override
-    public void move(MoverType type, Vec3 pos) {
-        //if(level().isClientSide)ClientDebugCharts.recordDebugData("Speed", (long) (getDeltaMovement().length()*100));
-        super.move(type, pos);
-        //if(level().isClientSide)ClientDebugCharts.recordDebugData("Speed", (long) (getDeltaMovement().length()*100));
     }
     
     @Override
