@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/template_command_block",
+  "textures": {
+    "back": "powertool:block/delayer_back",
+    "front": "powertool:block/delayer_front",
+    "side": "powertool:block/delayer_side"
+  }
+}
