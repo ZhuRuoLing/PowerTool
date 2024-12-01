@@ -13,7 +13,12 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec2;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.teacon.powertool.PowerTool;
+import org.teacon.powertool.client.overlay.ClientDebugCharts;
+import org.teacon.powertool.network.client.RecordDebugData;
 
 import java.util.UUID;
 
@@ -105,5 +110,20 @@ public class VanillaUtils {
     public static Component getName(Block block) {
         ResourceLocation rl = BuiltInRegistries.BLOCK.getKey(block);
         return Component.translatable("block." + rl.getNamespace() + "." + rl.getPath());
+    }
+    
+    public static void recordDebugData(String id,long data){
+        if(FMLEnvironment.dist == Dist.DEDICATED_SERVER){
+            PacketDistributor.sendToAllPlayers(new RecordDebugData(id, data));
+        }
+        else {
+            ClientHandler.handleDebugData(id, data);
+        }
+    }
+    
+    public static class ClientHandler{
+        public static void handleDebugData(String id,long data){
+            ClientDebugCharts.recordDebugData(id,data);
+        }
     }
 }

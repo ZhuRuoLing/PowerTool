@@ -47,11 +47,15 @@ public class PowerToolNetwork {
             UpdateOpenMenuSourcePacket.STREAM_CODEC,
             UpdateOpenMenuSourcePacket::handle
         );
-
         register.playToClient(
             UpdateDisplayChunkDataPacket.TYPE,
             UpdateDisplayChunkDataPacket.STREAM_CODEC,
             UpdateDisplayChunkDataPacket::handle
+        );
+        register.playToClient(
+                RecordDebugData.TYPE,
+                RecordDebugData.STREAM_CODEC,
+                RecordDebugData::handle
         );
     
         register.commonToServer(

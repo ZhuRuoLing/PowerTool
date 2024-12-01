@@ -74,7 +74,7 @@ public class ClientEvents {
      * @return The lower right pos of rendered area.
      */
     @SuppressWarnings("SameParameterValue")
-    static Vector2i drawRegisterInfo(Minecraft mc, GuiGraphics guiGraphics, ItemStack item, int xOffset, int yOffset, Component componentTop, Component componentBottom) {
+    public static Vector2i drawRegisterInfo(Minecraft mc, GuiGraphics guiGraphics, ItemStack item, int xOffset, int yOffset, Component componentTop, Component componentBottom) {
         Window window = mc.getWindow();
         int x = window.getGuiScaledWidth() / 2 + xOffset;
         int y = window.getGuiScaledHeight() / 2 + yOffset;
@@ -177,27 +177,6 @@ public class ClientEvents {
             for (var v : MartingCarEntity.Variant.values()) {
                 event.registerLayerDefinition(MartingCarEntityRenderer.getModelLayer(v), MartingCarEntityModel::createBodyLayer);
             }
-        }
-
-        @SubscribeEvent
-        public static void onRegGuiLayerDef(RegisterGuiLayersEvent event) {
-            event.registerAbove(VanillaGuiLayers.CROSSHAIR, ResourceLocation.fromNamespaceAndPath(PowerTool.MODID, "cashier_hud"), (guiGraphics, partialTicks) -> {
-                Minecraft mc = Minecraft.getInstance();
-                HitResult res = mc.hitResult;
-                if (mc.level != null && res instanceof BlockHitResult hit) {
-                    BlockEntity be = mc.level.getBlockEntity(hit.getBlockPos());
-                    if (be instanceof RegisterBlockEntity theBE && !theBE.itemToAccept.isEmpty()) {
-                        var offset = drawRegisterInfo(mc, guiGraphics, theBE.itemToAccept,0,0,
-                                Component.translatable("block.powertool.register.hud.prompt.1").withStyle(ChatFormatting.ITALIC),
-                                Component.translatable("block.powertool.register.hud.prompt.2", Component.keybind("key.use")).withStyle(ChatFormatting.ITALIC));
-                        if(theBE.displaySupply && !theBE.itemToSupply.isEmpty()){
-                            drawRegisterInfo(mc,guiGraphics,theBE.itemToSupply,offset.x+8,0,
-                                    Component.translatable("block.powertool.register.hud.prompt.3").withStyle(ChatFormatting.ITALIC),
-                                    Component.empty());
-                        }
-                    }
-                }
-            });
         }
     }
 }
