@@ -13,7 +13,6 @@ import org.apache.commons.compress.utils.Lists;
 import org.teacon.powertool.block.cosmetical.CosmeticFurnace;
 import org.teacon.powertool.block.PowerToolBlocks;
 
-import java.util.List;
 import java.util.Objects;
 
 

@@ -26,14 +26,10 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForgeMod;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.teacon.powertool.PowerTool;
-import org.teacon.powertool.client.overlay.ClientDebugCharts;
 import org.teacon.powertool.item.PowerToolItems;
-import org.teacon.powertool.network.client.RecordDebugData;
-import org.teacon.powertool.utils.VanillaUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -440,7 +436,7 @@ public class MartingCarEntity extends LivingEntity {
         this.zza *= 0.98F;
         this.updateFallFlying();
         AABB aabb = this.getBoundingBox();
-        Vec3 vec31 = new Vec3((double)this.xxa, (double)this.yya, (double)this.zza);
+        Vec3 vec31 = new Vec3(this.xxa, this.yya, this.zza);
         if (this.hasEffect(MobEffects.SLOW_FALLING) || this.hasEffect(MobEffects.LEVITATION)) {
             this.resetFallDistance();
         }
