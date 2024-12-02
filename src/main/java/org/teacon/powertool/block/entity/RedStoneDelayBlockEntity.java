@@ -20,13 +20,13 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class RedStoneDelayBlockEntity extends BlockEntity {
+public class RedStoneDelayBlockEntity extends BlockEntity implements IClientUpdateBlockEntity{
     
     public int delayTicks;
     public int delayedTicks;
     public boolean counting;
     public boolean checkRisingEdge;
-    public Mode mode = Mode.BLOCK;
+    public Mode mode = Mode.IGNORE;
     public Boolean powered;
     public Boolean poweredOld;
     
@@ -46,11 +46,12 @@ public class RedStoneDelayBlockEntity extends BlockEntity {
         }
         if(risingEdge != null && blockEntity.checkRisingEdge == risingEdge){
             blockEntity.counting = true;
-            if(blockEntity.mode == Mode.OVERWRITE) blockEntity.delayedTicks = 0;
+            if(blockEntity.mode == Mode.RESET) blockEntity.delayedTicks = 0;
             blockEntity.setChanged();
         }
         if(blockEntity.counting){
             blockEntity.delayedTicks++;
+            if(blockEntity.delayedTicks%2==0) level.updateNeighbourForOutputSignal(pos,state.getBlock());
         }
         if(blockEntity.counting && blockEntity.delayedTicks >= blockEntity.delayTicks){
             blockEntity.delayedTicks = 0;
@@ -62,12 +63,16 @@ public class RedStoneDelayBlockEntity extends BlockEntity {
         
     }
     
-    public void read(CompoundTag tag) {
+    public void readWithOutState(CompoundTag tag) {
         if(tag.contains("DelayTicks")) this.delayTicks = tag.getInt("DelayTicks");
-        if(tag.contains("DelayedTicks")) this.delayedTicks = tag.getInt("DelayedTicks");
         if(tag.contains("Mode")) this.mode = Mode.fromId(tag.getInt("Mode"));
-        if(tag.contains("counting")) this.counting = tag.getBoolean("counting");
         if(tag.contains("checkRisingEdge")) this.checkRisingEdge = tag.getBoolean("checkRisingEdge");
+    }
+    
+    public void read(CompoundTag tag) {
+        readWithOutState(tag);
+        if(tag.contains("DelayedTicks")) this.delayedTicks = tag.getInt("DelayedTicks");
+        if(tag.contains("counting")) this.counting = tag.getBoolean("counting");
     }
     
     public CompoundTag write(CompoundTag tag) {
@@ -116,12 +121,22 @@ public class RedStoneDelayBlockEntity extends BlockEntity {
         this.handleUpdateTag(pkt.getTag(),lookupProvider);
     }
     
+    @Override
+    public void update(CompoundTag tag, HolderLookup.Provider registries) {
+        readWithOutState(tag);
+    }
+    
+    @Override
+    public void writeToPacket(CompoundTag tag, HolderLookup.Provider registries) {
+        write(tag);
+    }
+    
     public enum Mode{
-        BLOCK,
-        OVERWRITE;
+        IGNORE,
+        RESET;
         
         public static Mode fromId(int id) {
-            return id == 0 ? BLOCK : OVERWRITE;
+            return id == 0 ? IGNORE : RESET;
         }
     }
 }

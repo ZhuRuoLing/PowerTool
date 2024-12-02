@@ -6,8 +6,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -25,8 +29,11 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.phys.BlockHitResult;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 import org.teacon.powertool.block.entity.RedStoneDelayBlockEntity;
+import org.teacon.powertool.network.client.OpenBlockScreen;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -81,12 +88,20 @@ public class RedStoneDelayBlock extends BaseEntityBlock {
     protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
         var be = level.getBlockEntity(pos);
         if(!(be instanceof RedStoneDelayBlockEntity te)) return 0;
-        return (int) Mth.clamp((te.delayTicks - te.delayedTicks)/(float)te.delayTicks,0f,15f);
+        return (int) Mth.clamp(((te.delayTicks - te.delayedTicks)/(float)te.delayTicks)*15,0f,15f);
     }
     
     @Override
     protected boolean isSignalSource(BlockState state) {
         return true;
+    }
+    
+    @Override
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        if(!level.isClientSide() && player.getAbilities().instabuild && player instanceof ServerPlayer serverPlayer) {
+            PacketDistributor.sendToPlayer(serverPlayer,new OpenBlockScreen(pos,OpenBlockScreen.RED_STONE_DELAYER));
+        }
+        return ItemInteractionResult.SUCCESS;
     }
     
     @Nullable
