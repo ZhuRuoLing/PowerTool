@@ -33,6 +33,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 import org.teacon.powertool.block.entity.RedStoneDelayBlockEntity;
+import org.teacon.powertool.item.IRedStoneStuff;
 import org.teacon.powertool.network.client.OpenBlockScreen;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -40,7 +41,7 @@ import java.util.List;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class RedStoneDelayBlock extends BaseEntityBlock {
+public class RedStoneDelayBlock extends BaseEntityBlock implements IRedStoneStuff {
     
     public static final MapCodec<RedStoneDelayBlock> CODEC = simpleCodec(RedStoneDelayBlock::new);
     public static final DirectionProperty FACING = BlockStateProperties.FACING;

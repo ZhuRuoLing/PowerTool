@@ -32,3 +32,4 @@ Gadgets that online convention organizers may find useful when holding conventio
   出自 [https://freesound.org/people/mikaelfernstrom/sounds/68727/](https://freesound.org/people/mikaelfernstrom/sounds/68727/)，
   在 CC-BY 4.0 许可证下发布，有修改。
 - 全息投影告示牌的部分代码改编自 [ModFest 团队维护的 GlowCase 模组](https://github.com/ModFest/glowcase)，该模组代码在 CC0-1.0 许可证下发布。
+- 部分渲染使用了[eyelib-sg-only](https://github.com/Argon4W/eyelib-sg-only)的部分代码,该模组代码在 MIT 许可证下发布.

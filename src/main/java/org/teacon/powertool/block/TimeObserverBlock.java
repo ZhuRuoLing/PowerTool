@@ -35,6 +35,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.teacon.powertool.block.entity.TimeObserverBlockEntity;
+import org.teacon.powertool.item.IRedStoneStuff;
 import org.teacon.powertool.network.client.OpenBlockScreen;
 import org.teacon.powertool.utils.time.DailyCycleTimeSection;
 import org.teacon.powertool.utils.time.ITimeSection;
@@ -45,7 +46,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class TimeObserverBlock extends BaseEntityBlock {
+public class TimeObserverBlock extends BaseEntityBlock implements IRedStoneStuff {
     
     public static final MapCodec<TimeObserverBlock> CODEC = RecordCodecBuilder.mapCodec(
             instance -> instance.group(propertiesCodec(), Type.CODEC.fieldOf("type").forGetter(block -> block.type))

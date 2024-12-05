@@ -124,5 +124,10 @@ public class PowerToolItems {
                 if(regObj.get() instanceof BlockItem blockItem && blockItem.getBlock() instanceof CosmeticBlock) event.accept(regObj.get());
             }
         }
+        if (event.getTabKey() == CreativeModeTabs.REDSTONE_BLOCKS){
+            for (var regObj : ITEMS.getEntries()) {
+                if(regObj.get() instanceof IRedStoneStuff || (regObj.get() instanceof BlockItem blockItem && blockItem.getBlock() instanceof IRedStoneStuff)) event.accept(regObj.get());
+            }
+        }
     }
 }

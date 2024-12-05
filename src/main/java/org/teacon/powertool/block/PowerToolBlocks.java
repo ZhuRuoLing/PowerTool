@@ -32,6 +32,7 @@ import org.teacon.powertool.block.cosmetical.CosmeticHorizontalDirectionalBlock;
 import org.teacon.powertool.block.cosmetical.CosmeticSimpleBlock;
 import org.teacon.powertool.block.cosmetical.CosmeticTrapdoor;
 import org.teacon.powertool.block.cosmetical.CosmeticWaterloggedBlock;
+import org.teacon.powertool.block.entity.BezierCurveBlockEntity;
 import org.teacon.powertool.block.entity.CommonHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.ItemDisplayBlockEntity;
 import org.teacon.powertool.block.entity.ItemSupplierBlockEntity;
@@ -119,6 +120,7 @@ public class PowerToolBlocks {
     public static DeferredHolder<Block, TimeObserverBlock> REAL_TIME_CYCLE_OBSERVER;
     public static DeferredHolder<Block, TimeObserverBlock> GAME_TIME_CYCLE_OBSERVER;
     public static DeferredHolder<Block, RedStoneDelayBlock> DELAYER;
+    public static DeferredHolder<Block, BezierCurveBlock> BEZIER_CURVE_BLOCK;
 
     public static DeferredHolder<BlockEntityType<?>,BlockEntityType<PeriodicCommandBlockEntity>> COMMAND_BLOCK_ENTITY;
     public static DeferredHolder<BlockEntityType<?>,BlockEntityType<PowerSupplyBlockEntity>> POWER_SUPPLY_BLOCK_ENTITY;
@@ -134,6 +136,7 @@ public class PowerToolBlocks {
     public static DeferredHolder<BlockEntityType<?>,BlockEntityType<TempleBlockEntity>> TEMPLE_BLOCK_ENTITY;
     public static DeferredHolder<BlockEntityType<?>,BlockEntityType<TimeObserverBlockEntity>> TIME_OBSERVER_BLOCK_ENTITY;
     public static DeferredHolder<BlockEntityType<?>,BlockEntityType<RedStoneDelayBlockEntity>> DELAYER_BLOCK_ENTITY;
+    public static DeferredHolder<BlockEntityType<?>,BlockEntityType<BezierCurveBlockEntity>> BEZIER_CURVE_BLOCK_ENTITY;
 
     public static void register(IEventBus bus) {
         BLOCKS.register(bus);
@@ -185,6 +188,7 @@ public class PowerToolBlocks {
         REAL_TIME_CYCLE_OBSERVER = BLOCKS.register("observer_realtime_cyl",() -> new TimeObserverBlock(BlockBehaviour.Properties.of(), TimeObserverBlock.Type.REAL_DAILY_CYCLE));
         GAME_TIME_CYCLE_OBSERVER = BLOCKS.register("observer_gametime_cyl",() -> new TimeObserverBlock(BlockBehaviour.Properties.of(), TimeObserverBlock.Type.GAME_DAILY_CYCLE));
         DELAYER = BLOCKS.register("delayer",() -> new RedStoneDelayBlock(BlockBehaviour.Properties.of()));
+        BEZIER_CURVE_BLOCK = BLOCKS.register("bezier_curve_block",() -> new BezierCurveBlock(BlockBehaviour.Properties.of()));
         
         COMMAND_BLOCK_ENTITY = BLOCK_ENTITIES.register("command_block_entity", () -> BlockEntityType.Builder.of(
             PeriodicCommandBlockEntity::new, COMMAND_BLOCK.get()
@@ -224,6 +228,9 @@ public class PowerToolBlocks {
         ).build(DSL.remainderType()));
         DELAYER_BLOCK_ENTITY = BLOCK_ENTITIES.register("delayer",() -> BlockEntityType.Builder.of(
                 RedStoneDelayBlockEntity::new,DELAYER.get()
+        ).build(DSL.remainderType()));
+        BEZIER_CURVE_BLOCK_ENTITY = BLOCK_ENTITIES.register("bezier_curve_block",() -> BlockEntityType.Builder.of(
+                BezierCurveBlockEntity::new,BEZIER_CURVE_BLOCK.get()
         ).build(DSL.remainderType()));
         
         regTrapDoors(Map.of(
@@ -292,6 +299,7 @@ public class PowerToolBlocks {
         ITEMS.register("observer_realtime_cyl",() -> new BlockItem(REAL_TIME_CYCLE_OBSERVER.get(),new Item.Properties()));
         ITEMS.register("observer_gametime_cyl",() -> new BlockItem(GAME_TIME_CYCLE_OBSERVER.get(), new Item.Properties()));
         ITEMS.register("delayer",() -> new BlockItem(DELAYER.get(), new Item.Properties()));
+        ITEMS.register("bezier_curve_block",() -> new BlockItem(BEZIER_CURVE_BLOCK.get(), new Item.Properties()));
     }
 
     private static void regTrapDoors(Map<BlockSetType, Block> existing) {

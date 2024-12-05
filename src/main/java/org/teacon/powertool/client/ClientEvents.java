@@ -7,8 +7,11 @@ import net.minecraft.client.gui.screens.inventory.CommandBlockEditScreen;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.BoatRenderer;
 import net.minecraft.client.renderer.entity.MinecartRenderer;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -24,6 +27,7 @@ import org.teacon.powertool.block.PowerToolBlocks;
 import org.teacon.powertool.block.entity.PeriodicCommandBlockEntity;
 import org.teacon.powertool.client.gui.RegisterScreen;
 import org.teacon.powertool.client.gui.TrashCanWithContainerScreen;
+import org.teacon.powertool.client.renders.BezierCurveBlockRenderer;
 import org.teacon.powertool.client.renders.entity.FenceKnotRenderer;
 import org.teacon.powertool.client.renders.TempleRenderer;
 import org.teacon.powertool.client.renders.entity.MartingCarEntityRenderer;
@@ -38,6 +42,8 @@ import org.teacon.powertool.client.renders.holo_sign.RawJsonHolographicSignBlock
 import org.teacon.powertool.entity.MartingCarEntity;
 import org.teacon.powertool.entity.PowerToolEntities;
 import org.teacon.powertool.menu.PowerToolMenus;
+
+import java.util.ArrayList;
 
 @EventBusSubscriber(value = Dist.CLIENT, modid = PowerTool.MODID)
 public class ClientEvents {
@@ -151,17 +157,18 @@ public class ClientEvents {
         }
         @SubscribeEvent
         public static void renderers(EntityRenderersEvent.RegisterRenderers event) {
-            event.registerEntityRenderer(PowerToolEntities.FENCE_KNOT.get(), FenceKnotRenderer::new);
-            event.registerEntityRenderer(PowerToolEntities.AUTO_VANISH_BOAT.get(),(c) -> new BoatRenderer(c,false));
-            event.registerEntityRenderer(PowerToolEntities.AUTO_VANISH_MINECART.get(), (c) -> new MinecartRenderer<>(c, ModelLayers.MINECART));
             event.registerBlockEntityRenderer(PowerToolBlocks.ITEM_DISPLAY_BLOCK_ENTITY.get(), ItemDisplayBlockEntityRenderer::new);
             event.registerBlockEntityRenderer(PowerToolBlocks.ITEM_SUPPLIER_BLOCK_ENTITY.get(), ItemSupplierBlockEntityRenderer::new);
             event.registerBlockEntityRenderer(PowerToolBlocks.HOLOGRAPHIC_SIGN_BLOCK_ENTITY.get(), HolographicSignBlockEntityRenderer::new);
             event.registerBlockEntityRenderer(PowerToolBlocks.LINK_HOLOGRAPHIC_SIGN_BLOCK_ENTITY.get(), LinkHolographicSignBlockEntityRenderer::new);
             event.registerBlockEntityRenderer(PowerToolBlocks.RAW_JSON_HOLOGRAPHIC_SIGN_BLOCK_ENTITY.get(), RawJsonHolographicSignBlockEntityRenderer::new);
             event.registerBlockEntityRenderer(PowerToolBlocks.TEMPLE_BLOCK_ENTITY.get(), TempleRenderer::new);
-
+            event.registerBlockEntityRenderer(PowerToolBlocks.BEZIER_CURVE_BLOCK_ENTITY.get(), BezierCurveBlockRenderer::new);
+            
             event.registerEntityRenderer(PowerToolEntities.MARTING.get(), MartingCarEntityRenderer::new);
+            event.registerEntityRenderer(PowerToolEntities.FENCE_KNOT.get(), FenceKnotRenderer::new);
+            event.registerEntityRenderer(PowerToolEntities.AUTO_VANISH_BOAT.get(),(c) -> new BoatRenderer(c,false));
+            event.registerEntityRenderer(PowerToolEntities.AUTO_VANISH_MINECART.get(), (c) -> new MinecartRenderer<>(c, ModelLayers.MINECART));
         }
 
         @SubscribeEvent

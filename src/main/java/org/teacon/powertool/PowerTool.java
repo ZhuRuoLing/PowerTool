@@ -1,5 +1,6 @@
 package org.teacon.powertool;
 
+import net.minecraft.util.RandomSource;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -14,6 +15,7 @@ import org.teacon.powertool.menu.PowerToolMenus;
 public class PowerTool {
 
     public static final String MODID = "powertool";
+    public static final ThreadLocal<RandomSource> GLOBAL_RANDOM = ThreadLocal.withInitial(RandomSource::createNewThreadLocalInstance);
 
     public PowerTool(ModContainer modContainer, IEventBus bus) {
         PowerToolBlocks.register(bus);
@@ -23,10 +25,5 @@ public class PowerTool {
         PowerToolEntities.register(bus);
         PowerToolAttachments.register(bus);
         PowerToolConfig.init(modContainer);
-    }
-
-    @SubscribeEvent
-    public void on(){
-
     }
 }

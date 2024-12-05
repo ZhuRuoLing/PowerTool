@@ -1,6 +1,7 @@
 package org.teacon.powertool.entity;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -22,6 +23,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -160,6 +162,7 @@ public class MartingCarEntity extends LivingEntity {
         }
     }
 
+    @SuppressWarnings("unused")
     boolean shouldSourceDestroy(DamageSource source) {
         return false;
     }
@@ -173,6 +176,7 @@ public class MartingCarEntity extends LivingEntity {
         }
     }
 
+    @SuppressWarnings("unused")
     protected void destroy(DamageSource source) {
         this.destroy(this.getDropItem());
     }
@@ -254,7 +258,13 @@ public class MartingCarEntity extends LivingEntity {
         }
         return super.getControllingPassenger();
     }
-
+    
+    @Override
+    public boolean vibrationAndSoundEffectsFromBlock(BlockPos pos, BlockState state, boolean playStepSound, boolean broadcastGameEvent, Vec3 entityPos) {
+        if(PowerTool.GLOBAL_RANDOM.get().nextBoolean()) return false;
+        return super.vibrationAndSoundEffectsFromBlock(pos, state, playStepSound, broadcastGameEvent, entityPos);
+    }
+    
     @Override
     protected Vec3 getRiddenInput(Player player, Vec3 travelVector) {
         setYRot(player.getYHeadRot());
@@ -405,8 +415,10 @@ public class MartingCarEntity extends LivingEntity {
             if (!fluidType.isAir()) d3 = this.getFluidTypeHeight(fluidType);
             else
             if (this.isInLava()) {
+                //noinspection deprecation
                 d3 = this.getFluidHeight(FluidTags.LAVA);
             } else {
+                //noinspection deprecation
                 d3 = this.getFluidHeight(FluidTags.WATER);
             }
             
