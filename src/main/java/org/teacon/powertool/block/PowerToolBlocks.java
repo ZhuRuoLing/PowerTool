@@ -1,6 +1,9 @@
 package org.teacon.powertool.block;
 
 import com.mojang.datafixers.DSL;
+import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvents;
@@ -8,12 +11,15 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -50,12 +56,16 @@ import org.teacon.powertool.block.holo_sign.HolographicSignBlock;
 import org.teacon.powertool.block.holo_sign.SignType;
 import org.teacon.powertool.item.PowerToolDataComponents;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 import static org.teacon.powertool.item.PowerToolItems.ITEMS;
 
+@MethodsReturnNonnullByDefault
+@ParametersAreNonnullByDefault
 public class PowerToolBlocks {
 
     public static final SoundType ITEM_DISPLAY_SOUND_TYPE = new DeferredSoundType(1.0F, 1.0F,
@@ -77,6 +87,8 @@ public class PowerToolBlocks {
 
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(Registries.BLOCK, PowerTool.MODID);
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, PowerTool.MODID);
+    
+    public static final Map<DyeColor,DeferredHolder<Block,? extends Block>> DH_CHEAT_BLOCKS = new EnumMap<>(DyeColor.class);
 
     public static DeferredHolder<Block,PeriodicCommandBlock> COMMAND_BLOCK;
     public static DeferredHolder<Block,TrashCanWithContainer> TRASH_CAN;
@@ -188,7 +200,14 @@ public class PowerToolBlocks {
         REAL_TIME_CYCLE_OBSERVER = BLOCKS.register("observer_realtime_cyl",() -> new TimeObserverBlock(BlockBehaviour.Properties.of(), TimeObserverBlock.Type.REAL_DAILY_CYCLE));
         GAME_TIME_CYCLE_OBSERVER = BLOCKS.register("observer_gametime_cyl",() -> new TimeObserverBlock(BlockBehaviour.Properties.of(), TimeObserverBlock.Type.GAME_DAILY_CYCLE));
         DELAYER = BLOCKS.register("delayer",() -> new RedStoneDelayBlock(BlockBehaviour.Properties.of()));
-        BEZIER_CURVE_BLOCK = BLOCKS.register("bezier_curve_block",() -> new BezierCurveBlock(BlockBehaviour.Properties.of().noOcclusion().lightLevel(bs -> 1)));
+        BEZIER_CURVE_BLOCK = BLOCKS.register("bezier_curve_block",() -> new BezierCurveBlock(BlockBehaviour.Properties.of().noOcclusion()));
+        
+        for(var dyeColor : DyeColor.values()) {
+            var name = dyeColor.getName() + "_distant_horizon_cheating_block";
+            var block = BLOCKS.register(name,() -> new DistantHorizonCheatingBlock(BlockBehaviour.Properties.of().forceSolidOn().noOcclusion().mapColor(dyeColor)));
+            DH_CHEAT_BLOCKS.put(dyeColor,block);
+            ITEMS.register(name,() -> new BlockItem(block.get(), new Item.Properties()));
+        }
         
         COMMAND_BLOCK_ENTITY = BLOCK_ENTITIES.register("command_block_entity", () -> BlockEntityType.Builder.of(
             PeriodicCommandBlockEntity::new, COMMAND_BLOCK.get()

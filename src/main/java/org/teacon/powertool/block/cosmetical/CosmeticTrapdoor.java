@@ -23,14 +23,14 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.teacon.powertool.block.CosmeticBlock;
+import org.teacon.powertool.block.ICosmeticBlock;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class CosmeticTrapdoor extends DirectionalBlock implements SimpleWaterloggedBlock, CosmeticBlock {
+public class CosmeticTrapdoor extends DirectionalBlock implements SimpleWaterloggedBlock, ICosmeticBlock {
     
     public static final MapCodec<CosmeticTrapdoor> CODEC = simpleCodec(CosmeticTrapdoor::new);
 

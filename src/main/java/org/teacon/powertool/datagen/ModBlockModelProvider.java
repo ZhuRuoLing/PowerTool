@@ -44,6 +44,12 @@ public class ModBlockModelProvider extends BlockStateProvider {
         cosmeticBlock(Blocks.ENCHANTING_TABLE);
         simpleBlockWithItem(cosmeticBlock(Blocks.BEACON),models().withExistingParent(name(cosmeticBlock(Blocks.BEACON)),mcLoc(name(Blocks.BEACON))).renderType("cutout"));
         modItem(PowerToolBlocks.DELAYER.get());
+        for(var entry : PowerToolBlocks.DH_CHEAT_BLOCKS.entrySet()){
+            var dye = entry.getKey();
+            var block = entry.getValue().get();
+            simpleBlock(block,models().withExistingParent(name(block),"block/block").texture("particle",mcLoc("block/"+dye.getName()+"_concrete")));
+            itemModels().getBuilder(name(block)).parent(models().getExistingFile(mcLoc("block/"+dye.getName()+"_concrete")));
+        }
     }
     
     private void trashCanCap(TrapDoorBlock block) {

@@ -41,7 +41,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
-import org.teacon.powertool.block.CosmeticBlock;
+import org.teacon.powertool.block.ICosmeticBlock;
 import org.teacon.powertool.utils.VanillaUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -49,7 +49,7 @@ import java.util.List;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class CosmeticCampfireBlock extends Block implements SimpleWaterloggedBlock, CosmeticBlock {
+public class CosmeticCampfireBlock extends Block implements SimpleWaterloggedBlock, ICosmeticBlock {
 
     protected static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 7.0D, 16.0D);
     public static final BooleanProperty LIT = BlockStateProperties.LIT;

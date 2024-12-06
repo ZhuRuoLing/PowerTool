@@ -1,20 +1,18 @@
 package org.teacon.powertool.block.cosmetical;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import org.teacon.powertool.block.CosmeticBlock;
+import org.teacon.powertool.block.ICosmeticBlock;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
 @ParametersAreNonnullByDefault
-public class CosmeticSimpleBlock extends Block implements CosmeticBlock {
+public class CosmeticSimpleBlock extends Block implements ICosmeticBlock {
 
     public CosmeticSimpleBlock(Properties p) {
         super(p);
