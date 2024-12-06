@@ -8,8 +8,10 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.teacon.powertool.block.entity.BezierCurveBlockEntity;
 import org.teacon.powertool.block.entity.RedStoneDelayBlockEntity;
 import org.teacon.powertool.block.entity.TimeObserverBlockEntity;
+import org.teacon.powertool.client.gui.BezierCurveBlockScreen;
 import org.teacon.powertool.client.gui.RedStoneDelayerScreen;
 import org.teacon.powertool.client.gui.observers.GameTimeCycleObserverScreen;
 import org.teacon.powertool.client.gui.observers.RealTimeCycleObserverScreen;
@@ -23,6 +25,7 @@ public record OpenBlockScreen(BlockPos pos, int guiType) implements CustomPacket
     public static final int REAL_TIME_CYCLE_OBSERVER = 2;
     public static final int GAME_TIME_CYCLE_OBSERVER = 3;
     public static final int RED_STONE_DELAYER = 4;
+    public static final int BEZIER_CURVE_BLOCK = 5;
     
     public static final CustomPacketPayload.Type<OpenBlockScreen> TYPE = new Type<>(VanillaUtils.modRL("open_gui"));
     
@@ -59,6 +62,9 @@ public record OpenBlockScreen(BlockPos pos, int guiType) implements CustomPacket
             }
             else if(pack.guiType == RED_STONE_DELAYER && te instanceof RedStoneDelayBlockEntity _te){
                 Minecraft.getInstance().setScreen(new RedStoneDelayerScreen(_te));
+            }
+            else if(pack.guiType == BEZIER_CURVE_BLOCK && te instanceof BezierCurveBlockEntity _te){
+                Minecraft.getInstance().setScreen(new BezierCurveBlockScreen(_te));
             }
         }
     }

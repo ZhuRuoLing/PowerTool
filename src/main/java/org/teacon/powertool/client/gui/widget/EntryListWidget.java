@@ -44,8 +44,8 @@ public abstract class EntryListWidget<S extends Screen,E extends EntryListWidget
     }
     
     public static abstract class Entry<E extends Entry<E>> extends ContainerObjectSelectionList.Entry<E> {
-        abstract void setID(int id);
-        abstract int getID();
-        abstract E copyWithID(int id);
+        public abstract void setID(int id);
+        public abstract int getID();
+        public abstract E copyWithID(int id);
     }
 }

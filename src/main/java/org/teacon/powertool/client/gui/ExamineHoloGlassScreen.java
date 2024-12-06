@@ -12,6 +12,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.teacon.powertool.block.PowerToolBlocks;
 import org.teacon.powertool.datagen.PowerToolBlockTagsProvider;
 import org.teacon.powertool.item.ExamineHoloGlass;
 import org.teacon.powertool.item.PowerToolDataComponents;
@@ -32,6 +33,7 @@ public class ExamineHoloGlassScreen extends Screen {
     
     protected Checkbox commandBlockTagCheckBox;
     protected Checkbox repeatingCommandBlockTagCheckBox;
+    protected Checkbox bezierCurveBlockCheckBox;
     
     public ExamineHoloGlassScreen(EquipmentSlot slot,@Nullable ExamineHoloGlass.BlockTagsComponent tagsData,@Nullable ExamineHoloGlass.BlockComponents blocksData) {
         super(Component.translatable("powertool.examine_holo_glass.screen"));
@@ -58,15 +60,28 @@ public class ExamineHoloGlassScreen extends Screen {
                 .selected(tagsData.contains(PowerToolBlockTagsProvider.REPEATING_COMMAND_BLOCK_TAG))
                 .onValueChange(withTag(PowerToolBlockTagsProvider.REPEATING_COMMAND_BLOCK_TAG))
                 .build();
-        
+        bezierCurveBlockCheckBox = Checkbox.builder(Component.translatable("powertool.examine_holo_glass.screen.tag.bezier_curve_block"),font)
+                .pos(wc-160,90)
+                .maxWidth(150)
+                .selected(blocksData.contains(PowerToolBlocks.BEZIER_CURVE_BLOCK.getId()))
+                .onValueChange(withBlock(PowerToolBlocks.BEZIER_CURVE_BLOCK.getId()))
+                .build();
         this.addRenderableWidget(commandBlockTagCheckBox);
         this.addRenderableWidget(repeatingCommandBlockTagCheckBox);
+        this.addRenderableWidget(bezierCurveBlockCheckBox);
     }
     
     protected Checkbox.OnValueChange withTag(TagKey<Block> tag) {
         return (self,value) -> {
             if(value) tagsData.add(tag);
             else tagsData.remove(tag);
+        };
+    }
+    
+    protected Checkbox.OnValueChange withBlock(ResourceLocation blockID) {
+        return (self,value) -> {
+            if(value) blocksData.add(blockID);
+            else blocksData.remove(blockID);
         };
     }
     

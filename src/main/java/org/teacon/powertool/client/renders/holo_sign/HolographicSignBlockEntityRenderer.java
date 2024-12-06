@@ -42,7 +42,7 @@ public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<C
         beforeRender(theSign,transform,dispatcher,rotatedDegree);
         Matrix4f matrix4f = transform.last().pose();
         int bgColor = theSign.bgColorInARGB;
-        int yOffset = -theSign.contents.size() / 2 * this.font.lineHeight;
+        int yOffset = -theSign.renderedContents.size() / 2 * this.font.lineHeight;
         int fontColor = theSign.colorInARGB;
         int maxWidth = 0;
         for (var text : theSign.contents) {
@@ -52,15 +52,15 @@ public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<C
             }
         }
         var align = theSign.align;
-        for (var text : theSign.contents) {
-            if (text != null && !text.getContents().toString().isEmpty()) {
+        for (var text : theSign.renderedContents) {
+            if (text != null && !text.isEmpty()) {
                 int xOffset = switch (align) {
                     case LEFT -> -maxWidth / 2;
                     case CENTER -> -this.font.width(text) / 2;
                     case RIGHT -> maxWidth / 2 - this.font.width(text);
                 };
                 // FIXME Implement all 3 different shadow types
-                this.font.drawInBatch(text.getString(), xOffset, yOffset, fontColor, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, bgColor, packedLight, false);
+                this.font.drawInBatch(text, xOffset, yOffset, fontColor, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, bgColor, packedLight, false);
             }
             yOffset += this.font.lineHeight + 2;
         }

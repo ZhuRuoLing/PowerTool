@@ -158,5 +158,17 @@
   "powertool.gui.register.sup": "提供物品(可选):",
   "powertool.gui.register.display_supply": "在HUD显示提供的物品",
   "tooltip.powertool.raw_json_holo_sign_block":"在方块形状更新时动态更新内容(例: 计分板).",
-  "tooltip.powertool.delayer": "使用比较器输出倒计时"
+  "tooltip.powertool.delayer": "使用比较器输出倒计时",
+  "powertool.examine_holo_glass.screen.tag.command_block": "命令方块",
+  "powertool.examine_holo_glass.screen.tag.repeating_command_block": "循环命令方块",
+  "powertool.examine_holo_glass.screen.tag.bezier_curve_block": "贝塞尔曲线方块",
+  "powertool.gui.bezier_curve.step": "采样点数量",
+  "powertool.gui.bezier_curve.sides": "边数量",
+  "powertool.gui.bezier_curve.radius": "半径",
+  "powertool.gui.bezier_curve.uScale": "材质轴向缩放",
+  "powertool.gui.bezier_curve.vScale": "材质径向缩放",
+  "powertool.gui.bezier_curve.texture": "材质",
+  "powertool.gui.bezier_curve.color": "颜色(ARGB)",
+  "powertool.gui.bezier_curve.control_points": "控制点: ",
+  "powertool.gui.bezier_curve.control_points_warn": "出于性能考虑,建议控制点个数在四个以下"
 }

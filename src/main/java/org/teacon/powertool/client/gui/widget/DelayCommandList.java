@@ -112,17 +112,17 @@ public class DelayCommandList extends EntryListWidget<SetCommandScreen,DelayComm
         }
         
         @Override
-        void setID(int id) {
+        public void setID(int id) {
             this.id = id;
         }
         
         @Override
-        int getID() {
+        public int getID() {
             return id;
         }
         
         @Override
-        CommandEntry copyWithID(int id) {
+        public CommandEntry copyWithID(int id) {
             return new CommandEntry(id,delay(),command());
         }
     }

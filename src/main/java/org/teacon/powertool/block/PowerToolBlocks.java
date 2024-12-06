@@ -188,7 +188,7 @@ public class PowerToolBlocks {
         REAL_TIME_CYCLE_OBSERVER = BLOCKS.register("observer_realtime_cyl",() -> new TimeObserverBlock(BlockBehaviour.Properties.of(), TimeObserverBlock.Type.REAL_DAILY_CYCLE));
         GAME_TIME_CYCLE_OBSERVER = BLOCKS.register("observer_gametime_cyl",() -> new TimeObserverBlock(BlockBehaviour.Properties.of(), TimeObserverBlock.Type.GAME_DAILY_CYCLE));
         DELAYER = BLOCKS.register("delayer",() -> new RedStoneDelayBlock(BlockBehaviour.Properties.of()));
-        BEZIER_CURVE_BLOCK = BLOCKS.register("bezier_curve_block",() -> new BezierCurveBlock(BlockBehaviour.Properties.of()));
+        BEZIER_CURVE_BLOCK = BLOCKS.register("bezier_curve_block",() -> new BezierCurveBlock(BlockBehaviour.Properties.of().noOcclusion().lightLevel(bs -> 1)));
         
         COMMAND_BLOCK_ENTITY = BLOCK_ENTITIES.register("command_block_entity", () -> BlockEntityType.Builder.of(
             PeriodicCommandBlockEntity::new, COMMAND_BLOCK.get()

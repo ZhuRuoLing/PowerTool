@@ -5,7 +5,6 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3f;
 import org.joml.Vector3f;
-import org.teacon.powertool.client.ClientEvents;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -24,7 +23,7 @@ public class Line3f {
     
     /**
      * constructor of a line can be rendered in world.
-     * @param line a function define domains from zero to one,considering scaling according to line length before call.
+     * @param line sample points of the line.
      * @param sideCount the number of vertex of each sample point,affects rendering performance.
      * @param radius the radius of the line.
      */
@@ -91,13 +90,13 @@ public class Line3f {
             else {
                 next.sub(center,j);
             }
-            if(j.equals(ZERO)) j.set(0,1,0);
+            if(j.length() < 1e-9) j.set(0,1,0);
             j.normalize();
             var i = new Vector3f(j.z,0,-j.x);
-            if(i.equals(ZERO)) j.set(1,0,0);
-            i = compareWithHistory(lastI, i);
+            if(i.length() < 1e-9) i.set(1,0,0);
+            i = i.normalize();
             var k = i.cross(j,new Vector3f());
-            k = compareWithHistory(lastK, k);
+            k = k.normalize();
             this.i = i;
             this.k = k;
             var transMatrix = new Matrix3f(i,j,k);
@@ -115,7 +114,7 @@ public class Line3f {
         
         @NotNull
         private Vector3f compareWithHistory(@Nullable Vector3f lastI, Vector3f i) {
-            i.normalize();
+            
             if(lastI != null){
                 var negI = i.mul(-1,new Vector3f());
                 var d1 = lastI.sub(i,new Vector3f()).lengthSquared();

@@ -26,7 +26,6 @@ public class JsonComponentList extends EntryListWidget<RawJsonHolographicSignEdi
     void init(RawJsonHolographicSignEditingScreen screen) {
         for(var data: screen.content){
             this.appendEntry(new Entry(id,data));
-            id++;
         }
         if(id == 0) this.appendEntry(new Entry(id,""));
     }
@@ -51,9 +50,9 @@ public class JsonComponentList extends EntryListWidget<RawJsonHolographicSignEdi
             this.content = new ObjectInputBox<>(Minecraft.getInstance().font,-1,-1,box_l-80,20,Component.literal("component"),ObjectInputBox.COMPONENT_VALIDATOR,ObjectInputBox.COMPONENT_RESPONDER);
             this.content.setMaxLength(114514);
             this.content.setValue(content);
-            this.remove = Button.builder(Component.literal("-"),(b) -> {
-                JsonComponentList.this.removeEntry(id);
-            } ).size(20,20).build();
+            this.remove = Button.builder(Component.literal("-"),(b) -> JsonComponentList.this.removeEntry(id))
+                    .size(20,20)
+                    .build();
             remove.active = id != 0;
         }
         
@@ -77,13 +76,13 @@ public class JsonComponentList extends EntryListWidget<RawJsonHolographicSignEdi
         }
         
         @Override
-        void setID(int id) {
+        public void setID(int id) {
             this.id = id;
             remove.active = id != 0;
         }
         
         @Override
-        int getID() {
+        public int getID() {
             return id;
         }
         
@@ -96,7 +95,7 @@ public class JsonComponentList extends EntryListWidget<RawJsonHolographicSignEdi
         }
         
         @Override
-        Entry copyWithID(int id) {
+        public Entry copyWithID(int id) {
             return new Entry(id,contentString());
         }
     }

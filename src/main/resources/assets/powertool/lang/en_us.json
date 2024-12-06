@@ -157,5 +157,17 @@
   "powertool.gui.register.sup": "Supply Item (Optional):",
   "powertool.gui.register.display_supply": "Display Supply Item On HUD",
   "tooltip.powertool.raw_json_holo_sign_block":"Dynamic update content when block shape update.(eg. scoreboard)",
-  "tooltip.powertool.delayer": "Use comparator output countdown."
+  "tooltip.powertool.delayer": "Use comparator output countdown.",
+  "powertool.examine_holo_glass.screen.tag.command_block": "Command Block",
+  "powertool.examine_holo_glass.screen.tag.repeating_command_block": "Repeating Command Block",
+  "powertool.examine_holo_glass.screen.tag.bezier_curve_block": "Bezier Curve Block",
+  "powertool.gui.bezier_curve.step": "SamplingPoints",
+  "powertool.gui.bezier_curve.sides": "Sides",
+  "powertool.gui.bezier_curve.radius": "Radius",
+  "powertool.gui.bezier_curve.uScale": "TextureAxisScaling",
+  "powertool.gui.bezier_curve.vScale": "TextureRadialScaling",
+  "powertool.gui.bezier_curve.texture": "Texture",
+  "powertool.gui.bezier_curve.color": "Color(ARGB)",
+  "powertool.gui.bezier_curve.control_points": "Control Points: ",
+  "powertool.gui.bezier_curve.control_points_warn": "For performance reasons, it is recommended that the number of control points be less than four."
 }

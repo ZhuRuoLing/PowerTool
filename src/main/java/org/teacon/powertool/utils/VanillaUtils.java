@@ -25,6 +25,7 @@ import java.util.UUID;
 public class VanillaUtils {
     
     public static final Direction[] DIRECTIONS = Direction.values();
+    public static final ResourceLocation MISSING_TEXTURE = ResourceLocation.withDefaultNamespace("missingno");
     
     public static ResourceLocation modRL(String path) {
         return resourceLocationOf(PowerTool.MODID, path);

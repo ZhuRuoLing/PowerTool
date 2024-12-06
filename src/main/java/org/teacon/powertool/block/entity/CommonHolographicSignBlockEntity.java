@@ -23,6 +23,7 @@ import java.util.List;
 public class CommonHolographicSignBlockEntity extends BaseHolographicSignBlockEntity{
     
     public List<? extends Component> contents = Collections.emptyList();
+    public List<String> renderedContents = Collections.emptyList();
     
     public CommonHolographicSignBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(PowerToolBlocks.HOLOGRAPHIC_SIGN_BLOCK_ENTITY.get(), pPos, pBlockState);
@@ -35,6 +36,9 @@ public class CommonHolographicSignBlockEntity extends BaseHolographicSignBlockEn
             loaded.add(Component.Serializer.fromJson(entry.getAsString(),registries));
         }
         this.contents = loaded;
+        if(getLevel() != null && getLevel().isClientSide()) {
+            renderedContents = contents.stream().map(Component::getString).toList();
+        }
         super.readFrom(tag, registries);
         
     }
