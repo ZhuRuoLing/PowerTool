@@ -101,7 +101,6 @@ public class CosmeticHopper extends Block implements ICosmeticBlock {
     }
     
     @Override
-    @SuppressWarnings("deprecation")
     public BlockState rotate(BlockState state, Rotation rotation) {
         return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
     }

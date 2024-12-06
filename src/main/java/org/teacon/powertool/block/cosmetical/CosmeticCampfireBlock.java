@@ -173,7 +173,6 @@ public class CosmeticCampfireBlock extends Block implements SimpleWaterloggedBlo
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public BlockState rotate(BlockState pState, Rotation pRot) {
         return pState.setValue(FACING, pRot.rotate(pState.getValue(FACING)));
     }

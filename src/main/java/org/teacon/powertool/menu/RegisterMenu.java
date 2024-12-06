@@ -59,7 +59,7 @@ public class RegisterMenu extends AbstractContainerMenu {
         return player.getAbilities().instabuild;
     }
     
-    private static class FakeSlot extends Slot {
+    public static class FakeSlot extends Slot {
         
         public FakeSlot(Container container, int slot, int x, int y) {
             super(container, slot, x, y);

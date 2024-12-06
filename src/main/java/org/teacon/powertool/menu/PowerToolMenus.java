@@ -14,11 +14,13 @@ public class PowerToolMenus {
 
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, PowerTool.MODID);
 
-    public static DeferredHolder<MenuType<?>,MenuType<PowerSupplyMenu>> POWER_SUPPLY_MENU;
+    public static DeferredHolder<MenuType<?>, MenuType<PowerSupplyMenu>> POWER_SUPPLY_MENU;
     
-    public static DeferredHolder<MenuType<?>,MenuType<TrashCanWithContainerMenu>> TRASH_CAN_MENU;
+    public static DeferredHolder<MenuType<?>, MenuType<TrashCanWithContainerMenu>> TRASH_CAN_MENU;
 
     public static DeferredHolder<MenuType<?>, MenuType<RegisterMenu>> REGISTER_MENU;
+    
+    public static DeferredHolder<MenuType<?>, MenuType<TextureExtractorMenu>> TEXTURE_EXTRACTOR_MENU;
 
     public static void register(IEventBus bus) {
         MENUS.register(bus);
@@ -31,5 +33,8 @@ public class PowerToolMenus {
         TRASH_CAN_MENU = MENUS.register("trash_can_with_container",() -> IMenuTypeExtension.create(((windowId, inv, data) -> new TrashCanWithContainerMenu(windowId,inv,new SimpleContainer(1)))));
         REGISTER_MENU = MENUS.register("register", () -> IMenuTypeExtension.create(((windowId, inv, data) ->
                 new RegisterMenu(windowId, inv, new SimpleContainer(2),data.readBlockPos()))));
+        TEXTURE_EXTRACTOR_MENU = MENUS.register("texture_extractor",() -> IMenuTypeExtension.create(
+                (windowId, inv, data) -> new TextureExtractorMenu(windowId,inv)
+        ));
     }
 }

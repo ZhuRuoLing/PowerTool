@@ -36,7 +36,7 @@ public class JsonComponentList extends EntryListWidget<RawJsonHolographicSignEdi
     
     @Override
     public int getRowWidth() {
-        return width-4;
+        return width-30;
     }
     
     public class Entry extends EntryListWidget.Entry<Entry> {

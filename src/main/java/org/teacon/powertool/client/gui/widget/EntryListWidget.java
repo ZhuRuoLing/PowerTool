@@ -43,6 +43,12 @@ public abstract class EntryListWidget<S extends Screen,E extends EntryListWidget
         this.id = newEntries.size();
     }
     
+    @Override
+    protected void clearEntries() {
+        super.clearEntries();
+        id = 0;
+    }
+    
     public static abstract class Entry<E extends Entry<E>> extends ContainerObjectSelectionList.Entry<E> {
         public abstract void setID(int id);
         public abstract int getID();

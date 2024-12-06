@@ -56,7 +56,7 @@ public class DelayCommandList extends EntryListWidget<SetCommandScreen,DelayComm
     
     @Override
     public int getRowWidth() {
-        return width-4;
+        return width-30;
     }
     
     

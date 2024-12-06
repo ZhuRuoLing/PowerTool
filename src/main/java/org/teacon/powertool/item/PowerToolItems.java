@@ -1,9 +1,7 @@
 package org.teacon.powertool.item;
 
-import com.mojang.serialization.Codec;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.Util;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -24,7 +22,7 @@ import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.teacon.powertool.PowerTool;
-import org.teacon.powertool.block.CosmeticBlock;
+import org.teacon.powertool.block.ICosmeticBlock;
 import org.teacon.powertool.block.PowerToolBlocks;
 import org.teacon.powertool.entity.FenceKnotEntity;
 import org.teacon.powertool.entity.MartingCarEntity;
@@ -74,6 +72,7 @@ public class PowerToolItems {
     public static DeferredHolder<Item,AutoVanishBoatItem> AV_OAK_BOAT,AV_SPRUCE_BOAT,AV_BIRCH_BOAT,AV_JUNGLE_BOAT,AV_ACACIA_BOAT,AV_CHERRY_BOAT,AV_DARK_OAK_BOAT,AV_MANGROVE_BOAT,AV_BAMBOO_RAFT;
     public static DeferredHolder<Item,AutoVanishMinecartItem> AV_MINE_CART;
     public static DeferredHolder<Item, DisplayModeToolItem> DISPLAY_MODE_TOOL;
+    public static DeferredHolder<Item, TextureExtractor> TEXTURE_EXTRACTOR;
 
     public static Supplier<Item> MARTING_RED = ITEMS.register("marting_car_red", () -> new MartingCarItem(new Item.Properties(), MartingCarEntity.Variant.RED));
     public static Supplier<Item> MARTING_GREEN = ITEMS.register("marting_car_green", () -> new MartingCarItem(new Item.Properties(), MartingCarEntity.Variant.GREEN));
@@ -107,6 +106,7 @@ public class PowerToolItems {
         AV_BAMBOO_RAFT = ITEMS.register("auto_vanish_bamboo_raft",() -> new AutoVanishBoatItem(Boat.Type.BAMBOO));
         AV_MINE_CART = ITEMS.register("auto_vanish_minecart",() -> new AutoVanishMinecartItem(new Item.Properties()));
         DISPLAY_MODE_TOOL = ITEMS.register("display_mode_tool", () -> new DisplayModeToolItem(new Item.Properties()));
+        TEXTURE_EXTRACTOR = ITEMS.register("texture_extractor",() -> new TextureExtractor(new Item.Properties()));
         CREATIVE_MODE_TABS.register(bus);
         PowerToolDataComponents.DATA_COMPONENTS.register(bus);
         ARMOR_MATERIAL.register(bus);
@@ -116,12 +116,12 @@ public class PowerToolItems {
     public static void creativeTab(BuildCreativeModeTabContentsEvent event) {
         if (event.getTab() == THE_TAB.get()) {
             for (var regObj : ITEMS.getEntries()) {
-                if(!(regObj.get() instanceof BlockItem blockItem) || !(blockItem.getBlock() instanceof CosmeticBlock)) event.accept(regObj.get());
+                if(!(regObj.get() instanceof BlockItem blockItem) || !(blockItem.getBlock() instanceof ICosmeticBlock)) event.accept(regObj.get());
             }
         }
         if (event.getTab() == COSMETIC_TAB.get()){
             for (var regObj : ITEMS.getEntries()) {
-                if(regObj.get() instanceof BlockItem blockItem && blockItem.getBlock() instanceof CosmeticBlock) event.accept(regObj.get());
+                if(regObj.get() instanceof BlockItem blockItem && blockItem.getBlock() instanceof ICosmeticBlock) event.accept(regObj.get());
             }
         }
         if (event.getTabKey() == CreativeModeTabs.REDSTONE_BLOCKS){

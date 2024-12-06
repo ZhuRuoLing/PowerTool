@@ -114,7 +114,6 @@ public class Line3f {
         
         @NotNull
         private Vector3f compareWithHistory(@Nullable Vector3f lastI, Vector3f i) {
-            
             if(lastI != null){
                 var negI = i.mul(-1,new Vector3f());
                 var d1 = lastI.sub(i,new Vector3f()).lengthSquared();
