@@ -1,4 +1,4 @@
-package io.github.tt432.eyelib.client.render.sections;
+package org.teacon.powertool.client.eyelib.render.sections;
 
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;

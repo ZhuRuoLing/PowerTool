@@ -3,7 +3,7 @@ package org.teacon.powertool.client.renders;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Pair;
-import io.github.tt432.eyelib.client.render.sections.BlockEntitySectionGeometryRenderer;
+import org.teacon.powertool.client.eyelib.render.sections.BlockEntitySectionGeometryRenderer;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;

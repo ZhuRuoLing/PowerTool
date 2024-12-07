@@ -1,4 +1,4 @@
-package io.github.tt432.eyelib.client.render.sections;
+package org.teacon.powertool.client.eyelib.render.sections;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
