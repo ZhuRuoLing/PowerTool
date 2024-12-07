@@ -2,7 +2,6 @@ package org.teacon.powertool.utils.math;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.MethodsReturnNonnullByDefault;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3f;
 import org.joml.Vector3f;
 
@@ -44,7 +43,8 @@ public class Line3f {
         nodes.add(new LineNode3f(line.getLast(), previous,null, sideCount,radius));
     }
     
-    public List<Pair<Vector3f,Vector3f>> vertexAndNormalQuadsList(){
+    //是的这真有可能多线程访问[xkball]
+    public synchronized List<Pair<Vector3f,Vector3f>> vertexAndNormalQuadsList(){
         if(vertexesAndNormals == null){
             vertexesAndNormals = new ArrayList<>();
             for(var i = 0; i < (nodes.size() - 1); i++){
@@ -110,16 +110,5 @@ public class Line3f {
             }
         }
         
-        @NotNull
-        private Vector3f compareWithHistory(@Nullable Vector3f lastI, Vector3f i) {
-            if(lastI != null){
-                var negI = i.mul(-1,new Vector3f());
-                var d1 = lastI.sub(i,new Vector3f()).lengthSquared();
-                var d2 = lastI.sub(negI,new Vector3f()).lengthSquared();
-                if(d2 < d1)
-                     i = negI;
-            }
-            return i;
-        }
     }
 }

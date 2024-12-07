@@ -16,9 +16,11 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -31,6 +33,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
@@ -97,7 +100,7 @@ public class HolographicSignBlock extends BaseEntityBlock implements SimpleWater
         if(hand == InteractionHand.MAIN_HAND){
             return VanillaUtils.itemInteractionFrom(use(level,pos,player));
         }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return ItemInteractionResult.SUCCESS;
     }
     
     @Override
@@ -117,6 +120,21 @@ public class HolographicSignBlock extends BaseEntityBlock implements SimpleWater
             return Shapes.empty();
         }
         return super.getShape(state, level, pos, context);
+    }
+    
+    @Override
+    protected boolean canBeReplaced(BlockState state, BlockPlaceContext useContext) {
+        return false;
+    }
+    
+    @Override
+    protected boolean canBeReplaced(BlockState state, Fluid fluid) {
+        return false;
+    }
+    
+    @Override
+    protected float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
+        return 1f;
     }
     
     public InteractionResult use(Level level, BlockPos pos, Player player) {
