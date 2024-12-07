@@ -115,6 +115,7 @@ public class BezierCurveBlockScreen extends Screen {
         var startY = (int)(height*0.05);
         guiGraphics.drawString(font,s1,(int)(width*0.55)+5,startY+20+5,-1);
         guiGraphics.drawString(font,s2,(int)(width*0.55)+5, (int) (startY+20+height*0.8)+5,-1);
+        guiGraphics.drawString(font,"length: "+te.bezierCurve.getLength(),(int) (width*0.2),startY*2+20+25*7,-1);
     }
     
     @Override

@@ -13,6 +13,7 @@ public class BezierCurve3f {
     public final int steps;
     public final List<Vector3f> controlPoints;
     private List<Vector3f> points;
+    private float length = -1;
     
     public BezierCurve3f(int steps, List<Vector3f> controlPoints) {
         this(controlPoints.size() - 1, steps, controlPoints);
@@ -56,6 +57,16 @@ public class BezierCurve3f {
             points = Collections.unmodifiableList(points);
         }
         return points;
+    }
+    
+    public float getLength() {
+        if(length < 0){
+            var context = new Vector3f();
+            for(var i = 0; i < getPoints().size()-1; i++) {
+                length += getPoints().get(i+1).sub(getPoints().get(i),context).length();
+            }
+        }
+        return length;
     }
     
     @Override

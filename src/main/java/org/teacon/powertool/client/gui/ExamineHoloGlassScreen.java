@@ -13,6 +13,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.teacon.powertool.block.PowerToolBlocks;
+import org.teacon.powertool.client.gui.widget.BlockEntityList;
 import org.teacon.powertool.datagen.PowerToolBlockTagsProvider;
 import org.teacon.powertool.item.ExamineHoloGlass;
 import org.teacon.powertool.item.PowerToolDataComponents;
@@ -28,12 +29,13 @@ import java.util.Set;
 public class ExamineHoloGlassScreen extends Screen {
     
     protected final EquipmentSlot slot;
-    protected Set<TagKey<Block>> tagsData;
-    protected Set<ResourceLocation> blocksData;
+    public Set<TagKey<Block>> tagsData;
+    public Set<ResourceLocation> blocksData;
     
     protected Checkbox commandBlockTagCheckBox;
     protected Checkbox repeatingCommandBlockTagCheckBox;
     protected Checkbox bezierCurveBlockCheckBox;
+    protected BlockEntityList blockEntityList;
     
     public ExamineHoloGlassScreen(EquipmentSlot slot,@Nullable ExamineHoloGlass.BlockTagsComponent tagsData,@Nullable ExamineHoloGlass.BlockComponents blocksData) {
         super(Component.translatable("powertool.examine_holo_glass.screen"));
@@ -66,15 +68,18 @@ public class ExamineHoloGlassScreen extends Screen {
                 .selected(blocksData.contains(PowerToolBlocks.BEZIER_CURVE_BLOCK.getId()))
                 .onValueChange(withBlock(PowerToolBlocks.BEZIER_CURVE_BLOCK.getId()))
                 .build();
+        blockEntityList = new BlockEntityList(this, (int) (width*0.4), (int) (height*0.8), (int) (height*0.1),25);
         this.addRenderableWidget(commandBlockTagCheckBox);
         this.addRenderableWidget(repeatingCommandBlockTagCheckBox);
         this.addRenderableWidget(bezierCurveBlockCheckBox);
+        this.addRenderableWidget(blockEntityList);
     }
     
     protected Checkbox.OnValueChange withTag(TagKey<Block> tag) {
         return (self,value) -> {
             if(value) tagsData.add(tag);
             else tagsData.remove(tag);
+            //if(blockEntityList != null) blockEntityList.update();
         };
     }
     
@@ -82,11 +87,15 @@ public class ExamineHoloGlassScreen extends Screen {
         return (self,value) -> {
             if(value) blocksData.add(blockID);
             else blocksData.remove(blockID);
+            //if(blockEntityList != null) blockEntityList.update();
         };
     }
     
     @Override
     public void removed() {
+        if(blockEntityList != null) {
+            blocksData.addAll(blockEntityList.getResult());
+        }
         var patch = DataComponentPatch.builder()
                 .set(PowerToolDataComponents.BLOCK_TAGS_DATA.get(),new ExamineHoloGlass.BlockTagsComponent(new ArrayList<>(tagsData)))
                 .set(PowerToolDataComponents.BLOCKS_DATA.get(),new ExamineHoloGlass.BlockComponents(new ArrayList<>(blocksData)))
@@ -99,6 +108,8 @@ public class ExamineHoloGlassScreen extends Screen {
         Lighting.setupForFlatItems();
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         Lighting.setupFor3DItems();
+        var str = Component.translatable("powertool.gui.examine_holo_glass.warn");
+        guiGraphics.drawString(font,str, (int) (width*0.55), (int) (height*0.9+2),-1);
     }
     
     @Override

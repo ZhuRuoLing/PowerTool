@@ -169,5 +169,6 @@
   "powertool.gui.bezier_curve.texture": "Texture",
   "powertool.gui.bezier_curve.color": "Color(ARGB)",
   "powertool.gui.bezier_curve.control_points": "Control Points: ",
-  "powertool.gui.bezier_curve.control_points_warn": "For performance reasons, it is recommended that the number of control points be less than four."
+  "powertool.gui.bezier_curve.control_points_warn": "For performance reasons, it is recommended that the number of control points be less than four.",
+  "powertool.gui.examine_holo_glass.warn": "Calculated independently relative to the left side."
 }
