@@ -33,19 +33,15 @@ public class Line3f {
         this.end = line.getLast();
         this.line = line;
         Vector3f previous = null;
-        Vector3f i = null;
-        Vector3f k = null;
         Vector3f current;
         Vector3f next;
         for(int n = 0; n < line.size() - 1; n++){
             current = line.get(n);
             next = line.get(n + 1);
-            nodes.add(new LineNode3f(current,previous,next,i,k,sideCount,radius));
+            nodes.add(new LineNode3f(current,previous,next, sideCount,radius));
             previous = current;
-            k = nodes.getLast().k;
-            i = nodes.getLast().i;
         }
-        nodes.add(new LineNode3f(line.getLast(), previous,null,i,k,sideCount,radius));
+        nodes.add(new LineNode3f(line.getLast(), previous,null, sideCount,radius));
     }
     
     public List<Pair<Vector3f,Vector3f>> vertexAndNormalQuadsList(){
@@ -75,10 +71,11 @@ public class Line3f {
         public final Vector3f center;
         private final List<Vector3f> points = new ArrayList<>();
         private final List<Vector3f> normals = new ArrayList<>();
-        private final Vector3f i;
-        private final Vector3f k;
+        public final Vector3f i;
+        public final Vector3f j;
+        public final Vector3f k;
         
-        public LineNode3f(Vector3f center, @Nullable Vector3f previous, @Nullable Vector3f next, @Nullable Vector3f lastI, @Nullable Vector3f lastK, int sideCount, double radius) {
+        public LineNode3f(Vector3f center, @Nullable Vector3f previous, @Nullable Vector3f next, int sideCount, double radius) {
             assert previous != null || next != null;
             this.sideCount = sideCount;
             this.center = center;
@@ -98,6 +95,7 @@ public class Line3f {
             var k = i.cross(j,new Vector3f());
             k = k.normalize();
             this.i = i;
+            this.j = j;
             this.k = k;
             var transMatrix = new Matrix3f(i,j,k);
             

@@ -7,11 +7,8 @@ import net.minecraft.client.gui.screens.inventory.CommandBlockEditScreen;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.BoatRenderer;
 import net.minecraft.client.renderer.entity.MinecartRenderer;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -43,8 +40,6 @@ import org.teacon.powertool.client.renders.holo_sign.RawJsonHolographicSignBlock
 import org.teacon.powertool.entity.MartingCarEntity;
 import org.teacon.powertool.entity.PowerToolEntities;
 import org.teacon.powertool.menu.PowerToolMenus;
-
-import java.util.ArrayList;
 
 @EventBusSubscriber(value = Dist.CLIENT, modid = PowerTool.MODID)
 public class ClientEvents {

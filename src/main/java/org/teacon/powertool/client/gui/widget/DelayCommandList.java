@@ -4,14 +4,12 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.network.chat.Component;
 import org.teacon.powertool.client.gui.SetCommandScreen;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -76,9 +74,7 @@ public class DelayCommandList extends EntryListWidget<SetCommandScreen,DelayComm
             this.command_.setMaxLength(114514);
             this.command_.setRenderState(false);
             this.command_.setValue(command);
-            this.remove = Button.builder(Component.literal("-"),(b) -> {
-                DelayCommandList.this.removeEntry(id);
-            } ).size(20,20).build();
+            this.remove = Button.builder(Component.literal("-"),(b) -> DelayCommandList.this.removeEntry(id)).size(20,20).build();
         }
         
         
