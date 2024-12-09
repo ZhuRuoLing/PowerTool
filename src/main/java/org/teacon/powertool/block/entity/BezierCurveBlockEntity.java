@@ -34,6 +34,8 @@ public class BezierCurveBlockEntity extends BlockEntity implements IClientUpdate
     public int uScale = 1;
     public int vScale = 1;
     public int color = -1;
+    public boolean clampMode = false;
+    public boolean worldCoordinate = false;
     public ResourceLocation texture = VanillaUtils.MISSING_TEXTURE;
     public List<Vector3f> controlPoints = new ArrayList<>();
     public BezierCurve3f bezierCurve;
@@ -72,6 +74,8 @@ public class BezierCurveBlockEntity extends BlockEntity implements IClientUpdate
         if(tag.contains("uScale")) uScale = tag.getInt("uScale");
         if(tag.contains("vScale")) vScale = tag.getInt("vScale");
         if(tag.contains("texture")) texture = Objects.requireNonNullElse(ResourceLocation.tryParse(tag.getString("texture")),VanillaUtils.MISSING_TEXTURE);
+        if(tag.contains("clampMode")) clampMode = tag.getBoolean("clampMode");
+        if(tag.contains("worldCoordinate")) worldCoordinate = tag.getBoolean("worldCoordinate");
         if(tag.contains("controlPointSize")){
             var size = tag.getInt("controlPointSize");
             controlPoints = new ArrayList<>();
@@ -93,6 +97,8 @@ public class BezierCurveBlockEntity extends BlockEntity implements IClientUpdate
         tag.putInt("uScale", uScale);
         tag.putInt("vScale", vScale);
         tag.putString("texture", texture.toString());
+        tag.putBoolean("clampMode", clampMode);
+        tag.putBoolean("worldCoordinate", worldCoordinate);
         for(int i = 0; i < controlPoints.size(); i++){
             tag.putFloat("controlPoint"+i+"x", controlPoints.get(i).x());
             tag.putFloat("controlPoint"+i+"y", controlPoints.get(i).y());

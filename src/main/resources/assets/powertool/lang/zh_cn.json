@@ -171,5 +171,9 @@
   "powertool.gui.bezier_curve.color": "颜色(ARGB)",
   "powertool.gui.bezier_curve.control_points": "控制点: ",
   "powertool.gui.bezier_curve.control_points_warn": "出于性能考虑,建议控制点个数在四个以下",
+  "powertool.gui.bezier_curve.use_clamp_mode": "使用限制渲染模式",
+  "powertool.gui.bezier_curve.use_clamp_mode.tooltip": "将不会渲染远离区块中心的顶点.",
+  "powertool.gui.bezier_curve.use_world_coordinate": "使用世界坐标",
+  "powertool.gui.bezier_curve.use_world_coordinate.tooltip": "决定控制点代表相对坐标还是绝对(世界)坐标.",
   "powertool.gui.examine_holo_glass.warn": "相对左侧独立计算."
 }

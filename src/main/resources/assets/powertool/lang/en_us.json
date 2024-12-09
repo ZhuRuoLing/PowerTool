@@ -170,5 +170,9 @@
   "powertool.gui.bezier_curve.color": "Color(ARGB)",
   "powertool.gui.bezier_curve.control_points": "Control Points: ",
   "powertool.gui.bezier_curve.control_points_warn": "For performance reasons, it is recommended that the number of control points be less than four.",
+  "powertool.gui.bezier_curve.use_clamp_mode": "Use Clamp Mode",
+  "powertool.gui.bezier_curve.use_clamp_mode.tooltip": "Will not render vertexes far from chunk center.",
+  "powertool.gui.bezier_curve.use_world_coordinate": "Use World Coordinate",
+  "powertool.gui.bezier_curve.use_world_coordinate.tooltip": "Determines whether control points represent relative or absolute(world) coordinates.",
   "powertool.gui.examine_holo_glass.warn": "Calculated independently relative to the left side."
 }

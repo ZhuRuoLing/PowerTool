@@ -18,7 +18,8 @@ public class Line3f {
     public final Vector3f start;
     public final Vector3f end;
     public final List<Vector3f> line;
-    private List<Pair<Vector3f,Vector3f>> vertexesAndNormals;
+    private volatile List<Pair<Vector3f,Vector3f>> vertexesAndNormals;
+    private final Object lock = new Object();
     
     /**
      * constructor of a line can be rendered in world.
@@ -43,23 +44,28 @@ public class Line3f {
         nodes.add(new LineNode3f(line.getLast(), previous,null, sideCount,radius));
     }
     
-    //是的这真有可能多线程访问[xkball]
-    public synchronized List<Pair<Vector3f,Vector3f>> vertexAndNormalQuadsList(){
+    //是的这真有多线程访问[xkball]
+    public List<Pair<Vector3f,Vector3f>> vertexAndNormalQuadsList(){
         if(vertexesAndNormals == null){
-            vertexesAndNormals = new ArrayList<>();
-            for(var i = 0; i < (nodes.size() - 1); i++){
-                var cur = nodes.get(i);
-                var next = nodes.get(i + 1);
-                var sideCount = cur.sideCount;
-                for(int j = 0; j < sideCount; j++){
-                    vertexesAndNormals.add(Pair.of(cur.points.get(j),cur.normals.get(j)));
-                    vertexesAndNormals.add(Pair.of(next.points.get(j),next.normals.get(j)));
-                    var jNext = (j+1)%sideCount;
-                    vertexesAndNormals.add(Pair.of(next.points.get(jNext),next.normals.get(jNext)));
-                    vertexesAndNormals.add(Pair.of(cur.points.get(jNext),cur.normals.get(jNext)));
+            synchronized (lock){
+                if(vertexesAndNormals == null){
+                    var temp = new ArrayList<Pair<Vector3f,Vector3f>>();
+                    for(var i = 0; i < (nodes.size() - 1); i++){
+                        var cur = nodes.get(i);
+                        var next = nodes.get(i + 1);
+                        var sideCount = cur.sideCount;
+                        for(int j = 0; j < sideCount; j++){
+                            temp.add(Pair.of(cur.points.get(j),cur.normals.get(j)));
+                            temp.add(Pair.of(next.points.get(j),next.normals.get(j)));
+                            var jNext = (j+1)%sideCount;
+                            temp.add(Pair.of(next.points.get(jNext),next.normals.get(jNext)));
+                            temp.add(Pair.of(cur.points.get(jNext),cur.normals.get(jNext)));
+                        }
+                    }
+                    vertexesAndNormals = Collections.unmodifiableList(temp);
                 }
             }
-            vertexesAndNormals = Collections.unmodifiableList(vertexesAndNormals);
+            
         }
         return vertexesAndNormals;
     }
