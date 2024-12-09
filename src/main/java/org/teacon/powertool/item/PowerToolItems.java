@@ -71,7 +71,8 @@ public class PowerToolItems {
     public static DeferredHolder<Item,TonkItem> TONK,THICK_TONK,EXTRA_THICK_TONK;
     public static DeferredHolder<Item,AutoVanishBoatItem> AV_OAK_BOAT,AV_SPRUCE_BOAT,AV_BIRCH_BOAT,AV_JUNGLE_BOAT,AV_ACACIA_BOAT,AV_CHERRY_BOAT,AV_DARK_OAK_BOAT,AV_MANGROVE_BOAT,AV_BAMBOO_RAFT;
     public static DeferredHolder<Item,AutoVanishMinecartItem> AV_MINE_CART;
-    public static DeferredHolder<Item, DisplayModeToolItem> DISPLAY_MODE_TOOL;
+    public static DeferredHolder<Item, AccessControlToolItem> DISPLAY_MODE_TOOL;
+    public static DeferredHolder<Item, AccessControlToolItem> STATIC_MODE_TOOL;
     public static DeferredHolder<Item, TextureExtractor> TEXTURE_EXTRACTOR;
 
     public static Supplier<Item> MARTING_RED = ITEMS.register("marting_car_red", () -> new MartingCarItem(new Item.Properties(), MartingCarEntity.Variant.RED));
@@ -105,7 +106,8 @@ public class PowerToolItems {
         AV_MANGROVE_BOAT = ITEMS.register("auto_vanish_mangrove_boat",() -> new AutoVanishBoatItem(Boat.Type.MANGROVE));
         AV_BAMBOO_RAFT = ITEMS.register("auto_vanish_bamboo_raft",() -> new AutoVanishBoatItem(Boat.Type.BAMBOO));
         AV_MINE_CART = ITEMS.register("auto_vanish_minecart",() -> new AutoVanishMinecartItem(new Item.Properties()));
-        DISPLAY_MODE_TOOL = ITEMS.register("display_mode_tool", () -> new DisplayModeToolItem(new Item.Properties()));
+        DISPLAY_MODE_TOOL = ITEMS.register("display_mode_tool", () -> new AccessControlToolItem(new Item.Properties(), AccessControlToolItem.Type.DISPLAY_MODE));
+        STATIC_MODE_TOOL = ITEMS.register("static_mode_tool",() -> new AccessControlToolItem(new Item.Properties(), AccessControlToolItem.Type.STATIC_MODE));
         TEXTURE_EXTRACTOR = ITEMS.register("texture_extractor",() -> new TextureExtractor(new Item.Properties()));
         CREATIVE_MODE_TABS.register(bus);
         PowerToolDataComponents.DATA_COMPONENTS.register(bus);

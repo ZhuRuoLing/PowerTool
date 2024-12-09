@@ -12,9 +12,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DisplayModeClient {
-    public static final DisplayModeClient INSTANCE = new DisplayModeClient();
-    private final Map<ChunkPos, List<BlockPos>> data = new HashMap<>();
+public class AccessControlClient {
+    public static final AccessControlClient INSTANCE = new AccessControlClient();
+    private final Map<ChunkPos, List<BlockPos>> displayModeData = new HashMap<>();
+    private final Map<ChunkPos, List<BlockPos>> staticModeData = new HashMap<>();
     private BlockPos interactionSourcePos = null;
 
     public boolean isDisplayModeEnabledOn(Screen screen) {
@@ -24,8 +25,8 @@ public class DisplayModeClient {
         }
         if (screen instanceof AbstractContainerScreen<? extends AbstractContainerMenu> abstractContainerScreen) {
             ChunkPos pos = new ChunkPos(interactionSourcePos);
-            if (data.containsKey(pos)) {
-                return data.get(pos).contains(interactionSourcePos);
+            if (displayModeData.containsKey(pos)) {
+                return displayModeData.get(pos).contains(interactionSourcePos);
             }
         }
         return false;
@@ -36,21 +37,34 @@ public class DisplayModeClient {
     }
 
     public void clear() {
-        data.clear();
+        displayModeData.clear();
+        staticModeData.clear();
     }
 
     public void updateInteractionSource(BlockPos pos) {
         this.interactionSourcePos = pos;
     }
 
-    public void update(ChunkPos chunkPos, List<BlockPos> blockPosList) {
-        data.put(chunkPos, blockPosList);
+    public void updateDisplayModeData(ChunkPos chunkPos, List<BlockPos> blockPosList) {
+        displayModeData.put(chunkPos, blockPosList);
+    }
+    
+    public void updateStaticModeData(ChunkPos chunkPos, List<BlockPos> blockPosList) {
+        staticModeData.put(chunkPos, blockPosList);
     }
 
     public boolean isDisplayModeEnabledAt(BlockPos blockPos) {
         ChunkPos pos = new ChunkPos(blockPos);
-        if (data.containsKey(pos)) {
-            return data.get(pos).contains(blockPos);
+        if (displayModeData.containsKey(pos)) {
+            return displayModeData.get(pos).contains(blockPos);
+        }
+        return false;
+    }
+    
+    public boolean isStaticModeEnabledAt(BlockPos blockPos) {
+        ChunkPos pos = new ChunkPos(blockPos);
+        if (staticModeData.containsKey(pos)) {
+            return staticModeData.get(pos).contains(blockPos);
         }
         return false;
     }

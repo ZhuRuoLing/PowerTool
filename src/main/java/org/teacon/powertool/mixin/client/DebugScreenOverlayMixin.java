@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.teacon.powertool.client.DisplayModeClient;
+import org.teacon.powertool.client.AccessControlClient;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ public class DebugScreenOverlayMixin {
         CallbackInfoReturnable<List<String>> cir,
         @Local(index = 9) List<String> list
     ){
-        boolean isDisplayModeEnabled = DisplayModeClient.INSTANCE.isDisplayModeEnabledAt(
+        boolean isDisplayModeEnabled = AccessControlClient.INSTANCE.isDisplayModeEnabledAt(
             ((BlockHitResult)this.block).getBlockPos()
         );
         list.add(

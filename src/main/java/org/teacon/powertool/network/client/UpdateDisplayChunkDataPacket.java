@@ -9,7 +9,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.level.ChunkPos;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.teacon.powertool.client.DisplayModeClient;
+import org.teacon.powertool.client.AccessControlClient;
 import org.teacon.powertool.utils.VanillaUtils;
 
 import java.util.List;
@@ -41,7 +41,7 @@ public record UpdateDisplayChunkDataPacket(
     public void handle(IPayloadContext context){
         context.enqueueWork(() -> {
             ChunkPos chunkPos = new ChunkPos(chunkX, chunkZ);
-            DisplayModeClient.INSTANCE.update(chunkPos, blockPosList);
+            AccessControlClient.INSTANCE.updateDisplayModeData(chunkPos, blockPosList);
         });
     }
 }

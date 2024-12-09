@@ -4,7 +4,7 @@ import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.animal.Chicken;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.entity.vehicle.ChestBoat;
 import net.minecraft.world.entity.vehicle.Minecart;
@@ -15,6 +15,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.EntityTravelToDimensionEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.ChunkWatchEvent;
 import net.neoforged.neoforge.event.level.ExplosionEvent;
@@ -23,7 +24,9 @@ import org.teacon.powertool.attachment.PowerToolAttachments;
 import org.teacon.powertool.entity.AutoVanishBoat;
 import org.teacon.powertool.entity.AutoVanishMinecart;
 import org.teacon.powertool.network.client.UpdateDisplayChunkDataPacket;
+import org.teacon.powertool.network.client.UpdateStaticModeChunkDataPacket;
 import org.teacon.powertool.utils.DelayServerExecutor;
+import org.teacon.powertool.utils.VanillaUtils;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -35,17 +38,23 @@ import java.util.Map;
 public class PowerToolEvents {
 
     @SubscribeEvent
-    public static void on(ChunkWatchEvent.Sent event) {
+    public static void onChunkSent(ChunkWatchEvent.Sent event) {
         ChunkPos chunkPos = event.getPos();
-        List<BlockPos> list = event.getChunk().getData(PowerToolAttachments.DISPLAY_MODE);
-        PacketDistributor.sendToPlayer(
-            event.getPlayer(),
-            new UpdateDisplayChunkDataPacket(
-                chunkPos.x,
-                chunkPos.z,
-                list
-            )
-        );
+        var listDisplayModeData = event.getChunk().getData(PowerToolAttachments.DISPLAY_MODE);
+        var listStaticModeData = event.getChunk().getData(PowerToolAttachments.STATIC_MODE);
+        PacketDistributor.sendToPlayer(event.getPlayer(), new UpdateDisplayChunkDataPacket(chunkPos.x, chunkPos.z, listDisplayModeData));
+        PacketDistributor.sendToPlayer(event.getPlayer(), new UpdateStaticModeChunkDataPacket(chunkPos.x, chunkPos.z, listStaticModeData));
+    }
+    
+    @SubscribeEvent
+    public static void onPlayerRightClickBlock(PlayerInteractEvent.RightClickBlock event){
+        event.setCancellationResult(InteractionResult.SUCCESS);
+        event.setCanceled(VanillaUtils.isBlockStaticMode(event.getEntity(),event.getPos()));
+    }
+    
+    @SubscribeEvent
+    public static void onPlayerLeftClickBlock(PlayerInteractEvent.LeftClickBlock event){
+        event.setCanceled(VanillaUtils.isBlockStaticMode(event.getEntity(),event.getPos()));
     }
 
     @SubscribeEvent
@@ -69,72 +78,51 @@ public class PowerToolEvents {
                 LevelChunk chunk = entry.getKey();
                 ChunkPos pos = entry.getValue();
                 for (BlockPos blockPos : list) {
-                    removeDisplayMode(
-                        (ServerLevel) event.getLevel(),
-                        pos,
-                        chunk,
-                        blockPos,
-                        null
-                    );
+                    removeAccessControl((ServerLevel) event.getLevel(), pos, chunk, blockPos, null);
                 }
             });
     }
 
-    private static void removeDisplayMode(
+    private static void removeAccessControl(
         ServerLevel level,
         ChunkPos chunkPos,
         ChunkAccess chunk,
         BlockPos pos,
         @Nullable ServerPlayer player
     ) {
-        List<BlockPos> displayEnabledPosList = new ArrayList<>(chunk.getData(PowerToolAttachments.DISPLAY_MODE));
+        var displayEnabledPosList = new ArrayList<>(chunk.getData(PowerToolAttachments.DISPLAY_MODE));
         displayEnabledPosList.remove(pos);
-        chunk.setUnsaved(true);
+        var staticEnabledPosList = new ArrayList<>(chunk.getData(PowerToolAttachments.STATIC_MODE));
+        staticEnabledPosList.remove(pos);
         chunk.setData(PowerToolAttachments.DISPLAY_MODE, displayEnabledPosList);
-        UpdateDisplayChunkDataPacket data = new UpdateDisplayChunkDataPacket(
-            chunkPos.x,
-            chunkPos.z,
-            displayEnabledPosList
-        );
+        chunk.setData(PowerToolAttachments.STATIC_MODE, staticEnabledPosList);
+        chunk.setUnsaved(true);
+        var displayModePacket = new UpdateDisplayChunkDataPacket(chunkPos.x, chunkPos.z, displayEnabledPosList);
+        var staticModePacket = new UpdateStaticModeChunkDataPacket(chunkPos.x, chunkPos.z, staticEnabledPosList);
         if (player == null) {
-            PacketDistributor.sendToPlayersTrackingChunk(
-                level,
-                chunkPos,
-                data
-            );
+            PacketDistributor.sendToPlayersTrackingChunk(level, chunkPos, displayModePacket);
+            PacketDistributor.sendToPlayersTrackingChunk(level, chunkPos, staticModePacket);
             return;
         }
-        PacketDistributor.sendToPlayer(
-            player,
-            data
-        );
+        PacketDistributor.sendToPlayer(player, displayModePacket);
+        PacketDistributor.sendToPlayer(player, staticModePacket);
     }
 
-    private static void removeDisplayMode(
+    private static void removeAccessControl(
         ServerLevel level,
         BlockPos pos,
         @Nullable ServerPlayer player
     ) {
         ChunkPos chunkPos = new ChunkPos(pos);
         ChunkAccess chunk = level.getChunk(pos);
-        removeDisplayMode(
-            level,
-            chunkPos,
-            chunk,
-            pos,
-            player
-        );
+        removeAccessControl(level, chunkPos, chunk, pos, player);
     }
 
     @SubscribeEvent
     public static void onBlockBreak(BlockEvent.BreakEvent event) {
         ServerLevel level = (ServerLevel) event.getLevel();
         BlockPos pos = event.getPos();
-        removeDisplayMode(
-            level,
-            pos,
-            (ServerPlayer) event.getPlayer()
-        );
+        removeAccessControl(level, pos, (ServerPlayer) event.getPlayer());
     }
     
     @SubscribeEvent

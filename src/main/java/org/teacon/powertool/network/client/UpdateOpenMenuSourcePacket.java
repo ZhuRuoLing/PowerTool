@@ -6,7 +6,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.teacon.powertool.client.DisplayModeClient;
+import org.teacon.powertool.client.AccessControlClient;
 import org.teacon.powertool.utils.VanillaUtils;
 
 @MethodsReturnNonnullByDefault
@@ -28,6 +28,6 @@ public record UpdateOpenMenuSourcePacket(
     }
 
     public void handle(IPayloadContext context){
-        DisplayModeClient.INSTANCE.updateInteractionSource(pos);
+        AccessControlClient.INSTANCE.updateInteractionSource(pos);
     }
 }

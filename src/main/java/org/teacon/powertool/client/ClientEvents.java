@@ -106,41 +106,48 @@ public class ClientEvents {
 
     @SubscribeEvent
     static void onMousePress(ScreenEvent.MouseButtonPressed.Pre event) {
-        event.setCanceled(DisplayModeClient.INSTANCE.isDisplayModeEnabledOn(event.getScreen()));
+        event.setCanceled(AccessControlClient.INSTANCE.isDisplayModeEnabledOn(event.getScreen()));
     }
 
     @SubscribeEvent
     static void onMouseRelease(ScreenEvent.MouseButtonReleased.Pre event) {
-        event.setCanceled(DisplayModeClient.INSTANCE.isDisplayModeEnabledOn(event.getScreen()));
+        event.setCanceled(AccessControlClient.INSTANCE.isDisplayModeEnabledOn(event.getScreen()));
     }
 
     @SubscribeEvent
     static void onKeyPress(ScreenEvent.KeyPressed.Pre event) {
         if (event.getKeyCode() != GLFW.GLFW_KEY_ESCAPE) {
-            event.setCanceled(DisplayModeClient.INSTANCE.isDisplayModeEnabledOn(event.getScreen()));
+            event.setCanceled(AccessControlClient.INSTANCE.isDisplayModeEnabledOn(event.getScreen()));
         }
     }
 
     @SubscribeEvent
     static void onKeyRelease(ScreenEvent.KeyReleased.Pre event) {
         if (event.getKeyCode() != GLFW.GLFW_KEY_ESCAPE) {
-            event.setCanceled(DisplayModeClient.INSTANCE.isDisplayModeEnabledOn(event.getScreen()));
+            event.setCanceled(AccessControlClient.INSTANCE.isDisplayModeEnabledOn(event.getScreen()));
         }
     }
 
     @SubscribeEvent
     static void onCharTyped(ScreenEvent.CharacterTyped.Pre event) {
-        event.setCanceled(DisplayModeClient.INSTANCE.isDisplayModeEnabledOn(event.getScreen()));
+        event.setCanceled(AccessControlClient.INSTANCE.isDisplayModeEnabledOn(event.getScreen()));
     }
 
     @SubscribeEvent
     static void onScreenClosing(ScreenEvent.Closing event){
-        DisplayModeClient.INSTANCE.screenClosed();
+        AccessControlClient.INSTANCE.screenClosed();
     }
 
     @SubscribeEvent
     static void onPlayerLogout(ClientPlayerNetworkEvent.LoggingOut event) {
-        DisplayModeClient.INSTANCE.clear();
+        AccessControlClient.INSTANCE.clear();
+    }
+    
+    @SubscribeEvent
+    static void onPlayerClone(ClientPlayerNetworkEvent.Clone event) {
+        var p1 = event.getOldPlayer();
+        var p2 = event.getNewPlayer();
+        if(p1.level().dimension() != p2.level().dimension()) AccessControlClient.INSTANCE.clear();
     }
 
     @EventBusSubscriber(value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD, modid = PowerTool.MODID)

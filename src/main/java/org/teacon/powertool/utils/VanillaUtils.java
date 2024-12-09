@@ -1,6 +1,7 @@
 package org.teacon.powertool.utils;
 
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -11,12 +12,15 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec2;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.teacon.powertool.PowerTool;
+import org.teacon.powertool.attachment.PowerToolAttachments;
+import org.teacon.powertool.client.AccessControlClient;
 import org.teacon.powertool.client.overlay.ClientDebugCharts;
 import org.teacon.powertool.network.client.RecordDebugData;
 
@@ -122,9 +126,25 @@ public class VanillaUtils {
         }
     }
     
+    public static boolean isBlockStaticMode(Player player, BlockPos pos){
+        if(player.getAbilities().instabuild) return false;
+        var level = player.level();
+        if(level.isClientSide){
+            return ClientHandler.handleIsBlockStaticMode(pos);
+        }
+        else {
+            return level.getChunk(pos).getData(PowerToolAttachments.STATIC_MODE).contains(pos);
+        }
+    }
+    
     public static class ClientHandler{
+        
         public static void handleDebugData(String id,long data){
             ClientDebugCharts.recordDebugData(id,data);
+        }
+        
+        public static boolean handleIsBlockStaticMode(BlockPos pos){
+            return AccessControlClient.INSTANCE.isStaticModeEnabledAt(pos);
         }
     }
 }

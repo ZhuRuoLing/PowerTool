@@ -57,6 +57,11 @@ public class PowerToolNetwork {
                 RecordDebugData.STREAM_CODEC,
                 RecordDebugData::handle
         );
+        register.playToClient(
+                UpdateStaticModeChunkDataPacket.TYPE,
+                UpdateStaticModeChunkDataPacket.STREAM_CODEC,
+                UpdateStaticModeChunkDataPacket::handle
+        );
     
         register.commonToServer(
                 SetCommandBlockPacket.TYPE,
