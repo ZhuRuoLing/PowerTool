@@ -204,5 +204,9 @@
   "powertool.gui.examine_holo_glass.warn": "Calculated independently relative to the left side.",
   "powertool.gui.static_mode_enabled": "Enabled static mode on %s",
   "powertool.gui.static_mode_disabled": "Disabled static mode on %s",
-  "tooltip.powertool.distant_horizon_cheating_block": "Normally this block is invisible. If installed \"Distant Horizon\" mod,then this block will be displayed as the corresponding color in the LOD."
+  "tooltip.powertool.distant_horizon_cheating_block": "Normally this block is invisible. If installed \"Distant Horizon\" mod,then this block will be displayed as the corresponding color in the LOD.",
+  "powertool.gui.holo_sign.shadow_on": "Drop Shadow: On",
+  "powertool.gui.holo_sign.shadow_off": "Drop Shadow: Off",
+  "powertool.gui.holo_sign.background_on": "Background: On",
+  "powertool.gui.holo_sign.background_off": "Background: Off"
 }

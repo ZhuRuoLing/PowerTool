@@ -9,6 +9,7 @@ import com.mojang.blaze3d.platform.Lighting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -31,25 +32,23 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
     protected final T sign;
     
     protected float scale;
-    protected int colorInARGB = 0xffffffff; // White by default
+    protected int colorInARGB; // White by default
     protected BaseHolographicSignBlockEntity.Align textAlign;
-    protected BaseHolographicSignBlockEntity.Shadow shadowType;
     protected BaseHolographicSignBlockEntity.LayerArrange layerArrange;
-    
     protected boolean locked;
     protected int rotation;
-    
     protected boolean bidirectional;
+    protected boolean renderBackground;
+    protected boolean dropShadow;
 
     protected Button changeAlignment;
     protected ObjectInputBox<Integer> colorInput;
     protected Button zOffsetToggle;
-    protected Button shadowToggle;
-    
     protected EditBox rotationInput;
     protected Button lockToggle;
-    
     protected Button bidButton;
+    protected Button shadowToggle;
+    protected Button backgroundToggle;
 
     public static Screen creatHoloSignScreen(BlockEntity sign, SignType type) {
         return switch (type) {
@@ -63,12 +62,13 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
         this.colorInARGB = theSign.colorInARGB;
         this.scale = theSign.scale;
         this.textAlign = theSign.align;
-        this.shadowType = theSign.shadow;
         this.layerArrange = theSign.arrange;
         this.locked = theSign.lock;
         this.rotation = theSign.rotate;
         this.bidirectional = theSign.bidirectional;
         this.sign = theSign;
+        this.renderBackground = theSign.renderBackground;
+        this.dropShadow = theSign.dropShadow;
     }
     
     public int getDoneButtonY(){
@@ -108,22 +108,25 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
                 .createNarration(displayed -> Component.translatable("powertool.gui.holographic_sign.narration.text_align", displayed.get()))
                 .build();
 
-        this.shadowToggle = new Button.Builder(this.shadowType.displayName, btn -> {
-            this.shadowType = switch (this.shadowType) {
-                case NONE -> BaseHolographicSignBlockEntity.Shadow.DROP;
-                case DROP -> BaseHolographicSignBlockEntity.Shadow.PLATE;
-                case PLATE -> BaseHolographicSignBlockEntity.Shadow.NONE;
-            };
-            this.shadowToggle.setMessage(this.shadowType.displayName);
-        }).pos(120 + innerPadding, 20 + innerPadding)
+        this.shadowToggle = new Button.Builder(toggleMessage("powertool.gui.holo_sign.shadow",dropShadow), btn -> {
+            this.dropShadow = !dropShadow;
+            this.shadowToggle.setMessage(toggleMessage("powertool.gui.holo_sign.shadow",dropShadow));})
+                .pos(120 + innerPadding, 20 + innerPadding)
                 .size(80, 20)
-                .createNarration(displayed -> Component.translatable("powertool.gui.holographic_sign.narration.shadow", displayed.get()))
+                .build();
+        
+        this.backgroundToggle = new Button.Builder(toggleMessage("powertool.gui.holo_sign.background",renderBackground), btn -> {
+            this.renderBackground = !renderBackground;
+            this.backgroundToggle.setMessage(toggleMessage("powertool.gui.holo_sign.background",renderBackground));})
+                .pos(40, 20 + innerPadding)
+                .size(80, 20)
                 .build();
         
         this.colorInput = new ObjectInputBox<>(font, 200 + innerPadding * 2, 0, 50, 20, Component.empty(),ObjectInputBox.RGB_COLOR_VALIDATOR,ObjectInputBox.RGB_COLOR_RESPONDER);
         this.colorInput.setValue(VanillaUtils.hexColorFromInt(colorInARGB));
         this.colorInput.setFocused(false);
         this.colorInput.setMaxLength(8);
+        this.colorInput.setTooltip(Tooltip.create(Component.translatable("powertool.gui.bezier_curve.color")));
         this.colorInput.setCanLoseFocus(true);
 
         this.zOffsetToggle = new Button.Builder(this.layerArrange.displayName, btn -> {
@@ -138,7 +141,7 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
                 .createNarration(Supplier::get)
                 .build();
         
-        this.rotationInput = new EditBox(this.minecraft.font,200 + innerPadding * 2, 20 + innerPadding, 50, 20,Component.empty());
+        this.rotationInput = new EditBox(font,200 + innerPadding * 2, 20 + innerPadding, 50, 20,Component.empty());
         this.rotationInput.setValue(Integer.toString(this.rotation));
         this.rotationInput.setResponder((string) -> {
             try {
@@ -200,6 +203,7 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
         this.addRenderableWidget(scaleDown);
         this.addRenderableWidget(this.changeAlignment);
         this.addRenderableWidget(this.shadowToggle);
+        this.addRenderableWidget(this.backgroundToggle);
         this.addRenderableWidget(this.zOffsetToggle);
         this.addRenderableWidget(this.colorInput);
         this.addRenderableWidget(this.rotationInput);
@@ -225,17 +229,21 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
         this.sign.colorInARGB = Optional.ofNullable(colorInput.get()).orElse(0xffffff);
         this.sign.scale = this.scale;
         this.sign.align = this.textAlign;
-        this.sign.shadow = this.shadowType;
         this.sign.arrange = this.layerArrange;
         this.sign.lock = this.locked;
         this.sign.rotate = this.rotation;
         this.sign.bidirectional = this.bidirectional;
+        this.sign.renderBackground = this.renderBackground;
+        this.sign.dropShadow = this.dropShadow;
+    }
+    
+    protected Component toggleMessage(String key,boolean state){
+        return Component.translatable(key + (state ? "_on":"_off"));
     }
 
     @Override
     public void removed() {
         //this.minecraft.keyboardHandler.setSendRepeatsToGui(false);
-
         this.writeBackToBE();
         PacketDistributor.sendToServer(UpdateBlockEntityData.create(sign));
     }

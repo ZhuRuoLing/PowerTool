@@ -39,7 +39,7 @@ public class LinkHolographicSignBlockEntityRenderer implements BlockEntityRender
         Matrix4f matrix4f = transform.last().pose();
         var text = theSign.displayContent.getString();
         text = text.startsWith("🌐") ? text : "🌐"+ text;
-        int bgColor = theSign.bgColorInARGB;
+        int bgColor = HolographicSignBlockEntityRenderer.getBackgroundColor(theSign);
         int yOffset = (int) -(0.5 * this.font.lineHeight);
         int fontColor = theSign.colorInARGB;
         int w = this.font.width(text);
@@ -50,8 +50,7 @@ public class LinkHolographicSignBlockEntityRenderer implements BlockEntityRender
 //            case CENTER -> -w / 2;
 //            case RIGHT -> 8 - w / 2;
 //        };
-        // FIXME Implement all 3 different shadow types
-        this.font.drawInBatch(Component.literal(text).withStyle(LINK_STYLE), (float) -w / 2, yOffset, fontColor, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, bgColor, packedLight);
+        HolographicSignBlockEntityRenderer.renderText(font,Component.literal(text).withStyle(LINK_STYLE), (float) -w / 2, yOffset, fontColor, theSign.dropShadow, matrix4f, bufferSource, bgColor, packedLight);
         transform.popPose();
     }
 }

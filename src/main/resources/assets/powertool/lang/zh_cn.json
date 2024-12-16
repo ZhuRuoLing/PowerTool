@@ -206,5 +206,9 @@
   "powertool.gui.examine_holo_glass.warn": "相对左侧独立计算.",
   "powertool.gui.static_mode_enabled": "已在%s上启用静态模式",
   "powertool.gui.static_mode_disabled": "已在%s上禁用静态模式",
-  "tooltip.powertool.distant_horizon_cheating_block": "正常情况下此方块透明. 如果安装了\"遥远的地平线\"模组,则此方块会在LOD中显示为对应颜色."
+  "tooltip.powertool.distant_horizon_cheating_block": "正常情况下此方块透明. 如果安装了\"遥远的地平线\"模组,则此方块会在LOD中显示为对应颜色.",
+  "powertool.gui.holo_sign.shadow_on": "文字阴影: On",
+  "powertool.gui.holo_sign.shadow_off": "文字阴影: Off",
+  "powertool.gui.holo_sign.background_on": "文字背景: On",
+  "powertool.gui.holo_sign.background_off": "文字背景: Off"
 }

@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 public record SectionGeometryBlockEntityRenderDispatcher(BlockPos regionOrigin) implements AddSectionGeometryEvent.AdditionalSectionRenderer {
     @Override
     public void render(@NotNull AddSectionGeometryEvent.SectionRenderingContext context) {
-        BlockPos.betweenClosed(regionOrigin, regionOrigin.offset(16, 16, 16)).forEach(pos -> renderAt(pos, context));
+        BlockPos.betweenClosed(regionOrigin, regionOrigin.offset(15, 15, 15)).forEach(pos -> renderAt(pos, context));
     }
 
     @SuppressWarnings("unchecked")

@@ -12,15 +12,20 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.util.FormattedCharSequence;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.teacon.powertool.block.entity.BaseHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.CommonHolographicSignBlockEntity;
+import org.teacon.powertool.utils.VanillaUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<CommonHolographicSignBlockEntity> {
-
+    private static final Vector3f SHADOW_OFFSET = new Vector3f(0.0F, 0.0F, -0.2F);
     private final BlockEntityRenderDispatcher dispatcher;
     private final Font font;
 
@@ -41,7 +46,8 @@ public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<C
         transform.pushPose();
         beforeRender(theSign,transform,dispatcher,rotatedDegree);
         Matrix4f matrix4f = transform.last().pose();
-        int bgColor = theSign.bgColorInARGB;
+        int bgColor = getBackgroundColor(theSign);
+        var dropShadow = theSign.dropShadow;
         int yOffset = -theSign.renderedContents.size() / 2 * this.font.lineHeight;
         int fontColor = theSign.colorInARGB;
         int maxWidth = 0;
@@ -59,8 +65,7 @@ public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<C
                     case CENTER -> -this.font.width(text) / 2;
                     case RIGHT -> maxWidth / 2 - this.font.width(text);
                 };
-                // FIXME Implement all 3 different shadow types
-                this.font.drawInBatch(text, xOffset, yOffset, fontColor, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, bgColor, packedLight, false);
+                renderText(font,text, xOffset, yOffset, fontColor, dropShadow, matrix4f, bufferSource, bgColor, packedLight);
             }
             yOffset += this.font.lineHeight + 2;
         }
@@ -80,8 +85,48 @@ public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<C
         // FIXME Scaling does not work as expected
         transform.scale(theSign.scale, theSign.scale, 1);
         switch (theSign.arrange) {
-            case FRONT -> transform.translate(0.0, 0.0, 0.4D);
-            case BACK -> transform.translate(0.0, 0.0, -0.4D);
+            case FRONT -> transform.translate(0.0, 0.0, -0.45D*40);
+            case BACK -> transform.translate(0.0, 0.0, 0.45D*40);
         }
     }
+    
+    public static int getBackgroundColor(BaseHolographicSignBlockEntity theSign) {
+        int bgColor = VanillaUtils.TRANSPARENT;
+        if(theSign.renderBackground) bgColor = 0x40000000;
+        return bgColor;
+    }
+    
+    @SuppressWarnings("DuplicatedCode")
+    public static void renderText(Font font, Component component, float x, float y, int color, boolean dropShadow,
+                                  Matrix4f matrix, MultiBufferSource buffer,
+                                  int backgroundColor, int packedLightCoords){
+        color = Font.adjustColor(color);
+        var text = component.getVisualOrderText();
+        Matrix4f matrix4f = new Matrix4f(matrix);
+        if (dropShadow) {
+            font.renderText(text, x, y, color, true, matrix, buffer, Font.DisplayMode.NORMAL, backgroundColor, packedLightCoords);
+            matrix4f.translate(SHADOW_OFFSET);
+            backgroundColor = VanillaUtils.TRANSPARENT;
+        }
+        
+        font.renderText(text, x, y, color, false, matrix4f, buffer, Font.DisplayMode.NORMAL, backgroundColor, packedLightCoords);
+    }
+    
+    @SuppressWarnings("DuplicatedCode")
+    public static void renderText(Font font,String text,float x, float y, int color, boolean dropShadow,
+                                  Matrix4f matrix, MultiBufferSource buffer,
+                                  int backgroundColor, int packedLightCoords){
+        if (font.isBidirectional()) {
+            text = font.bidirectionalShaping(text);
+        }
+        color = Font.adjustColor(color);
+        Matrix4f matrix4f = new Matrix4f(matrix);
+        if (dropShadow) {
+            font.renderText(text, x, y, color, true, matrix, buffer, Font.DisplayMode.NORMAL, backgroundColor, packedLightCoords);
+            matrix4f.translate(SHADOW_OFFSET);
+            backgroundColor = VanillaUtils.TRANSPARENT;
+        }
+        font.renderText(text, x, y, color, false, matrix4f, buffer, Font.DisplayMode.NORMAL, backgroundColor, packedLightCoords);
+    }
+    
 }

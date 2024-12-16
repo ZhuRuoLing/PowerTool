@@ -27,6 +27,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.teacon.powertool.block.holo_sign.HoloSignBEFlag;
+import org.teacon.powertool.utils.VanillaUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -116,11 +117,13 @@ public class BaseHolographicSignBlockEntity extends BlockEntity implements HoloS
 }}
     
     public int colorInARGB = 0xFFFFFFFF;
-
-    public int bgColorInARGB = 0x40000000;
+    //public int bgColorInARGB = VanillaUtils.getColor(255,255,255,0);
     public float scale = 1.0F;
     public Align align = Align.CENTER;
-    public Shadow shadow = Shadow.DROP;
+    //public Shadow shadow = Shadow.PLATE;
+    public boolean renderBackground = true;
+    public boolean dropShadow = false;
+    
     public LayerArrange arrange = LayerArrange.CENTER;
     
     public boolean lock = false;
@@ -133,34 +136,45 @@ public class BaseHolographicSignBlockEntity extends BlockEntity implements HoloS
     }
 
     public void writeTo(CompoundTag tag, HolderLookup.Provider registries) {
-       
         tag.putInt("color", this.colorInARGB);
-        tag.putInt("backgroundColor", this.bgColorInARGB);
         tag.putFloat("scale", this.scale);
         tag.putInt("align", this.align.ordinal());
-        tag.putInt("shadow", this.shadow.ordinal());
         tag.putInt("arrange", this.arrange.ordinal());
         tag.putBoolean("lock",lock);
         tag.putInt("rotate",rotate);
         tag.putBoolean("bidirectional",bidirectional);
+        tag.putBoolean("renderBackground",renderBackground);
+        tag.putBoolean("dropShadow",dropShadow);
+    }
+    
+    public void readHistory(CompoundTag tag){
+        if (tag.contains("shadow", Tag.TAG_INT)) {
+            var shadow = Shadow.byOrdinal(tag.getInt("shadow"));
+            if(shadow == Shadow.PLATE){
+                this.renderBackground = true;
+                this.dropShadow = false;
+            }
+            if(shadow == Shadow.DROP){
+                this.renderBackground = false;
+                this.dropShadow = true;
+            }
+            if(shadow == Shadow.NONE){
+                this.renderBackground = false;
+                this.dropShadow = false;
+            }
+        }
     }
 
     public void readFrom(CompoundTag tag,HolderLookup.Provider registries) {
-     
+        this.readHistory(tag);
         if (tag.contains("color", Tag.TAG_INT)) {
             this.colorInARGB = tag.getInt("color");
-        }
-        if (tag.contains("backgroundColor", Tag.TAG_INT)) {
-            this.bgColorInARGB = tag.getInt("backgroundColor");
         }
         if (tag.contains("scale", Tag.TAG_FLOAT)) {
             this.scale = tag.getFloat("scale");
         }
         if (tag.contains("align", Tag.TAG_INT)) {
             this.align = Align.byOrdinal(tag.getInt("align"));
-        }
-        if (tag.contains("shadow", Tag.TAG_INT)) {
-            this.shadow = Shadow.byOrdinal(tag.getInt("shadow"));
         }
         if (tag.contains("arrange", Tag.TAG_INT)) {
             this.arrange = LayerArrange.byOrdinal(tag.getInt("arrange"));
@@ -174,6 +188,12 @@ public class BaseHolographicSignBlockEntity extends BlockEntity implements HoloS
         }
         if(tag.contains("bidirectional")){
             this.bidirectional = tag.getBoolean("bidirectional");
+        }
+        if(tag.contains("renderBackground")){
+            this.renderBackground = tag.getBoolean("renderBackground");
+        }
+        if(tag.contains("dropShadow")){
+            this.dropShadow = tag.getBoolean("dropShadow");
         }
     }
     

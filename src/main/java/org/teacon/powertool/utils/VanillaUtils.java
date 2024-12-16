@@ -30,6 +30,7 @@ public class VanillaUtils {
     
     public static final Direction[] DIRECTIONS = Direction.values();
     public static final ResourceLocation MISSING_TEXTURE = ResourceLocation.withDefaultNamespace("missingno");
+    public static final int TRANSPARENT = VanillaUtils.getColor(255,255,255,0);
     
     public static ResourceLocation modRL(String path) {
         return resourceLocationOf(PowerTool.MODID, path);
