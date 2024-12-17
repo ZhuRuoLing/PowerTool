@@ -27,15 +27,15 @@ public class LinkHolographicSignBlockEntityRenderer implements BlockEntityRender
     
     @Override
     public void render(LinkHolographicSignBlockEntity theSign, float partialTick, PoseStack transform, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        renderInternal(theSign,transform,bufferSource,packedLight,theSign.rotate);
+        renderInternal(theSign,transform,bufferSource,packedLight,theSign.yRotate,theSign.xRotate);
         if(theSign.bidirectional){
-            renderInternal(theSign,transform,bufferSource,packedLight,(theSign.rotate+180)%360);
+            renderInternal(theSign,transform,bufferSource,packedLight,(theSign.yRotate +180)%360,(360 - theSign.xRotate) % 360);
         }
     }
     
-    public void renderInternal(LinkHolographicSignBlockEntity theSign, PoseStack transform, MultiBufferSource bufferSource, int packedLight, int rotatedDegree){
+    public void renderInternal(LinkHolographicSignBlockEntity theSign, PoseStack transform, MultiBufferSource bufferSource, int packedLight, int yRotation, int xRotation){
         transform.pushPose();
-        HolographicSignBlockEntityRenderer.beforeRender(theSign,transform,dispatcher,rotatedDegree);
+        HolographicSignBlockEntityRenderer.beforeRender(theSign,transform,dispatcher,yRotation,xRotation);
         Matrix4f matrix4f = transform.last().pose();
         var text = theSign.displayContent.getString();
         text = text.startsWith("🌐") ? text : "🌐"+ text;

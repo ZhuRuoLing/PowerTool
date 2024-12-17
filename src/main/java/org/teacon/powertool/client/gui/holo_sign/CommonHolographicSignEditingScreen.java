@@ -42,9 +42,6 @@ public class CommonHolographicSignEditingScreen extends BaseHolographicSignEditi
     protected void init() {
         super.init();
         var mc = Objects.requireNonNull(this.minecraft, "Minecraft instance is missing while Screen is initializing!");
-        this.addRenderableWidget(new Button.Builder(CommonComponents.GUI_DONE, btn -> this.onDone())
-                .pos(this.width / 2 - 100, this.height / 4 + 120)
-                .size(200, 20).build());
         this.signField = new TextFieldHelper(
                 () -> this.messages[this.line],
                 (str) -> this.messages[this.line] = str,
@@ -76,8 +73,10 @@ public class CommonHolographicSignEditingScreen extends BaseHolographicSignEditi
     @Override
     public boolean charTyped(char pCodePoint, int pModifiers) {
         if (this.colorInput.charTyped(pCodePoint, pModifiers)) return true;
-        if (this.rotationInput.charTyped(pCodePoint, pModifiers)) return true;
-        if(!colorInput.isFocused() && !rotationInput.isFocused() && this.signField.charTyped(pCodePoint)) return true;
+        if (this.yRotationInput.charTyped(pCodePoint, pModifiers)) return true;
+        if (this.xRotationInput.charTyped(pCodePoint, pModifiers)) return true;
+        if (this.zOffsetInput.charTyped(pCodePoint, pModifiers)) return true;
+        if(!colorInput.isFocused() && !yRotationInput.isFocused() && this.signField.charTyped(pCodePoint)) return true;
         return super.charTyped(pCodePoint, pModifiers);
     }
 
@@ -101,7 +100,7 @@ public class CommonHolographicSignEditingScreen extends BaseHolographicSignEditi
             return true;
         } else {
             // Regular typing
-            return (!colorInput.isFocused() && !rotationInput.isFocused() && this.signField.keyPressed(keyCode)) || super.keyPressed(keyCode, scanCode, modifiers);
+            return (!colorInput.isFocused() && !yRotationInput.isFocused() && !this.xRotationInput.isFocused() && !this.zOffsetInput.isFocused() && this.signField.keyPressed(keyCode)) || super.keyPressed(keyCode, scanCode, modifiers);
         }
     }
 
@@ -112,10 +111,9 @@ public class CommonHolographicSignEditingScreen extends BaseHolographicSignEditi
         // I don't know, someone please explain why these transforms are necessary???
         var transform = guiGraphics.pose();
         transform.pushPose();
-        transform.translate(0.0F, 0.0F, 50.0F);
+        transform.translate(0.0F, 45.0F, 50.0F);
         transform.scale(93.75F, -93.75F, 93.75F);
         transform.translate(0.0, -1.625, 0.0);
-
         // Render the text and cursor
         boolean showCursor = this.frame / 6 % 2 == 0;
         transform.translate(0, 1.0 / 3.0, 7.0 / 15.0);
@@ -138,7 +136,7 @@ public class CommonHolographicSignEditingScreen extends BaseHolographicSignEditi
                         case CENTER -> this.width / 2.0 + j1 - this.font.width(text) / 2.0;
                         case RIGHT -> this.width * 0.9F;
                     };
-                    if (cursorPos >= text.length() && (!this.colorInput.isFocused() && !this.rotationInput.isFocused())) {
+                    if (cursorPos >= text.length() && (!this.colorInput.isFocused() && !this.yRotationInput.isFocused())) {
                         guiGraphics.drawString(this.font, "_", cursorX, cursorY, 0xFFFFFF, false);
                     }
                 }

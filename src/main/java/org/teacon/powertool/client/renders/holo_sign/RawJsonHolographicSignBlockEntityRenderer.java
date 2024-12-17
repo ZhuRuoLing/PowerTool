@@ -1,7 +1,6 @@
 package org.teacon.powertool.client.renders.holo_sign;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
@@ -10,11 +9,8 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.world.phys.BlockHitResult;
-import net.neoforged.neoforge.client.ClientCommandHandler;
-import net.neoforged.neoforge.client.ClientCommandSourceStack;
 import org.teacon.powertool.block.entity.RawJsonHolographicSignBlockEntity;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -34,9 +30,9 @@ public class RawJsonHolographicSignBlockEntityRenderer implements BlockEntityRen
     @Override
     public void render(RawJsonHolographicSignBlockEntity theSign, float partialTick, PoseStack transform, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         var renderHoverText = Minecraft.getInstance().hitResult instanceof BlockHitResult blockHitResult && blockHitResult.getBlockPos().equals(theSign.getBlockPos());
-        renderInternal(theSign, transform, bufferSource, packedLight, theSign.rotate,renderHoverText);
+        renderInternal(theSign, transform, bufferSource, packedLight, theSign.yRotate, theSign.xRotate, renderHoverText);
         if (theSign.bidirectional) {
-            renderInternal(theSign, transform, bufferSource, packedLight, (theSign.rotate + 180) % 360,renderHoverText);
+            renderInternal(theSign, transform, bufferSource, packedLight, (theSign.yRotate + 180) % 360, (360 - theSign.xRotate) % 360 , renderHoverText);
         }
     }
     
@@ -89,9 +85,9 @@ public class RawJsonHolographicSignBlockEntityRenderer implements BlockEntityRen
         return yr-y;
     }
     
-    public void renderInternal(RawJsonHolographicSignBlockEntity theSign, PoseStack transform, MultiBufferSource bufferSource, int packedLight, int rotatedDegree,boolean renderHoverText) {
+    public void renderInternal(RawJsonHolographicSignBlockEntity theSign, PoseStack transform, MultiBufferSource bufferSource, int packedLight, int yRotation,int xRotation,boolean renderHoverText) {
         transform.pushPose();
-        HolographicSignBlockEntityRenderer.beforeRender(theSign, transform, dispatcher, rotatedDegree);
+        HolographicSignBlockEntityRenderer.beforeRender(theSign, transform, dispatcher, yRotation,xRotation);
         int yOffset = (int) -(0.5 * this.font.lineHeight);
         renderComponentList(theSign.forRender,0,yOffset,transform,bufferSource,theSign.dropShadow,packedLight,theSign.colorInARGB,HolographicSignBlockEntityRenderer.getBackgroundColor(theSign),renderHoverText);
         transform.popPose();

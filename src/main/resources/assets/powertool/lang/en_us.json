@@ -137,6 +137,7 @@
   "powertool.gui.holographic_sign.arrange_front": "Bring to front",
   "powertool.gui.holographic_sign.arrange_center": "At the same layer",
   "powertool.gui.holographic_sign.arrange_back": "Send to back",
+  "powertool.gui.holographic_sign.arrange_custom": "Customize",
   "powertool.gui.holographic_sign.scale": "Scale: %s",
   "powertool.gui.holographic_sign.narration.text_align": "Text Alignment: %s",
   "powertool.gui.holographic_sign.narration.shadow": "Shadow: %s",
@@ -208,5 +209,8 @@
   "powertool.gui.holo_sign.shadow_on": "Drop Shadow: On",
   "powertool.gui.holo_sign.shadow_off": "Drop Shadow: Off",
   "powertool.gui.holo_sign.background_on": "Background: On",
-  "powertool.gui.holo_sign.background_off": "Background: Off"
+  "powertool.gui.holo_sign.background_off": "Background: Off",
+  "powertool.gui.holo_sign.x_rotation": "X Axis Rotation:",
+  "powertool.gui.holo_sign.y_rotation": "Y Axis Rotation:",
+  "powertool.gui.holo_sign.z_offset": "Z Axis Offset:"
 }

@@ -13,8 +13,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.util.FormattedCharSequence;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.teacon.powertool.block.entity.BaseHolographicSignBlockEntity;
@@ -36,15 +34,16 @@ public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<C
 
     @Override
     public void render(CommonHolographicSignBlockEntity theSign, float partialTick, PoseStack transform, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        renderInternal(theSign,transform,bufferSource,packedLight,theSign.rotate);
+        renderInternal(theSign,transform,bufferSource,packedLight,theSign.yRotate,theSign.xRotate);
         if(theSign.bidirectional){
-            renderInternal(theSign,transform,bufferSource,packedLight,(theSign.rotate+180)%360);
+            renderInternal(theSign,transform,bufferSource,packedLight,(theSign.yRotate +180)%360,(360 - theSign.xRotate) % 360);
         }
     }
     
-    public void renderInternal(CommonHolographicSignBlockEntity theSign, PoseStack transform, MultiBufferSource bufferSource, int packedLight, int rotatedDegree){
+    public void renderInternal(CommonHolographicSignBlockEntity theSign, PoseStack transform, MultiBufferSource bufferSource, int packedLight, int yRotation,int xRotation){
         transform.pushPose();
-        beforeRender(theSign,transform,dispatcher,rotatedDegree);
+        beforeRender(theSign,transform,dispatcher,yRotation,xRotation);
+        //VanillaUtils.ClientHandler.renderAxis(bufferSource,transform);
         Matrix4f matrix4f = transform.last().pose();
         int bgColor = getBackgroundColor(theSign);
         var dropShadow = theSign.dropShadow;
@@ -72,22 +71,19 @@ public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<C
         transform.popPose();
     }
     
-    public static void beforeRender(BaseHolographicSignBlockEntity theSign, PoseStack transform, BlockEntityRenderDispatcher dispatcher,int rotatedDegree){
+    public static void beforeRender(BaseHolographicSignBlockEntity theSign, PoseStack transform, BlockEntityRenderDispatcher dispatcher,int yRotation,int xRotation){
         transform.translate(0.5, 0.5, 0.5);
         if(theSign.lock){
-            transform.mulPose(Axis.YP.rotationDegrees(rotatedDegree));
+            transform.mulPose(Axis.YP.rotationDegrees(yRotation));
+            transform.mulPose(Axis.XP.rotationDegrees(xRotation));
         }
         else {
             transform.mulPose(dispatcher.camera.rotation());
             transform.mulPose(Axis.YP.rotationDegrees(180));
         }
         transform.scale(-0.025F, -0.025F, 0.025F);
-        // FIXME Scaling does not work as expected
         transform.scale(theSign.scale, theSign.scale, 1);
-        switch (theSign.arrange) {
-            case FRONT -> transform.translate(0.0, 0.0, -0.45D*40);
-            case BACK -> transform.translate(0.0, 0.0, 0.45D*40);
-        }
+        transform.translate(0.0, 0.0, theSign.zOffset*40);
     }
     
     public static int getBackgroundColor(BaseHolographicSignBlockEntity theSign) {

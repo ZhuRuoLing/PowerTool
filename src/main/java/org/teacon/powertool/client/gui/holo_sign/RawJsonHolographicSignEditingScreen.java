@@ -32,12 +32,12 @@ public class RawJsonHolographicSignEditingScreen extends BaseHolographicSignEdit
     @Override
     protected void init() {
         super.init();
-        var box_l = (int)Math.max(100,width*0.7);
+        
         var startY = (int)(height*0.05);
         this.append = Button.builder(Component.literal("+"),(b) -> {
             if(this.jsonComponentList != null) jsonComponentList.appendEntry();
-        }).size(20,20).pos(width/2+box_l/2-25,startY+52).build();
-        this.jsonComponentList = new JsonComponentList(this,box_l,startY+50);
+        }).size(20,20).pos(width-45,startY+52).build();
+        this.jsonComponentList = new JsonComponentList(this, (int) (width - 220 - width*0.05),startY+50);
         this.addRenderableWidget(jsonComponentList);
         this.addRenderableWidget(append);
     }

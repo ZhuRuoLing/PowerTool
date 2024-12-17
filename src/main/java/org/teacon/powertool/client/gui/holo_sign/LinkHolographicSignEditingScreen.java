@@ -23,8 +23,9 @@ public class LinkHolographicSignEditingScreen extends BaseHolographicSignEditing
     @Override
     protected void init() {
         super.init();
+        int innerPadding = width / 100;
         var mc = Objects.requireNonNull(this.minecraft, "Minecraft instance is missing while Screen is initializing!");
-        this.displayInput = new ObjectInputBox<>(mc.font,width/2-150,height/2-60,300,20,Component.literal("The Text: "),ObjectInputBox.PASS_VALIDATOR,ObjectInputBox.PASS_RESPONDER);
+        this.displayInput = new ObjectInputBox<>(mc.font,width/2-150,100 + innerPadding*5,300,20,Component.literal("The Text: "),ObjectInputBox.PASS_VALIDATOR,ObjectInputBox.PASS_RESPONDER);
         this.displayInput.setMaxLength(114514);
         this.displayInput.setValue(display);
         this.displayInput.setResponder( string -> display = string);
@@ -32,7 +33,7 @@ public class LinkHolographicSignEditingScreen extends BaseHolographicSignEditing
         this.displayInput.setCanLoseFocus(true);
         this.displayInput.setRenderState(false);
         
-        this.urlInput = new ObjectInputBox<>(mc.font,width/2-150,height/2-35,300,20,Component.literal("The URL: "),ObjectInputBox.PASS_VALIDATOR,ObjectInputBox.PASS_RESPONDER);
+        this.urlInput = new ObjectInputBox<>(mc.font,width/2-150,120 + innerPadding*6,300,20,Component.literal("The URL: "),ObjectInputBox.PASS_VALIDATOR,ObjectInputBox.PASS_RESPONDER);
         this.urlInput.setMaxLength(114514);
         this.urlInput.setValue(url);
         this.urlInput.setResponder( string -> url = string);

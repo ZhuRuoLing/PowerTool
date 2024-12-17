@@ -19,7 +19,7 @@ public class JsonComponentList extends EntryListWidget<RawJsonHolographicSignEdi
     
     public JsonComponentList(RawJsonHolographicSignEditingScreen screen,int width, int y) {
         super(screen, width, (int) (screen.height*0.6), y, 30);
-        this.setX((int) (screen.width*0.15));
+        this.setX((int) (200+screen.width*0.05));
     }
     
     @Override
@@ -46,7 +46,7 @@ public class JsonComponentList extends EntryListWidget<RawJsonHolographicSignEdi
         
         public Entry(int id,String content) {
             this.id = id;
-            var box_l = (int)Math.max(100,JsonComponentList.this.screen.width*0.7);
+            var box_l = Math.max(100,JsonComponentList.this.width);
             this.content = new ObjectInputBox<>(Minecraft.getInstance().font,-1,-1,box_l-80,20,Component.literal("component"),ObjectInputBox.COMPONENT_VALIDATOR,ObjectInputBox.COMPONENT_RESPONDER);
             this.content.setMaxLength(114514);
             this.content.setValue(content);

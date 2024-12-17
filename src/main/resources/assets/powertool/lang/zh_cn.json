@@ -82,6 +82,7 @@
   "powertool.gui.holographic_sign.arrange_front": "前移",
   "powertool.gui.holographic_sign.arrange_center": "无偏移",
   "powertool.gui.holographic_sign.arrange_back": "后移",
+  "powertool.gui.holographic_sign.arrange_custom": "自定义",
   "powertool.gui.holographic_sign.scale": "缩放比例：%s",
   "powertool.gui.holographic_sign.narration.text_align": "文字对齐：%s",
   "powertool.gui.holographic_sign.narration.shadow": "阴影：%s",
@@ -210,5 +211,8 @@
   "powertool.gui.holo_sign.shadow_on": "文字阴影: On",
   "powertool.gui.holo_sign.shadow_off": "文字阴影: Off",
   "powertool.gui.holo_sign.background_on": "文字背景: On",
-  "powertool.gui.holo_sign.background_off": "文字背景: Off"
+  "powertool.gui.holo_sign.background_off": "文字背景: Off",
+  "powertool.gui.holo_sign.x_rotation": "X轴旋转:",
+  "powertool.gui.holo_sign.y_rotation": "Y轴旋转:",
+  "powertool.gui.holo_sign.z_offset": "Z轴偏移:"
 }

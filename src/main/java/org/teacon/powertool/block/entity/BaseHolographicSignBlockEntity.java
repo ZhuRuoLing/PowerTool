@@ -27,7 +27,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.teacon.powertool.block.holo_sign.HoloSignBEFlag;
-import org.teacon.powertool.utils.VanillaUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -92,22 +91,34 @@ public class BaseHolographicSignBlockEntity extends BlockEntity implements HoloS
 
     /** Represents the Z-offset of the text: above things, same layer or below things. */
     public enum LayerArrange implements StringRepresentable  {
-        FRONT(Component.translatable("powertool.gui.holographic_sign.arrange_front")),
-        CENTER(Component.translatable("powertool.gui.holographic_sign.arrange_center")),
-        BACK(Component.translatable("powertool.gui.holographic_sign.arrange_back"));
+        FRONT(Component.translatable("powertool.gui.holographic_sign.arrange_front"),-0.45f),
+        CENTER(Component.translatable("powertool.gui.holographic_sign.arrange_center"),0f),
+        BACK(Component.translatable("powertool.gui.holographic_sign.arrange_back"),0.45f),
+        CUSTOM(Component.translatable("powertool.gui.holographic_sign.arrange_custom"),Float.NaN);
         
         public static final Codec<LayerArrange> CODEC = StringRepresentable.fromEnum(LayerArrange::values);
         public static final StreamCodec<ByteBuf, LayerArrange> STREAM_CODEC = ByteBufCodecs.fromCodec(CODEC);
         
         private static final LayerArrange[] VALUES = LayerArrange.values();
         public final Component displayName;
+        public final float offsetValue;
 
-        LayerArrange(Component displayName) {
+        LayerArrange(Component displayName, float offsetValue) {
             this.displayName = displayName;
+            this.offsetValue = offsetValue;
         }
 
         public static LayerArrange byOrdinal(int ordinal) {
             return ordinal >= 0 && ordinal <= VALUES.length ? VALUES[ordinal] : CENTER;
+        }
+        
+        public static LayerArrange formOffset(float offset) {
+            for(var arr : LayerArrange.VALUES) {
+                if(arr.offsetValue == offset) {
+                    return arr;
+                }
+            }
+            return CUSTOM;
         }
         
         @Override
@@ -123,11 +134,11 @@ public class BaseHolographicSignBlockEntity extends BlockEntity implements HoloS
     //public Shadow shadow = Shadow.PLATE;
     public boolean renderBackground = true;
     public boolean dropShadow = false;
-    
-    public LayerArrange arrange = LayerArrange.CENTER;
-    
+    //public LayerArrange arrange = LayerArrange.CENTER;
     public boolean lock = false;
-    public int rotate = 0;
+    public int yRotate = 0;
+    public int xRotate = 0;
+    public float zOffset = 0F;
     
     public boolean bidirectional = false;
 
@@ -139,12 +150,13 @@ public class BaseHolographicSignBlockEntity extends BlockEntity implements HoloS
         tag.putInt("color", this.colorInARGB);
         tag.putFloat("scale", this.scale);
         tag.putInt("align", this.align.ordinal());
-        tag.putInt("arrange", this.arrange.ordinal());
         tag.putBoolean("lock",lock);
-        tag.putInt("rotate",rotate);
+        tag.putInt("rotate", yRotate);
         tag.putBoolean("bidirectional",bidirectional);
         tag.putBoolean("renderBackground",renderBackground);
         tag.putBoolean("dropShadow",dropShadow);
+        tag.putInt("xRotate", xRotate);
+        tag.putFloat("zOffset", zOffset);
     }
     
     public void readHistory(CompoundTag tag){
@@ -163,6 +175,12 @@ public class BaseHolographicSignBlockEntity extends BlockEntity implements HoloS
                 this.dropShadow = false;
             }
         }
+        if (tag.contains("arrange", Tag.TAG_INT)) {
+            var arrange = LayerArrange.byOrdinal(tag.getInt("arrange"));
+            if(arrange == LayerArrange.FRONT) this.zOffset = -0.45f;
+            else if(arrange == LayerArrange.CENTER) this.zOffset = 0f;
+            else if(arrange == LayerArrange.BACK) this.zOffset = 0.45f;
+        }
     }
 
     public void readFrom(CompoundTag tag,HolderLookup.Provider registries) {
@@ -176,15 +194,12 @@ public class BaseHolographicSignBlockEntity extends BlockEntity implements HoloS
         if (tag.contains("align", Tag.TAG_INT)) {
             this.align = Align.byOrdinal(tag.getInt("align"));
         }
-        if (tag.contains("arrange", Tag.TAG_INT)) {
-            this.arrange = LayerArrange.byOrdinal(tag.getInt("arrange"));
-        }
         //Tag.TAG_BOOLEAN does not exist. I don’t know what to fill in the latter parameter.
         if(tag.contains("lock")){
             this.lock = tag.getBoolean("lock");
         }
         if(tag.contains("rotate",Tag.TAG_INT)){
-            this.rotate = tag.getInt("rotate");
+            this.yRotate = tag.getInt("rotate");
         }
         if(tag.contains("bidirectional")){
             this.bidirectional = tag.getBoolean("bidirectional");
@@ -194,6 +209,12 @@ public class BaseHolographicSignBlockEntity extends BlockEntity implements HoloS
         }
         if(tag.contains("dropShadow")){
             this.dropShadow = tag.getBoolean("dropShadow");
+        }
+        if(tag.contains("xRotate",Tag.TAG_INT)){
+            this.xRotate = tag.getInt("xRotate");
+        }
+        if(tag.contains("zOffset",Tag.TAG_FLOAT)){
+            this.zOffset = tag.getFloat("zOffset");
         }
     }
     
