@@ -60,6 +60,7 @@ import java.util.List;
 public class HolographicSignBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
 
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+    public static final BooleanProperty LIT = BlockStateProperties.LIT;
 
     public static final MapCodec<HolographicSignBlock> CODEC = RecordCodecBuilder.mapCodec(
             instance -> instance.group(propertiesCodec(), SignType.CODEC.fieldOf("type").forGetter(block -> block.type))
@@ -71,7 +72,7 @@ public class HolographicSignBlock extends BaseEntityBlock implements SimpleWater
     public HolographicSignBlock(Properties prop, SignType type) {
         super(prop);
         this.type = type;
-        this.registerDefaultState(this.stateDefinition.any().setValue(WATERLOGGED, Boolean.FALSE));
+        this.registerDefaultState(this.stateDefinition.any().setValue(WATERLOGGED, Boolean.FALSE).setValue(LIT, Boolean.TRUE));
     }
     
     @Override
@@ -81,7 +82,7 @@ public class HolographicSignBlock extends BaseEntityBlock implements SimpleWater
     
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(WATERLOGGED);
+        builder.add(WATERLOGGED,LIT);
     }
     
     @Override
@@ -101,6 +102,16 @@ public class HolographicSignBlock extends BaseEntityBlock implements SimpleWater
             return VanillaUtils.itemInteractionFrom(use(level,pos,player));
         }
         return ItemInteractionResult.SUCCESS;
+    }
+    
+    @Override
+    public boolean hasDynamicLightEmission(BlockState state) {
+        return true;
+    }
+    
+    @Override
+    public int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
+        return state.getValue(LIT) ? 15 : 0;
     }
     
     @Override

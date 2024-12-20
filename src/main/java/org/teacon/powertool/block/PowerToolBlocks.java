@@ -163,15 +163,15 @@ public class PowerToolBlocks {
         COSMETIC_SOUL_CAMPFIRE = BLOCKS.register("cosmetic_soul_campfire", () -> new CosmeticCampfireBlock(false, BlockBehaviour.Properties.ofFullCopy(Blocks.SOUL_CAMPFIRE)));
         HOLOGRAPHIC_SIGN = BLOCKS.register("holographic_sign",
                 () -> new HolographicSignBlock(
-                        BlockBehaviour.Properties.ofFullCopy(Blocks.LIGHT).lightLevel(state -> 15).noCollission().noLootTable(),
+                        BlockBehaviour.Properties.of().noCollission().noLootTable(),
                         SignType.COMMON));
         LINK_HOLOGRAPHIC_SIGN = BLOCKS.register("link_holographic_sign",
                 () -> new HolographicSignBlock(
-                        BlockBehaviour.Properties.ofFullCopy(Blocks.LIGHT).lightLevel(state -> 15).noCollission().noLootTable(),
+                        BlockBehaviour.Properties.of().noCollission().noLootTable(),
                         SignType.URL));
         RAW_JSON_HOLOGRAPHIC_SIGN = BLOCKS.register("raw_json_holographic_sign",
                 () -> new HolographicSignBlock(
-                        BlockBehaviour.Properties.ofFullCopy(Blocks.LIGHT).lightLevel(state -> 15).noCollission().noLootTable(),
+                        BlockBehaviour.Properties.of().noCollission().noLootTable(),
                         SignType.RAW_JSON));
         WHITE_TRASH_CAN = BLOCKS.register("white_trash_can", () -> new TrashCanWithContainer(BlockBehaviour.Properties.of().noOcclusion()));
         WHITE_TRASH_CAN_CAP = BLOCKS.register("white_trash_can_cap",() -> new TrapDoorBlock(BlockSetType.COPPER, BlockBehaviour.Properties.of().noOcclusion()));

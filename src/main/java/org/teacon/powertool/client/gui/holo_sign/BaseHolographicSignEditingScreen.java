@@ -20,6 +20,7 @@ import org.teacon.powertool.block.entity.BaseHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.CommonHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.LinkHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.RawJsonHolographicSignBlockEntity;
+import org.teacon.powertool.block.holo_sign.HolographicSignBlock;
 import org.teacon.powertool.block.holo_sign.SignType;
 import org.teacon.powertool.client.gui.widget.ObjectInputBox;
 import org.teacon.powertool.network.server.UpdateBlockEntityData;
@@ -41,6 +42,7 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
     protected boolean bidirectional;
     protected boolean renderBackground;
     protected boolean dropShadow;
+    protected boolean lit;
 
     protected Button changeAlignment;
     protected ObjectInputBox<Integer> colorInput;
@@ -52,6 +54,7 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
     protected Button bidButton;
     protected Button shadowToggle;
     protected Button backgroundToggle;
+    protected Button litToggle;
 
     public static Screen creatHoloSignScreen(BlockEntity sign, SignType type) {
         return switch (type) {
@@ -72,6 +75,7 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
         this.sign = theSign;
         this.renderBackground = theSign.renderBackground;
         this.dropShadow = theSign.dropShadow;
+        this.lit = theSign.lit;
     }
     
     public int getDoneButtonY(){
@@ -244,6 +248,13 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
                 .size(80,20)
                 .build();
         
+        this.litToggle = new Button.Builder(Component.translatable("powertool.gui.holo_sign.lit_"+(lit?"on":"off")),(btn) -> {
+            this.lit = !this.lit;
+            this.litToggle.setMessage(Component.translatable("powertool.gui.holo_sign.lit_"+(lit?"on":"off")));
+        }).pos(280 + innerPadding * 3, 20 + innerPadding)
+                .size(80,20)
+                .build();
+        
         this.addRenderableWidget(scaleUp);
         this.addRenderableWidget(scaleDown);
         this.addRenderableWidget(this.changeAlignment);
@@ -265,6 +276,7 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
         this.addRenderableWidget(rotateX45p);
         this.addRenderableWidget(rotateX90p);
         this.addRenderableWidget(this.bidButton);
+        this.addRenderableWidget(this.litToggle);
     }
     
     private void rotateY(int degree){
@@ -298,6 +310,7 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
         this.sign.bidirectional = this.bidirectional;
         this.sign.renderBackground = this.renderBackground;
         this.sign.dropShadow = this.dropShadow;
+        this.sign.lit = this.lit;
     }
     
     protected Component toggleMessage(String key,boolean state){

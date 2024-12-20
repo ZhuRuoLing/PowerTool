@@ -195,7 +195,7 @@
   "powertool.gui.bezier_curve.uScale": "TextureAxisScaling",
   "powertool.gui.bezier_curve.vScale": "TextureRadialScaling",
   "powertool.gui.bezier_curve.texture": "Texture",
-  "powertool.gui.bezier_curve.color": "Color(ARGB)",
+  "powertool.gui.bezier_curve.color": "Color(RGBA)",
   "powertool.gui.bezier_curve.control_points": "Control Points: ",
   "powertool.gui.bezier_curve.control_points_warn": "For performance reasons, it is recommended that the number of control points be less than four.",
   "powertool.gui.bezier_curve.use_clamp_mode": "Use Clamp Mode",
@@ -212,5 +212,7 @@
   "powertool.gui.holo_sign.background_off": "Background: Off",
   "powertool.gui.holo_sign.x_rotation": "X Axis Rotation:",
   "powertool.gui.holo_sign.y_rotation": "Y Axis Rotation:",
-  "powertool.gui.holo_sign.z_offset": "Z Axis Offset:"
+  "powertool.gui.holo_sign.z_offset": "Z Axis Offset:",
+  "powertool.gui.holo_sign.lit_on": "Light Emission: On",
+  "powertool.gui.holo_sign.lit_off": "Light Emission: Off"
 }

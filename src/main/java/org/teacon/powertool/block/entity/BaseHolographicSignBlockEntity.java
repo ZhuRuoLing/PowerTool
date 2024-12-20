@@ -21,12 +21,14 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.teacon.powertool.block.holo_sign.HoloSignBEFlag;
+import org.teacon.powertool.block.holo_sign.HolographicSignBlock;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -141,6 +143,7 @@ public class BaseHolographicSignBlockEntity extends BlockEntity implements HoloS
     public float zOffset = 0F;
     
     public boolean bidirectional = false;
+    public boolean lit = true;
 
     public BaseHolographicSignBlockEntity(BlockEntityType<?> type, BlockPos pPos, BlockState pBlockState) {
         super(type, pPos, pBlockState);
@@ -157,6 +160,7 @@ public class BaseHolographicSignBlockEntity extends BlockEntity implements HoloS
         tag.putBoolean("dropShadow",dropShadow);
         tag.putInt("xRotate", xRotate);
         tag.putFloat("zOffset", zOffset);
+        tag.putBoolean("lit", lit);
     }
     
     public void readHistory(CompoundTag tag){
@@ -215,6 +219,12 @@ public class BaseHolographicSignBlockEntity extends BlockEntity implements HoloS
         }
         if(tag.contains("zOffset",Tag.TAG_FLOAT)){
             this.zOffset = tag.getFloat("zOffset");
+        }
+        if(tag.contains("lit")){
+            this.lit = tag.getBoolean("lit");
+            if(this.getLevel() != null){
+                this.getLevel().setBlock(getBlockPos(),getBlockState().setValue(HolographicSignBlock.LIT,lit), Block.UPDATE_ALL);
+            }
         }
     }
     

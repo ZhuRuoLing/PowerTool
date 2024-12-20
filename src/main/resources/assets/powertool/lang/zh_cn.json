@@ -197,7 +197,7 @@
   "powertool.gui.bezier_curve.uScale": "材质轴向缩放",
   "powertool.gui.bezier_curve.vScale": "材质径向缩放",
   "powertool.gui.bezier_curve.texture": "材质",
-  "powertool.gui.bezier_curve.color": "颜色(ARGB)",
+  "powertool.gui.bezier_curve.color": "颜色(RGBA)",
   "powertool.gui.bezier_curve.control_points": "控制点: ",
   "powertool.gui.bezier_curve.control_points_warn": "出于性能考虑,建议控制点个数在四个以下",
   "powertool.gui.bezier_curve.use_clamp_mode": "使用限制渲染模式",
@@ -208,11 +208,13 @@
   "powertool.gui.static_mode_enabled": "已在%s上启用静态模式",
   "powertool.gui.static_mode_disabled": "已在%s上禁用静态模式",
   "tooltip.powertool.distant_horizon_cheating_block": "正常情况下此方块透明. 如果安装了\"遥远的地平线\"模组,则此方块会在LOD中显示为对应颜色.",
-  "powertool.gui.holo_sign.shadow_on": "文字阴影: On",
-  "powertool.gui.holo_sign.shadow_off": "文字阴影: Off",
-  "powertool.gui.holo_sign.background_on": "文字背景: On",
-  "powertool.gui.holo_sign.background_off": "文字背景: Off",
+  "powertool.gui.holo_sign.shadow_on": "文字阴影: 开启",
+  "powertool.gui.holo_sign.shadow_off": "文字阴影: 关闭",
+  "powertool.gui.holo_sign.background_on": "文字背景: 开启",
+  "powertool.gui.holo_sign.background_off": "文字背景: 关闭",
   "powertool.gui.holo_sign.x_rotation": "X轴旋转:",
   "powertool.gui.holo_sign.y_rotation": "Y轴旋转:",
-  "powertool.gui.holo_sign.z_offset": "Z轴偏移:"
+  "powertool.gui.holo_sign.z_offset": "Z轴偏移:",
+  "powertool.gui.holo_sign.lit_on": "发光: 开启",
+  "powertool.gui.holo_sign.lit_off": "发光: 关闭"
 }

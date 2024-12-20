@@ -8,11 +8,13 @@ package org.teacon.powertool.client.renders.holo_sign;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.font.glyphs.BakedGlyph;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.teacon.powertool.block.entity.BaseHolographicSignBlockEntity;
@@ -96,33 +98,40 @@ public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<C
     public static void renderText(Font font, Component component, float x, float y, int color, boolean dropShadow,
                                   Matrix4f matrix, MultiBufferSource buffer,
                                   int backgroundColor, int packedLightCoords){
-        color = Font.adjustColor(color);
         var text = component.getVisualOrderText();
         Matrix4f matrix4f = new Matrix4f(matrix);
+        renderBackground(font,backgroundColor,packedLightCoords,x,y,font.width(component),dropShadow,matrix4f,buffer);
         if (dropShadow) {
-            font.renderText(text, x, y, color, true, matrix, buffer, Font.DisplayMode.NORMAL, backgroundColor, packedLightCoords);
+            font.drawInBatch(text, x, y, color, true, matrix, buffer, Font.DisplayMode.NORMAL,VanillaUtils.TRANSPARENT , packedLightCoords);
             matrix4f.translate(SHADOW_OFFSET);
-            backgroundColor = VanillaUtils.TRANSPARENT;
         }
-        
-        font.renderText(text, x, y, color, false, matrix4f, buffer, Font.DisplayMode.NORMAL, backgroundColor, packedLightCoords);
+        font.drawInBatch(text, x, y, color, false, matrix4f, buffer, Font.DisplayMode.NORMAL, VanillaUtils.TRANSPARENT, packedLightCoords);
     }
     
     @SuppressWarnings("DuplicatedCode")
     public static void renderText(Font font,String text,float x, float y, int color, boolean dropShadow,
                                   Matrix4f matrix, MultiBufferSource buffer,
                                   int backgroundColor, int packedLightCoords){
-        if (font.isBidirectional()) {
-            text = font.bidirectionalShaping(text);
-        }
-        color = Font.adjustColor(color);
         Matrix4f matrix4f = new Matrix4f(matrix);
+        renderBackground(font,backgroundColor,packedLightCoords,x,y,font.width(text),dropShadow,matrix4f,buffer);
         if (dropShadow) {
-            font.renderText(text, x, y, color, true, matrix, buffer, Font.DisplayMode.NORMAL, backgroundColor, packedLightCoords);
+            font.drawInBatch(text, x, y, color, true, matrix, buffer, Font.DisplayMode.NORMAL, VanillaUtils.TRANSPARENT, packedLightCoords);
             matrix4f.translate(SHADOW_OFFSET);
-            backgroundColor = VanillaUtils.TRANSPARENT;
         }
-        font.renderText(text, x, y, color, false, matrix4f, buffer, Font.DisplayMode.NORMAL, backgroundColor, packedLightCoords);
+        font.drawInBatch(text, x, y, color, false, matrix4f, buffer, Font.DisplayMode.NORMAL, VanillaUtils.TRANSPARENT, packedLightCoords);
+    }
+    
+    public static void renderBackground(Font font,int backgroundColor, int packedLightCoords,float x,float y,int length,boolean append,Matrix4f matrix, MultiBufferSource buffer){
+        if (backgroundColor != 0) {
+            float f = (float)(backgroundColor >> 24 & 0xFF) / 255.0F;
+            float f1 = (float)(backgroundColor >> 16 & 0xFF) / 255.0F;
+            float f2 = (float)(backgroundColor >> 8 & 0xFF) / 255.0F;
+            float f3 = (float)(backgroundColor & 0xFF) / 255.0F;
+            var bgEffect = new BakedGlyph.Effect(x - 1.0F, y + 9.0F, x + length + (append ? 1 : 0), y - 1.0F, 0.02F, f1, f2, f3, f);
+            var bakedGlyph = font.getFontSet(Style.DEFAULT_FONT).whiteGlyph();
+            var vertexConsumer = buffer.getBuffer(bakedGlyph.renderType(Font.DisplayMode.NORMAL));
+            bakedGlyph.renderEffect(bgEffect,matrix,vertexConsumer,packedLightCoords);
+        }
     }
     
 }
