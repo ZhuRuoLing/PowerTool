@@ -22,6 +22,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class TrashCanWithContainerBlockEntity extends BaseContainerBlockEntity {
     
     private NonNullList<ItemStack> items = NonNullList.withSize(1, ItemStack.EMPTY);
+    private boolean init = false;
     
     public TrashCanWithContainerBlockEntity(BlockPos pos, BlockState blockState) {
         super(PowerToolBlocks.TRASH_CAN_WITH_CONTAINER_BLOCK_ENTITY.get(), pos, blockState);
@@ -61,6 +62,10 @@ public class TrashCanWithContainerBlockEntity extends BaseContainerBlockEntity {
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         ContainerHelper.loadAllItems(tag, this.items, registries);
+        if(!this.init){
+            items.clear();
+            init = true;
+        }
     }
     
     @Override

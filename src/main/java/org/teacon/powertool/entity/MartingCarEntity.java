@@ -324,7 +324,7 @@ public class MartingCarEntity extends LivingEntity {
     }
 
     public static AttributeSupplier createAttributes() {
-        return AttributeSupplier.builder()
+        return LivingEntity.createLivingAttributes()
                 .add(Attributes.MAX_HEALTH, 1)
                 .add(Attributes.STEP_HEIGHT, 1)
                 .add(Attributes.MOVEMENT_SPEED, 0.7)

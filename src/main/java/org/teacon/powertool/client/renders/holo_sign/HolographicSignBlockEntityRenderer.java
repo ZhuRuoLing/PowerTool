@@ -102,7 +102,7 @@ public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<C
         Matrix4f matrix4f = new Matrix4f(matrix);
         renderBackground(font,backgroundColor,packedLightCoords,x,y,font.width(component),dropShadow,matrix4f,buffer);
         if (dropShadow) {
-            font.drawInBatch(text, x, y, color, true, matrix, buffer, Font.DisplayMode.NORMAL,VanillaUtils.TRANSPARENT , packedLightCoords);
+            font.drawInBatch(text, x, y, color, true, matrix, buffer, Font.DisplayMode.SEE_THROUGH,VanillaUtils.TRANSPARENT , packedLightCoords);
             matrix4f.translate(SHADOW_OFFSET);
         }
         font.drawInBatch(text, x, y, color, false, matrix4f, buffer, Font.DisplayMode.NORMAL, VanillaUtils.TRANSPARENT, packedLightCoords);
@@ -122,7 +122,7 @@ public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<C
     }
     
     public static void renderBackground(Font font,int backgroundColor, int packedLightCoords,float x,float y,int length,boolean append,Matrix4f matrix, MultiBufferSource buffer){
-        if (backgroundColor != 0) {
+        if (backgroundColor != 0 && backgroundColor != VanillaUtils.TRANSPARENT) {
             float f = (float)(backgroundColor >> 24 & 0xFF) / 255.0F;
             float f1 = (float)(backgroundColor >> 16 & 0xFF) / 255.0F;
             float f2 = (float)(backgroundColor >> 8 & 0xFF) / 255.0F;
