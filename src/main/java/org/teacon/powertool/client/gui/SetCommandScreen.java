@@ -47,7 +47,7 @@ public class SetCommandScreen extends Screen {
         var mc = Minecraft.getInstance();
         var font = mc.font;
         var box_l = (int)Math.max(100,width*0.4);
-        var startY = (int)(height*0.15);
+        var startY = (int)(height*0.05);
         delayedCommands.clear();
         if(itemStack.has(PowerToolDataComponents.DELAYED_COMMANDS)) delayedCommands.addAll(Objects.requireNonNull(itemStack.get(PowerToolDataComponents.DELAYED_COMMANDS)));
         this.name = new ObjectInputBox<>(font,width/2-box_l/2,startY,box_l,20,Component.literal("name"),ObjectInputBox.PASS_VALIDATOR,ObjectInputBox.PASS_RESPONDER);
@@ -83,7 +83,7 @@ public class SetCommandScreen extends Screen {
     }
     
     public void refreshContentPos(){
-        var startY = (int)(height*0.15);
+        var startY = (int)(height*0.05);
         this.commandList.resize();
         var listEndY = startY+50+commandList.getHeight_();
         this.consume.setPosition(consume.getX(), listEndY+5);

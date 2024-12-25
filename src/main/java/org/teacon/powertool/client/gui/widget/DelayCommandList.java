@@ -31,7 +31,7 @@ public class DelayCommandList extends EntryListWidget<SetCommandScreen,DelayComm
     }
     
     public int getHeight_(){
-        return (int) Math.min(Math.max(100,24+45*id),screen.height*0.6);
+        return (int) Math.min(Math.max(100,24+45*id),screen.height*0.95-100);
     }
     
     @Override
