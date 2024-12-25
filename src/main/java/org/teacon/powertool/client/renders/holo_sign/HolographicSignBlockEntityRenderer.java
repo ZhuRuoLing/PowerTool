@@ -6,15 +6,15 @@
 package org.teacon.powertool.client.renders.holo_sign;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.font.glyphs.BakedGlyph;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.teacon.powertool.block.entity.BaseHolographicSignBlockEntity;
@@ -25,7 +25,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<CommonHolographicSignBlockEntity> {
-    private static final Vector3f SHADOW_OFFSET = new Vector3f(0.0F, 0.0F, -0.2F);
+    //private static final Vector3f SHADOW_OFFSET = new Vector3f(0.0F, 0.0F, -0.2F);
     private final BlockEntityRenderDispatcher dispatcher;
     private final Font font;
 
@@ -49,24 +49,27 @@ public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<C
         Matrix4f matrix4f = transform.last().pose();
         int bgColor = getBackgroundColor(theSign);
         var dropShadow = theSign.dropShadow;
-        int yOffset = -theSign.renderedContents.size() / 2 * this.font.lineHeight;
+        var contents = theSign.renderedContents;
+        int yOffset = (-contents.size() * (this.font.lineHeight + 2) + 2) / 2;
         int fontColor = theSign.colorInARGB;
+        int[] widths = new int[contents.size()];
         int maxWidth = 0;
-        for (var text : theSign.contents) {
-            int w = this.font.width(text);
+        for (int i = 0; i < contents.size(); i++) {
+            int w = widths[i] = this.font.width(contents.get(i));
             if (w > maxWidth) {
                 maxWidth = w;
             }
         }
         var align = theSign.align;
-        for (var text : theSign.renderedContents) {
+        for (int i = 0; i < contents.size(); i++) {
+            var text = contents.get(i);
             if (text != null && !text.isEmpty()) {
                 int xOffset = switch (align) {
                     case LEFT -> -maxWidth / 2;
-                    case CENTER -> -this.font.width(text) / 2;
-                    case RIGHT -> maxWidth / 2 - this.font.width(text);
+                    case CENTER -> -widths[i] / 2;
+                    case RIGHT -> maxWidth / 2 - widths[i];
                 };
-                renderText(font,text, xOffset, yOffset, fontColor, dropShadow, matrix4f, bufferSource, bgColor, packedLight);
+                renderText(font,text, xOffset, yOffset, widths[i], fontColor, dropShadow, matrix4f, bufferSource, bgColor, packedLight);
             }
             yOffset += this.font.lineHeight + 2;
         }
@@ -83,9 +86,8 @@ public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<C
             transform.mulPose(dispatcher.camera.rotation());
             transform.mulPose(Axis.YP.rotationDegrees(180));
         }
-        transform.scale(-0.025F, -0.025F, 0.025F);
-        transform.scale(theSign.scale, theSign.scale, 1);
-        transform.translate(0.0, 0.0, theSign.zOffset*40);
+        transform.scale(-0.025F * theSign.scale, -0.025F * theSign.scale, -0.25F);
+        transform.translate(0.0, 0.0, -theSign.zOffset * 4);
     }
     
     public static int getBackgroundColor(BaseHolographicSignBlockEntity theSign) {
@@ -95,43 +97,29 @@ public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<C
     }
     
     @SuppressWarnings("DuplicatedCode")
-    public static void renderText(Font font, Component component, float x, float y, int color, boolean dropShadow,
-                                  Matrix4f matrix, MultiBufferSource buffer,
-                                  int backgroundColor, int packedLightCoords){
-        var text = component.getVisualOrderText();
-        Matrix4f matrix4f = new Matrix4f(matrix);
-        renderBackground(font,backgroundColor,packedLightCoords,x,y,font.width(component),dropShadow,matrix4f,buffer);
-        if (dropShadow) {
-            font.drawInBatch(text, x, y, color, true, matrix, buffer, Font.DisplayMode.SEE_THROUGH,VanillaUtils.TRANSPARENT , packedLightCoords);
-            matrix4f.translate(SHADOW_OFFSET);
-        }
-        font.drawInBatch(text, x, y, color, false, matrix4f, buffer, Font.DisplayMode.NORMAL, VanillaUtils.TRANSPARENT, packedLightCoords);
+    public static void renderText(Font font, Component component, float x, float y, int width, int color,
+                                  boolean dropShadow, Matrix4f matrix, MultiBufferSource buffer,
+                                  int backgroundColor, int packedLightCoords) {
+        renderBackground(backgroundColor, packedLightCoords, x, y, width, dropShadow, matrix, buffer);
+        font.drawInBatch(component, x, y, color, dropShadow, matrix, buffer, Font.DisplayMode.POLYGON_OFFSET, 0, packedLightCoords);
     }
     
     @SuppressWarnings("DuplicatedCode")
-    public static void renderText(Font font,String text,float x, float y, int color, boolean dropShadow,
-                                  Matrix4f matrix, MultiBufferSource buffer,
-                                  int backgroundColor, int packedLightCoords){
-        Matrix4f matrix4f = new Matrix4f(matrix);
-        renderBackground(font,backgroundColor,packedLightCoords,x,y,font.width(text),dropShadow,matrix4f,buffer);
-        if (dropShadow) {
-            font.drawInBatch(text, x, y, color, true, matrix, buffer, Font.DisplayMode.NORMAL, VanillaUtils.TRANSPARENT, packedLightCoords);
-            matrix4f.translate(SHADOW_OFFSET);
-        }
-        font.drawInBatch(text, x, y, color, false, matrix4f, buffer, Font.DisplayMode.NORMAL, VanillaUtils.TRANSPARENT, packedLightCoords);
+    public static void renderText(Font font, String text, float x, float y, int width, int color,
+                                  boolean dropShadow, Matrix4f matrix, MultiBufferSource buffer,
+                                  int backgroundColor, int packedLightCoords) {
+        renderBackground(backgroundColor, packedLightCoords, x, y, width, dropShadow, matrix, buffer);
+        font.drawInBatch(text, x, y, color, dropShadow, matrix, buffer, Font.DisplayMode.POLYGON_OFFSET, 0, packedLightCoords);
     }
-    
-    public static void renderBackground(Font font,int backgroundColor, int packedLightCoords,float x,float y,int length,boolean append,Matrix4f matrix, MultiBufferSource buffer){
+
+    public static void renderBackground(int backgroundColor, int packedLightCoords, float x, float y, int width,
+                                        boolean dropShadow, Matrix4f matrix, MultiBufferSource buffer) {
         if (backgroundColor != 0 && backgroundColor != VanillaUtils.TRANSPARENT) {
-            float f = (float)(backgroundColor >> 24 & 0xFF) / 255.0F;
-            float f1 = (float)(backgroundColor >> 16 & 0xFF) / 255.0F;
-            float f2 = (float)(backgroundColor >> 8 & 0xFF) / 255.0F;
-            float f3 = (float)(backgroundColor & 0xFF) / 255.0F;
-            var bgEffect = new BakedGlyph.Effect(x - 1.0F, y + 9.0F, x + length + (append ? 1 : 0), y - 1.0F, 0.02F, f1, f2, f3, f);
-            var bakedGlyph = font.getFontSet(Style.DEFAULT_FONT).whiteGlyph();
-            var vertexConsumer = buffer.getBuffer(bakedGlyph.renderType(Font.DisplayMode.NORMAL));
-            bakedGlyph.renderEffect(bgEffect,matrix,vertexConsumer,packedLightCoords);
+            VertexConsumer vertexconsumer = buffer.getBuffer(RenderType.textBackground());
+            vertexconsumer.addVertex(matrix, x - 1.0F, y - 1.0F, 0.0F).setColor(backgroundColor).setLight(packedLightCoords);
+            vertexconsumer.addVertex(matrix, x - 1.0F, y + 9.0F, 0.0F).setColor(backgroundColor).setLight(packedLightCoords);
+            vertexconsumer.addVertex(matrix, x + width + 1.0F, y + 9.0F, 0.0F).setColor(backgroundColor).setLight(packedLightCoords);
+            vertexconsumer.addVertex(matrix, x + width + 1.0F, y - 1.0F, 0.0F).setColor(backgroundColor).setLight(packedLightCoords);
         }
     }
-    
 }
