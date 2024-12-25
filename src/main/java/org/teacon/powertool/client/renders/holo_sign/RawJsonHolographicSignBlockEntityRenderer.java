@@ -41,7 +41,7 @@ public class RawJsonHolographicSignBlockEntityRenderer implements BlockEntityRen
         var textColor = component.getStyle().getColor();
         int fontColor = textColor == null ? fontColorDefault : textColor.getValue();
         int w = this.font.width(component);
-        HolographicSignBlockEntityRenderer.renderText(font,component,x- (float) w /2,y,fontColor,dropShadow,transform.last().pose(),bufferSource,bgColor,packedLight);
+        HolographicSignBlockEntityRenderer.renderText(font,component,x- (float) w /2,y,w,fontColor,dropShadow,transform.last().pose(),bufferSource,bgColor,packedLight);
     }
     
     //todo 应用对齐方式
