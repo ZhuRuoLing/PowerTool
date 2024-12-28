@@ -511,7 +511,7 @@ public class MartingCarEntity extends LivingEntity {
             this.name = name;
             this.itemSupplier = itemSupplier;
             this.id = ResourceLocation.fromNamespaceAndPath(PowerTool.MODID, name);
-            this.texture = ResourceLocation.fromNamespaceAndPath(PowerTool.MODID, "textures/item/" + name + ".png");
+            this.texture = ResourceLocation.fromNamespaceAndPath(PowerTool.MODID, "textures/entity/" + name + ".png");
         }
 
         public static Variant from(String name) {
