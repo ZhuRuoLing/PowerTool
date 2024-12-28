@@ -25,7 +25,7 @@
 			"from": [1, 1, 11.9],
 			"to": [9, 3, 11.9],
 			"faces": {
-				"north": {"uv": [0, 0, 16, 4], "texture": "#overlay", "cullface": "north"}
+				"north": {"uv": [0, 0, 16, 4], "texture": "#overlay"}
 			}
 		},
 		{
