@@ -53,6 +53,11 @@ public class PowerToolNetwork {
             UpdateDisplayChunkDataPacket::handle
         );
         register.playToClient(
+            UpdateCachedModeChunkDataPacket.TYPE,
+            UpdateCachedModeChunkDataPacket.STREAM_CODEC,
+            UpdateCachedModeChunkDataPacket::handle
+        );
+        register.playToClient(
                 RecordDebugData.TYPE,
                 RecordDebugData.STREAM_CODEC,
                 RecordDebugData::handle

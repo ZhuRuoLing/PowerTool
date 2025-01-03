@@ -24,6 +24,7 @@ import org.teacon.powertool.attachment.PowerToolAttachments;
 import org.teacon.powertool.entity.AutoVanishBoat;
 import org.teacon.powertool.entity.AutoVanishMinecart;
 import org.teacon.powertool.network.client.UpdateDisplayChunkDataPacket;
+import org.teacon.powertool.network.client.UpdateCachedModeChunkDataPacket;
 import org.teacon.powertool.network.client.UpdateStaticModeChunkDataPacket;
 import org.teacon.powertool.utils.DelayServerExecutor;
 import org.teacon.powertool.utils.VanillaUtils;
@@ -42,19 +43,21 @@ public class PowerToolEvents {
         ChunkPos chunkPos = event.getPos();
         var listDisplayModeData = event.getChunk().getData(PowerToolAttachments.DISPLAY_MODE);
         var listStaticModeData = event.getChunk().getData(PowerToolAttachments.STATIC_MODE);
+        var listCachedModeData = event.getChunk().getData(PowerToolAttachments.CACHED_MODE);
         PacketDistributor.sendToPlayer(event.getPlayer(), new UpdateDisplayChunkDataPacket(chunkPos.x, chunkPos.z, listDisplayModeData));
         PacketDistributor.sendToPlayer(event.getPlayer(), new UpdateStaticModeChunkDataPacket(chunkPos.x, chunkPos.z, listStaticModeData));
+        PacketDistributor.sendToPlayer(event.getPlayer(), new UpdateCachedModeChunkDataPacket(chunkPos.x, chunkPos.z, listCachedModeData));
     }
-    
+
     @SubscribeEvent
-    public static void onPlayerRightClickBlock(PlayerInteractEvent.RightClickBlock event){
+    public static void onPlayerRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
         event.setCancellationResult(InteractionResult.SUCCESS);
-        event.setCanceled(VanillaUtils.isBlockStaticMode(event.getEntity(),event.getPos()));
+        event.setCanceled(VanillaUtils.isBlockStaticMode(event.getEntity(), event.getPos()));
     }
-    
+
     @SubscribeEvent
-    public static void onPlayerLeftClickBlock(PlayerInteractEvent.LeftClickBlock event){
-        event.setCanceled(VanillaUtils.isBlockStaticMode(event.getEntity(),event.getPos()));
+    public static void onPlayerLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
+        event.setCanceled(VanillaUtils.isBlockStaticMode(event.getEntity(), event.getPos()));
     }
 
     @SubscribeEvent
@@ -79,8 +82,28 @@ public class PowerToolEvents {
                 ChunkPos pos = entry.getValue();
                 for (BlockPos blockPos : list) {
                     removeAccessControl((ServerLevel) event.getLevel(), pos, chunk, blockPos, null);
+                    removeCachedModeControl((ServerLevel) event.getLevel(), pos, chunk, blockPos, null);
                 }
             });
+    }
+
+    private static void removeCachedModeControl(
+        ServerLevel level,
+        ChunkPos chunkPos,
+        ChunkAccess chunk,
+        BlockPos pos,
+        @Nullable ServerPlayer player
+    ) {
+        var cachedEnabledPosList = new ArrayList<>(chunk.getData(PowerToolAttachments.CACHED_MODE));
+        cachedEnabledPosList.remove(pos);
+        chunk.setData(PowerToolAttachments.CACHED_MODE, cachedEnabledPosList);
+        chunk.setUnsaved(true);
+        var packet = new UpdateCachedModeChunkDataPacket(chunkPos.x, chunkPos.z, cachedEnabledPosList);
+        if (player == null) {
+            PacketDistributor.sendToPlayersTrackingChunk(level, chunkPos, packet);
+            return;
+        }
+        PacketDistributor.sendToPlayer(player, packet);
     }
 
     private static void removeAccessControl(
@@ -116,6 +139,7 @@ public class PowerToolEvents {
         ChunkPos chunkPos = new ChunkPos(pos);
         ChunkAccess chunk = level.getChunk(pos);
         removeAccessControl(level, chunkPos, chunk, pos, player);
+        removeCachedModeControl(level, chunkPos, chunk, pos, player);
     }
 
     @SubscribeEvent
@@ -124,27 +148,27 @@ public class PowerToolEvents {
         BlockPos pos = event.getPos();
         removeAccessControl(level, pos, (ServerPlayer) event.getPlayer());
     }
-    
+
     @SubscribeEvent
     public static void onChangeDimension(EntityTravelToDimensionEvent event) {
-        if(event.getDimension().equals(ServerLevel.END) && PowerToolConfig.disableTeleportToEnd.get()){
+        if (event.getDimension().equals(ServerLevel.END) && PowerToolConfig.disableTeleportToEnd.get()) {
             event.setCanceled(true);
         }
     }
-    
+
     @SubscribeEvent
-    public static void onAddEntity(EntityJoinLevelEvent event){
+    public static void onAddEntity(EntityJoinLevelEvent event) {
         var entity = event.getEntity();
         var level = event.getLevel();
-        if(PowerToolConfig.vehicleAutoVanish.get()){
-            if(entity instanceof Boat boat && !(entity instanceof ChestBoat) &&!(entity instanceof AutoVanishBoat)){
+        if (PowerToolConfig.vehicleAutoVanish.get()) {
+            if (entity instanceof Boat boat && !(entity instanceof ChestBoat) && !(entity instanceof AutoVanishBoat)) {
                 var newBoat = AutoVanishBoat.fromBoat(boat);
-                DelayServerExecutor.addTask(2,(server) -> level.addFreshEntity(newBoat));
+                DelayServerExecutor.addTask(2, (server) -> level.addFreshEntity(newBoat));
                 event.setCanceled(true);
             }
-            if(entity instanceof Minecart minecart && !(entity instanceof AutoVanishMinecart)){
+            if (entity instanceof Minecart minecart && !(entity instanceof AutoVanishMinecart)) {
                 var newMinecart = AutoVanishMinecart.fromMinecart(minecart);
-                DelayServerExecutor.addTask(2,(server) -> level.addFreshEntity(newMinecart));
+                DelayServerExecutor.addTask(2, (server) -> level.addFreshEntity(newMinecart));
                 event.setCanceled(true);
             }
         }

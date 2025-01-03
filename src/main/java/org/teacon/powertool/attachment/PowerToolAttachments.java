@@ -25,6 +25,13 @@ public class PowerToolAttachments {
             .serialize(BlockPos.CODEC.listOf())
             .build()
     );
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<List<BlockPos>>> CACHED_MODE = ATTACHMENT_TYPE.register(
+        "cached_mode",
+        () -> AttachmentType.<List<BlockPos>>builder(() -> new ArrayList<>())
+            .serialize(BlockPos.CODEC.listOf())
+            .build()
+    );
     
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<List<BlockPos>>> STATIC_MODE = ATTACHMENT_TYPE.register(
             "static_mode",

@@ -11,12 +11,14 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.teacon.powertool.client.AccessControlClient;
+import org.teacon.powertool.client.CachedModeClient;
 
 import java.util.List;
 
 @Mixin(DebugScreenOverlay.class)
 public class DebugScreenOverlayMixin {
-    @Shadow private HitResult block;
+    @Shadow
+    private HitResult block;
 
     @Inject(
         method = "getSystemInformation",
@@ -28,13 +30,20 @@ public class DebugScreenOverlayMixin {
     private void appendDisplayModeInformation(
         CallbackInfoReturnable<List<String>> cir,
         @Local(index = 9) List<String> list
-    ){
+    ) {
         boolean isDisplayModeEnabled = AccessControlClient.INSTANCE.isDisplayModeEnabledAt(
-            ((BlockHitResult)this.block).getBlockPos()
+            ((BlockHitResult) this.block).getBlockPos()
+        );
+        boolean isCachedModeEnabled = CachedModeClient.INSTANCE.isCachedModeEnabledOn(
+            ((BlockHitResult) this.block).getBlockPos()
         );
         list.add(
             "Display Mode: "
-            + (isDisplayModeEnabled ? ChatFormatting.GREEN + "Enabled" : ChatFormatting.RED + "Disabled")
+                + (isDisplayModeEnabled ? ChatFormatting.GREEN + "Enabled" : ChatFormatting.RED + "Disabled")
+        );
+        list.add(
+            "Cached Mode: "
+                + ((isCachedModeEnabled) ? ChatFormatting.GREEN + "Enabled" : ChatFormatting.RED + "Disabled")
         );
     }
 }
