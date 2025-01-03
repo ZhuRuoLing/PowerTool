@@ -41,38 +41,39 @@ public class PowerToolItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, PowerTool.MODID);
 
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, PowerTool.MODID);
-    
-    public static final DeferredRegister<ArmorMaterial> ARMOR_MATERIAL = DeferredRegister.create(Registries.ARMOR_MATERIAL,PowerTool.MODID);
 
-    public static final DeferredHolder<CreativeModeTab,CreativeModeTab> THE_TAB = CREATIVE_MODE_TABS.register("tab", () -> CreativeModeTab.builder()
-            .title(Component.translatable("itemGroup.powertool"))
-            .icon(() -> new ItemStack(PowerToolBlocks.COMMAND_BLOCK.get()))
-            .withTabsBefore(CreativeModeTabs.FOOD_AND_DRINKS, CreativeModeTabs.INGREDIENTS, CreativeModeTabs.SPAWN_EGGS)
-            .build());
-    
-    public static final DeferredHolder<CreativeModeTab,CreativeModeTab> COSMETIC_TAB = CREATIVE_MODE_TABS.register("cosmetic_tab",() -> CreativeModeTab.builder()
-            .title(Component.translatable("itemGroup.powertool.cosmetic"))
-            .icon(() -> Blocks.BEACON.asItem().getDefaultInstance())
-            .withTabsBefore(VanillaUtils.modRL("tab"))
-            .build());
-    
-    public static final DeferredHolder<ArmorMaterial,ArmorMaterial> HOLO_GLASS_ARMOR_MATERIAL = ARMOR_MATERIAL.register("holo_glass",
-            () -> new ArmorMaterial(Util.make(new EnumMap<>(ArmorItem.Type.class),map -> {
-                for(var type : ArmorItem.Type.values()) {
-                    map.put(type,0);
-                }
-            }),
-                    0,
-                    SoundEvents.ARMOR_EQUIP_NETHERITE,
-                    () -> Ingredient.EMPTY,
-                    List.of(),
-                    0f,0f));
-    
-    public static DeferredHolder<Item,TonkItem> TONK,THICK_TONK,EXTRA_THICK_TONK;
-    public static DeferredHolder<Item,AutoVanishBoatItem> AV_OAK_BOAT,AV_SPRUCE_BOAT,AV_BIRCH_BOAT,AV_JUNGLE_BOAT,AV_ACACIA_BOAT,AV_CHERRY_BOAT,AV_DARK_OAK_BOAT,AV_MANGROVE_BOAT,AV_BAMBOO_RAFT;
-    public static DeferredHolder<Item,AutoVanishMinecartItem> AV_MINE_CART;
+    public static final DeferredRegister<ArmorMaterial> ARMOR_MATERIAL = DeferredRegister.create(Registries.ARMOR_MATERIAL, PowerTool.MODID);
+
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> THE_TAB = CREATIVE_MODE_TABS.register("tab", () -> CreativeModeTab.builder()
+        .title(Component.translatable("itemGroup.powertool"))
+        .icon(() -> new ItemStack(PowerToolBlocks.COMMAND_BLOCK.get()))
+        .withTabsBefore(CreativeModeTabs.FOOD_AND_DRINKS, CreativeModeTabs.INGREDIENTS, CreativeModeTabs.SPAWN_EGGS)
+        .build());
+
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> COSMETIC_TAB = CREATIVE_MODE_TABS.register("cosmetic_tab", () -> CreativeModeTab.builder()
+        .title(Component.translatable("itemGroup.powertool.cosmetic"))
+        .icon(() -> Blocks.BEACON.asItem().getDefaultInstance())
+        .withTabsBefore(VanillaUtils.modRL("tab"))
+        .build());
+
+    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> HOLO_GLASS_ARMOR_MATERIAL = ARMOR_MATERIAL.register("holo_glass",
+        () -> new ArmorMaterial(Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+            for (var type : ArmorItem.Type.values()) {
+                map.put(type, 0);
+            }
+        }),
+            0,
+            SoundEvents.ARMOR_EQUIP_NETHERITE,
+            () -> Ingredient.EMPTY,
+            List.of(),
+            0f, 0f));
+
+    public static DeferredHolder<Item, TonkItem> TONK, THICK_TONK, EXTRA_THICK_TONK;
+    public static DeferredHolder<Item, AutoVanishBoatItem> AV_OAK_BOAT, AV_SPRUCE_BOAT, AV_BIRCH_BOAT, AV_JUNGLE_BOAT, AV_ACACIA_BOAT, AV_CHERRY_BOAT, AV_DARK_OAK_BOAT, AV_MANGROVE_BOAT, AV_BAMBOO_RAFT;
+    public static DeferredHolder<Item, AutoVanishMinecartItem> AV_MINE_CART;
     public static DeferredHolder<Item, AccessControlToolItem> DISPLAY_MODE_TOOL;
     public static DeferredHolder<Item, AccessControlToolItem> STATIC_MODE_TOOL;
+    public static DeferredHolder<Item, AccessControlToolItem> CACHED_MODE_TOOL;
     public static DeferredHolder<Item, TextureExtractor> TEXTURE_EXTRACTOR;
 
     public static Supplier<Item> MARTING_RED = ITEMS.register("marting_car_red", () -> new MartingCarItem(new Item.Properties(), MartingCarEntity.Variant.RED));
@@ -90,25 +91,26 @@ public class PowerToolItems {
         ITEMS.register("clap", () -> new ClapItem(new Item.Properties()));
         ITEMS.register("clap_but_sad", () -> new ClapItem(new Item.Properties()));
         ITEMS.register("clap_but_angry", () -> new ClapItem(new Item.Properties()));
-        ITEMS.register("transparent_brush",TransparentBrushItem::new);
-        ITEMS.register("examine_holo_glass",ExamineHoloGlass::new);
+        ITEMS.register("transparent_brush", TransparentBrushItem::new);
+        ITEMS.register("examine_holo_glass", ExamineHoloGlass::new);
         ITEMS.register("command_rune", () -> new CommandRune(new Item.Properties()));
         TONK = ITEMS.register("tonk", () -> new TonkItem(new Item.Properties(), FenceKnotEntity.Type.Thin));
         THICK_TONK = ITEMS.register("thick_tonk", () -> new TonkItem(new Item.Properties(), FenceKnotEntity.Type.Normal));
-        EXTRA_THICK_TONK = ITEMS.register("extra_thick_tonk",() -> new TonkItem(new Item.Properties(), FenceKnotEntity.Type.Thick));
-        AV_OAK_BOAT = ITEMS.register("auto_vanish_oak_boat",() -> new AutoVanishBoatItem(Boat.Type.OAK));
-        AV_SPRUCE_BOAT = ITEMS.register("auto_vanish_spruce_boat",() -> new AutoVanishBoatItem(Boat.Type.SPRUCE));
-        AV_BIRCH_BOAT = ITEMS.register("auto_vanish_birch_boat",() -> new AutoVanishBoatItem(Boat.Type.BIRCH));
-        AV_JUNGLE_BOAT = ITEMS.register("auto_vanish_jungle_boat",() -> new AutoVanishBoatItem(Boat.Type.JUNGLE));
-        AV_ACACIA_BOAT = ITEMS.register("auto_vanish_acacia_boat",() -> new AutoVanishBoatItem(Boat.Type.ACACIA));
-        AV_CHERRY_BOAT = ITEMS.register("auto_vanish_cherry_boat",() -> new AutoVanishBoatItem(Boat.Type.CHERRY));
-        AV_DARK_OAK_BOAT = ITEMS.register("auto_vanish_dark_oak_boat",() -> new AutoVanishBoatItem(Boat.Type.DARK_OAK));
-        AV_MANGROVE_BOAT = ITEMS.register("auto_vanish_mangrove_boat",() -> new AutoVanishBoatItem(Boat.Type.MANGROVE));
-        AV_BAMBOO_RAFT = ITEMS.register("auto_vanish_bamboo_raft",() -> new AutoVanishBoatItem(Boat.Type.BAMBOO));
-        AV_MINE_CART = ITEMS.register("auto_vanish_minecart",() -> new AutoVanishMinecartItem(new Item.Properties()));
+        EXTRA_THICK_TONK = ITEMS.register("extra_thick_tonk", () -> new TonkItem(new Item.Properties(), FenceKnotEntity.Type.Thick));
+        AV_OAK_BOAT = ITEMS.register("auto_vanish_oak_boat", () -> new AutoVanishBoatItem(Boat.Type.OAK));
+        AV_SPRUCE_BOAT = ITEMS.register("auto_vanish_spruce_boat", () -> new AutoVanishBoatItem(Boat.Type.SPRUCE));
+        AV_BIRCH_BOAT = ITEMS.register("auto_vanish_birch_boat", () -> new AutoVanishBoatItem(Boat.Type.BIRCH));
+        AV_JUNGLE_BOAT = ITEMS.register("auto_vanish_jungle_boat", () -> new AutoVanishBoatItem(Boat.Type.JUNGLE));
+        AV_ACACIA_BOAT = ITEMS.register("auto_vanish_acacia_boat", () -> new AutoVanishBoatItem(Boat.Type.ACACIA));
+        AV_CHERRY_BOAT = ITEMS.register("auto_vanish_cherry_boat", () -> new AutoVanishBoatItem(Boat.Type.CHERRY));
+        AV_DARK_OAK_BOAT = ITEMS.register("auto_vanish_dark_oak_boat", () -> new AutoVanishBoatItem(Boat.Type.DARK_OAK));
+        AV_MANGROVE_BOAT = ITEMS.register("auto_vanish_mangrove_boat", () -> new AutoVanishBoatItem(Boat.Type.MANGROVE));
+        AV_BAMBOO_RAFT = ITEMS.register("auto_vanish_bamboo_raft", () -> new AutoVanishBoatItem(Boat.Type.BAMBOO));
+        AV_MINE_CART = ITEMS.register("auto_vanish_minecart", () -> new AutoVanishMinecartItem(new Item.Properties()));
         DISPLAY_MODE_TOOL = ITEMS.register("display_mode_tool", () -> new AccessControlToolItem(new Item.Properties(), AccessControlToolItem.Type.DISPLAY_MODE));
-        STATIC_MODE_TOOL = ITEMS.register("static_mode_tool",() -> new AccessControlToolItem(new Item.Properties(), AccessControlToolItem.Type.STATIC_MODE));
-        TEXTURE_EXTRACTOR = ITEMS.register("texture_extractor",() -> new TextureExtractor(new Item.Properties()));
+        STATIC_MODE_TOOL = ITEMS.register("static_mode_tool", () -> new AccessControlToolItem(new Item.Properties(), AccessControlToolItem.Type.STATIC_MODE));
+        CACHED_MODE_TOOL = ITEMS.register("cached_mode_tool", () -> new AccessControlToolItem(new Item.Properties(), AccessControlToolItem.Type.CACHED_MODE));
+        TEXTURE_EXTRACTOR = ITEMS.register("texture_extractor", () -> new TextureExtractor(new Item.Properties()));
         CREATIVE_MODE_TABS.register(bus);
         PowerToolDataComponents.DATA_COMPONENTS.register(bus);
         ARMOR_MATERIAL.register(bus);
@@ -118,17 +120,20 @@ public class PowerToolItems {
     public static void creativeTab(BuildCreativeModeTabContentsEvent event) {
         if (event.getTab() == THE_TAB.get()) {
             for (var regObj : ITEMS.getEntries()) {
-                if(!(regObj.get() instanceof BlockItem blockItem) || !(blockItem.getBlock() instanceof ICosmeticBlock)) event.accept(regObj.get());
+                if (!(regObj.get() instanceof BlockItem blockItem) || !(blockItem.getBlock() instanceof ICosmeticBlock))
+                    event.accept(regObj.get());
             }
         }
-        if (event.getTab() == COSMETIC_TAB.get()){
+        if (event.getTab() == COSMETIC_TAB.get()) {
             for (var regObj : ITEMS.getEntries()) {
-                if(regObj.get() instanceof BlockItem blockItem && blockItem.getBlock() instanceof ICosmeticBlock) event.accept(regObj.get());
+                if (regObj.get() instanceof BlockItem blockItem && blockItem.getBlock() instanceof ICosmeticBlock)
+                    event.accept(regObj.get());
             }
         }
-        if (event.getTabKey() == CreativeModeTabs.REDSTONE_BLOCKS){
+        if (event.getTabKey() == CreativeModeTabs.REDSTONE_BLOCKS) {
             for (var regObj : ITEMS.getEntries()) {
-                if(regObj.get() instanceof IRedStoneStuff || (regObj.get() instanceof BlockItem blockItem && blockItem.getBlock() instanceof IRedStoneStuff)) event.accept(regObj.get());
+                if (regObj.get() instanceof IRedStoneStuff || (regObj.get() instanceof BlockItem blockItem && blockItem.getBlock() instanceof IRedStoneStuff))
+                    event.accept(regObj.get());
             }
         }
     }

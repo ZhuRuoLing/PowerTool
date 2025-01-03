@@ -117,6 +117,7 @@
   "item.powertool.auto_vanish_minecart": "Auto Vanish Minecart",
   "item.powertool.display_mode_tool": "Display Mode Tool",
   "item.powertool.static_mode_tool": "Static Mode Tool",
+  "item.powertool.cached_mode_tool": "Cached Rendering Mode Tool",
   "item.powertool.texture_extractor": "Texture Extractor",
 
   "entity.powertool.fence_knot": "Knot On Fence",
@@ -171,9 +172,12 @@
   "itemGroup.powertool.cosmetic": "PowerTool: CosmeticBlocks",
 
   "tooltip.powertool.static_tool": "Use on block to toggle Static Mode",
+  "tooltip.powertool.cached_mode_tool": "Use on block to toggle Cached Rendering Mode, attack block to force rebuild cache.",
   "tooltip.powertool.display_tool": "Use on block to toggle Display Mode",
   "powertool.gui.display_mode_enabled": "Enabled display mode on %s",
   "powertool.gui.display_mode_disabled": "Disabled display mode on %s",
+  "powertool.gui.cached_mode_enabled": "Enabled cached rendering mode on %s",
+  "powertool.gui.cached_mode_disabled": "Disabled cached rendering mode on %s",
   "powertool.gui.display_mode_error": "Could not enable display mode on %s because it has no ability to open any screen. Or press shift key and click again to force enable display mode.",
 
   "entity.powertool.marting_car": "Marting Car",
@@ -215,4 +219,5 @@
   "powertool.gui.holo_sign.z_offset": "Z Axis Offset:",
   "powertool.gui.holo_sign.lit_on": "Light Emission: On",
   "powertool.gui.holo_sign.lit_off": "Light Emission: Off"
+
 }
