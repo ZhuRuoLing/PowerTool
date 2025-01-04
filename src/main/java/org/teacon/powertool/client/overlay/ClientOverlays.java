@@ -38,6 +38,7 @@ public class ClientOverlays {
                 }
             }
         });
+        event.registerAbove(VanillaGuiLayers.HOTBAR,VanillaUtils.modRL("marting_car_info"),MartingCarOverlay::renderBoostBar);
         if(SharedConstants.IS_RUNNING_WITH_JDWP){
             event.registerAboveAll(VanillaUtils.modRL("debug_charts"),(guiGraphics, partialTicks) -> {
                 var y = 80;

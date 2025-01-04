@@ -13,7 +13,8 @@ import org.teacon.powertool.entity.PowerToolEntities;
 import java.util.List;
 
 public class MartingCarItem extends Item {
-    public static final String TOOLTIP = "tooltip.powertool.marting";
+    public static final String TOOLTIP1 = "tooltip.powertool.marting";
+    public static final String TOOLTIP2 = "tooltip.powertool.marting2";
 
     private final MartingCarEntity.Variant variant;
 
@@ -25,8 +26,8 @@ public class MartingCarItem extends Item {
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context,
                                 @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.translatable(TOOLTIP));
-
+        tooltipComponents.add(Component.translatable(TOOLTIP1));
+        tooltipComponents.add(Component.translatable(TOOLTIP2));
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
     }
 
