@@ -31,7 +31,9 @@ import net.neoforged.neoforge.common.NeoForgeMod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.teacon.powertool.PowerTool;
+import org.teacon.powertool.client.overlay.ClientDebugCharts;
 import org.teacon.powertool.item.PowerToolItems;
+import org.teacon.powertool.utils.VanillaUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -116,11 +118,13 @@ public class MartingCarEntity extends LivingEntity {
     public void tick() {
         super.tick();
         var f2 = this.level().getBlockState(this.getBlockPosBelowThatAffectsMyMovement()).getFriction(level(), this.getBlockPosBelowThatAffectsMyMovement(), this);
-        f2 = this.onGround() ? f2 * 0.4F : 0.2F;
-        //VanillaUtils.recordDebugData("dv", (long) ((getd)*100));
-        this.setDeltaMovement(this.getDeltaMovement().scale(0.6+f2));
-        setYHeadRot(getYRot());
-        setYBodyRot(getYRot());
+        f2 = this.onGround() ? f2 * 0.1F : 0.05F;
+        var facing = getYRot();
+        var v = getInputVector(getDeltaMovement(),1,-facing);
+        this.setDeltaMovement(getInputVector(new Vec3(v.x*0.9,v.y,v.z),0.9f+f2,facing));
+        
+        setYHeadRot(facing);
+        setYBodyRot(facing);
         if (!level().isClientSide()) {
             if (remainingLifeTimeTicks < 0) {
                 discard();
@@ -223,7 +227,7 @@ public class MartingCarEntity extends LivingEntity {
             original += delta;
             original %= Mth.TWO_PI;
             original -= Mth.PI;
-            //ClientDebugCharts.recordDebugData("Speed", (long) (Mth.sign(delta)*getDeltaMovement().length()*100));
+            ClientDebugCharts.recordDebugData("Speed", (long) (Mth.sign(delta)*getDeltaMovement().length()*100));
             this.entityData.set(DATA_ID_WHEEL_ROTATE_RADIAN, original);
         } else {
             this.entityData.set(DATA_ID_WHEEL_ROTATE_RADIAN, 0F);
@@ -266,12 +270,21 @@ public class MartingCarEntity extends LivingEntity {
     }
     
     @Override
+    protected void positionRider(Entity passenger, MoveFunction callback) {
+        super.positionRider(passenger, callback);
+        passenger.setYRot(passenger.getYRot() - xxaSum);
+        passenger.setYHeadRot(passenger.getYHeadRot() - xxaSum);
+    }
+    
+    @Override
     protected Vec3 getRiddenInput(Player player, Vec3 travelVector) {
-        setYRot(player.getYHeadRot());
+        //setYRot(player.getYHeadRot());
         updateSteeringRotate(player.xxa);
-        xxaSum = Mth.clamp((xxaSum + player.xxa*0.05f)*0.75f,-0.08f,0.08f);
-        zzaSum = Mth.clamp((zzaSum + player.zza*0.08f)*0.75f,-0.25f,0.25f);
-        if(getDeltaMovement().lengthSqr() < 2) this.moveRelative(1,new Vec3(xxaSum, 0.0F, zzaSum));
+        xxaSum = Mth.clamp((xxaSum + player.xxa*5f)*0.75f,-30f,30f);
+        var yRot = (360 + getYRot() - xxaSum) % 360;
+        setYRot(yRot);
+        zzaSum = Mth.clamp((zzaSum + player.zza*0.04f)*0.75f,-0.25f,0.25f);
+        if(getDeltaMovement().lengthSqr() < 2) this.moveRelative(1,new Vec3(0f, 0f, zzaSum));
         return Vec3.ZERO;
     }
 
@@ -326,7 +339,7 @@ public class MartingCarEntity extends LivingEntity {
     public static AttributeSupplier createAttributes() {
         return LivingEntity.createLivingAttributes()
                 .add(Attributes.MAX_HEALTH, 1)
-                .add(Attributes.STEP_HEIGHT, 1)
+                .add(Attributes.STEP_HEIGHT, 1.5)
                 .add(Attributes.MOVEMENT_SPEED, 0.7)
                 .add(Attributes.SCALE)
                 .add(Attributes.GRAVITY)

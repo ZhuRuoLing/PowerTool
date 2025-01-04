@@ -1,9 +1,13 @@
 package org.teacon.powertool.entity;
 
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.vehicle.Minecart;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
+import org.teacon.powertool.item.PowerToolItems;
 
+@MethodsReturnNonnullByDefault
 public class AutoVanishMinecart extends Minecart {
     
     protected int idleTickCount = 0;
@@ -40,5 +44,10 @@ public class AutoVanishMinecart extends Minecart {
             }
         }
         super.tick();
+    }
+    
+    @Override
+    protected Item getDropItem() {
+        return PowerToolItems.AV_MINE_CART.get();
     }
 }
